@@ -25,6 +25,11 @@ from .paginators import *
 import json 
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 
 class ItemList(generics.ListCreateAPIView):
   queryset = Item.objects.all()
@@ -95,7 +100,6 @@ class ItemList(generics.ListCreateAPIView):
         ).values_list('item', flat=True)
         queryset = queryset.filter(id__in=item_ids)
     return queryset
-
 
 
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):

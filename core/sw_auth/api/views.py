@@ -142,7 +142,7 @@ class UserViewSet(viewsets.ModelViewSet):
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return JsonResponse({
             'status':'OK',
-            'url':request.META.get('HTTP_REFERER', '/'),
+            'url':reverse(auth_settings.REGISTER_REDIRECT_URL),
         })
 
 
@@ -207,12 +207,12 @@ def sw_login(request):
     #         return JsonResponse('inactive')
     # else:
     #     return JsonResponse('bad')
-
+    'profile'
     login(request, user)
     return JsonResponse({
         'status':'OK',
         'message':_('Ви увійшли'),
-        'url':auth_settings.LOGIN_REDIRECT_URL,
+        'url':reverse(auth_settings.LOGIN_REDIRECT_URL),
     })
 
 
@@ -221,6 +221,5 @@ def sw_logout(request):
     logout(request)
     return JsonResponse({
         'status':'OK',
-        'url':request.META.get('HTTP_REFERER', '/'),
+        'url':reverse(auth_settings.LOGOUT_REDIRECT_URL),
     })
-

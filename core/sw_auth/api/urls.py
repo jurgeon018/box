@@ -3,7 +3,6 @@ from .views import *
 
 from rest_framework.routers import DefaultRouter 
 
-
 router = DefaultRouter()
 router.register('users', UserViewSet)
 
@@ -14,5 +13,3 @@ urlpatterns = [
     path('babaski/', sw_login),
     path('', include(router.urls)),
 ]
-
-

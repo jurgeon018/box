@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from ..models import *
 from box.core.mail import box_send_mail 
 
+from django.utils.translation import ugettext_lazy as _
+
 
 @csrf_exempt
 def sw_contact(request):

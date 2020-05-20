@@ -67,6 +67,7 @@ def get_resource(name):
             return resource 
     raise Exception(f"Resource '{name}' not found")
 
+
 def get_resources():
   resources = []
   # print('APPNAMES:')
@@ -107,6 +108,8 @@ seo = [_("SEO"), {
       "collapse",
     ]
 }]
+
+
 base_main_info = [_("ОСНОВНА ІНФОРМАЦІЯ"), {
     "fields":[
         'title',
