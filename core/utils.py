@@ -67,10 +67,11 @@ def get_resource(name):
             return resource 
     raise Exception(f"Resource '{name}' not found")
 
+
 def get_resources():
   resources = []
   # print('APPNAMES:')
-  print('MODULES:')
+  # print('MODULES:')
   for appname in settings.INSTALLED_APPS:
     module = None 
     if not appname.startswith('import_export.'):
@@ -85,7 +86,7 @@ def get_resources():
           if ModelResource in obj.__mro__:
             if obj is not ModelResource:
               package_name = inspect.getmodule(obj)
-              print(package_name)
+              # print(package_name)
               if package_name.__name__.split('.')[-1] != 'abstract_resources':
                 resources.append(obj)
   return resources
@@ -107,6 +108,8 @@ seo = [_("SEO"), {
       "collapse",
     ]
 }]
+
+
 base_main_info = [_("ОСНОВНА ІНФОРМАЦІЯ"), {
     "fields":[
         'title',
