@@ -1,9 +1,9 @@
-from django.shortcuts import redirect 
+from django.shortcuts import redirect, reverse 
 from django.contrib.auth import logout
 
-
-
+from . import settings as auth_settings 
 
 def sw_logout(request):
     logout(request)
-    return redirect(request.META.get('HTTP_REFERER', "/"))
+    x = auth_settings.LOGOUT_REDIRECT_URL
+    return redirect(reverse(x))

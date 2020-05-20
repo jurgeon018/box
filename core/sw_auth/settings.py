@@ -1,7 +1,8 @@
 from django.conf import settings 
 
+def get(x, y):
+    return getattr(settings, x, y)
 
-DEFAULT_LOGIN_REDIRECT_URL = '/profile/'
-LOGIN_REDIRECT_URL = getattr(settings, 'LOGIN_REDIRECT_URL', DEFAULT_LOGIN_REDIRECT_URL)
-
-
+LOGIN_REDIRECT_URL    = get('LOGIN_REDIRECT_URL', 'profile')
+LOGOUT_REDIRECT_URL   = get('LOGOUT_REDIRECT_URL', 'index')
+REGISTER_REDIRECT_URL = get('REGISTER_REDIRECT_URL', 'profile')
