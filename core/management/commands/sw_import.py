@@ -120,7 +120,7 @@ class Command(BaseCommand):
   # 3
   def import_one(self, filename, resource_name, ext):
     result = self.load(filename, resource_name, ext)
-    result = result['status']
+    # result = result['status']
     return result 
 
   def load(self, filename, resource_name, ext):
