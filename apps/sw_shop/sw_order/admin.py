@@ -86,7 +86,9 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
     def total_with_coupon(self, obj=None):
         return f'{obj.total_price_with_coupon} {obj.currency}'
     def total_without_coupon(self, obj=None):
-        return f'{obj.total_price_with_coupon} {obj.currency}'
+        return f'{obj.total_price} {obj.currency}'
+        # return f'{obj.total_price_with_coupon} {obj.currency}'
+    
     def show_user(self, obj):
       link = show_admin_link(obj, obj_attr='user', obj_name='username', option='change')
       return link

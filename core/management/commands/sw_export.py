@@ -21,7 +21,7 @@ class Command(BaseCommand):
         '-e',
         '--extention',
     )
-
+    
     # 1
     parser.add_argument(
         '-d',
