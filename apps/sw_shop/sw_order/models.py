@@ -124,7 +124,7 @@ class Order(models.Model):
     cart = get_cart(request)
     self.handle_user(request)
     self.handle_amount(request)
-    self.total_price = self.cart.total_price
+    self.total_price = cart.total_price
     self.ordered = True
     self.save()
     cart.order = self 
@@ -133,7 +133,7 @@ class Order(models.Model):
     cart_items = CartItem.objects.filter(cart=cart)
     context = {'cart_items':cart_items}
     box_send_mail(
-      subject      = f'Отримано замовлення товарів # {self.id}',
+      subject      = _(f'Отримано замовлення товарів # {self.id}'),
       template     = 'sw_order/mail.html', 
       email_config = OrderRecipientEmail, 
       model        = self, 
@@ -149,7 +149,7 @@ class Order(models.Model):
 
   def __str__(self):
     return f'{self.phone}|{self.name}|{self.email}|{self.address}' 
-  
+
   @property
   def currency(self):
     return self.cart.currency

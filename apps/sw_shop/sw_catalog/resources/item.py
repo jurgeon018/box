@@ -44,8 +44,8 @@ class ItemResource(ModelResource):
     # def after_import_row(self, row, row_result,**kwargs):
     #     self.handle_images_import(row)
     #     self.handle_server_images_import(row)
-        # self.handle_markers_import(row)
-        # self.handle_labels_import(row)
+    #     self.handle_markers_import(row)
+    #     self.handle_labels_import(row)
 
     def get_export_order(self):
         multilingual_fields = get_multilingual_fields(self._meta.model)

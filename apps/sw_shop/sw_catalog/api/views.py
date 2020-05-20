@@ -25,6 +25,11 @@ from .paginators import *
 import json 
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 
 class ItemList(generics.ListCreateAPIView):
   queryset = Item.objects.all()
@@ -97,7 +102,6 @@ class ItemList(generics.ListCreateAPIView):
     return queryset
 
 
-
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
   queryset = Item.objects.all()
   serializer_class = ItemDetailSerializer
@@ -139,14 +143,12 @@ def create_review(request):
       "is_active":review.is_active,
     }
     box_send_mail(
-      subject=GlobalConfig.get_colo().get_data('review')['subject'],
-      recipient_list=GlobalConfig.get_colo().get_data('review')['emails'],
+      subject=_(f"Отримано відгук до товару {item.title}"),
+      template='sw_catalog/item_review_mail.html', 
+      email_config=CatalogRecipientEmail,
       model=review,
     )
     return JsonResponse(response)
-
-
-
 
 
 

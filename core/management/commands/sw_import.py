@@ -59,7 +59,7 @@ class Command(BaseCommand):
         ext = filename.split('.')[-1]
       else:
         ext = 'csv'
-    
+
     if resource_name is None and filename is not None:
       resource_name = f"{filename.split('/')[-1].split('.')[0]}"
 

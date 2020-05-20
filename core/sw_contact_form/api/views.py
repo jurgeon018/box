@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from ..models import *
 from box.core.mail import box_send_mail 
 
+from django.utils.translation import ugettext_lazy as _
+
 
 @csrf_exempt
 def sw_contact(request):
@@ -24,7 +26,7 @@ def sw_contact(request):
         url=url
     )
     box_send_mail(
-      subject      = 'Отримано контактну форму',
+      subject      = _('Отримано контактну форму'),
       template     = 'sw_contact_form/mail.html', 
       email_config = ContactRecipientEmail, 
       model        = model, 
@@ -32,9 +34,9 @@ def sw_contact(request):
     )
     return JsonResponse({
         'status':'OK',
-        # 'url':'/'
-        # 'redirect':reverse('index'),
     })
+
+
 
 
 
