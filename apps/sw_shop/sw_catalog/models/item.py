@@ -139,9 +139,9 @@ class Item(AbstractPage):
         price = 0 
         
         if self.price and self.discount:
-            discount = self.discount / 100
+            discount = self.discount 
             if self.discount_type == 'p':
-                discount = self.price * discount
+                discount = self.price * discount/ 100
             price = self.price - discount
         return round(price, 2)
 
