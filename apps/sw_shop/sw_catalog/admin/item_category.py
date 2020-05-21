@@ -39,9 +39,9 @@ from .item_inlines import *
 from ..resources import * 
 
 class ItemCategoryAdmin(
-    # BaseAdmin,
-    # ImportExportActionModelAdmin,
-    # ImportExportModelAdmin, 
+    BaseAdmin,
+    ImportExportActionModelAdmin,
+    ImportExportModelAdmin, 
     # ClonableModelAdmin, 
     # SortableAdminMixin,
     DraggableMPTTAdmin,
@@ -57,12 +57,12 @@ class ItemCategoryAdmin(
     def has_delete_permission(self, request, obj=None):
         return False if obj and obj.code else True 
 
-    # def tree_title(self, obj):
-    #     lvl = obj._mpttfield('level') * self.mptt_level_indent
-    #     return mark_safe(f'<div style="text-indent:{lvl}px">{obj.tree_title}</div>')
-    # tree_title.short_description = _('Заdispголовок')
-    # expand_tree_by_default = False 
-    # mptt_level_indent = 20
+    def tree_title(self, obj):
+        lvl = obj._mpttfield('level') * self.mptt_level_indent
+        return mark_safe(f'<div style="text-indent:{lvl}px">{obj.tree_title}</div>')
+    tree_title.short_description = _('Заголовок')
+    expand_tree_by_default = False 
+    mptt_level_indent = 20
 
     resource_class = ItemCategoryResource
     inlines = [
@@ -74,22 +74,22 @@ class ItemCategoryAdmin(
     ]
     # mptt_indent_field = "currency"
     list_display = [
-        # 'tree_actions',
-        # "show_image",
+        'tree_actions',
+        "show_image",
         # 'indented_title',
-        # 'tree_title',
-        'title',
+        'tree_title',
+        # 'title',
         'is_active',
-        # 'show_site_link',
-        # 'show_delete_link',
+        'show_site_link',
+        'show_delete_link',
     ]
     search_fields = [
         'title',
     ]
     list_display_links = [
         # 'indented_title',
-        # 'tree_title',
-        'title',
+        'tree_title',
+        # 'title',
     ]
     list_editable = [
         'is_active',

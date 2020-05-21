@@ -51,6 +51,13 @@ class Cart(models.Model):
           attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
           value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
         )
+        sdf = CartItemAttribute.objects.filter(
+          cart_item__item=item,
+          cart_item__cart=self,
+          attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
+          value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
+        )
+        print("cart_item_attributes", cart_item_attributes)
         if not cart_item_attributes.exists():
           # Якщо в корзині не існує товару хотя б з одним таким атрибутом
           # то цей товар створюється в корзині з всіма атрибутами, шо прийшли з фронту і з кількістю.
@@ -71,14 +78,16 @@ class Cart(models.Model):
             )
           break
       else:
-        # Якщо не було знайдено ніодного атрибуту який прийшов з фронту,
+        # Якщо було знайдено всі атрибути, які прийшли з фронту,
         # то це означає шо товар в корзині з таким атрибутом вже існує. 
         # Треба знайти цей товар і збільшити його кількість.
         # Проходиться по всіх товарах в корзині, 
         # і для кожного атрибута пробує знайти товар з таким атрибутом.
-        # Якшо такого немає - ????
-        for cart_item in CartItem.objects.filter(item=item, cart=self):
-          for attribute in attributes:
+        # Якшо такого товара немає - значить шось пішло не так.
+        for attribute in attributes:
+          for cart_item in CartItem.objects.filter(item=item, cart=self):
+            print()
+            print("attribute:\n", attribute)
             try:
               attr = CartItemAttribute.objects.get(
                 cart_item=cart_item,
@@ -86,9 +95,10 @@ class Cart(models.Model):
                 value__id=attribute['item_attribute_value_id'],
               )
             except CartItemAttribute.DoesNotExist as e:
+              print(e)
               break
           else:
-            break 
+            break
         cart_item.quantity += quantity
         cart_item.save()
     elif not attributes:
@@ -145,9 +155,7 @@ class Cart(models.Model):
   
   @property
   def items_count(self):
-    items_count = CartItem.objects.filter(cart=self).all().count()
-    items_count = self.items.all().count()
-    return items_count
+    return CartItem.objects.filter(cart=self).all().count()
 
   @property
   def total_price(self):
@@ -156,7 +164,6 @@ class Cart(models.Model):
     # for cart_item in CartItem.objects.filter(cart=self):
       if cart_item.total_price:
         total_price += cart_item.total_price
-    print(total_price)
     return float(total_price)
 
   @property
@@ -249,7 +256,10 @@ class CartItem(models.Model):
     return self.cart.currency
 
   def __str__(self):
-    return f'{self.item.title}, {self.quantity}, {self.total_price} {self.item.currency}'
+    return f'''
+      {self.item.title}, {self.quantity}, {self.total_price} {self.item.currency}
+      {self.get_attributes()}
+    '''
 
   class Meta: 
     verbose_name = _('Товар в корзині')
