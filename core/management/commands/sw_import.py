@@ -6,6 +6,10 @@ from tablib import Dataset
 from box.core.utils import get_resource, get_resources
 import os, shutil, glob, csv 
 
+from django.core.exceptions import ObjectDoesNotExist
+
+
+
 class Command(BaseCommand):
 
   def print_message(self, result):
@@ -66,6 +70,7 @@ class Command(BaseCommand):
     # 1
     if not init_filename and not filename:
       result = self.import_from_folder(dirname)
+
       self.print_message(result)
       return 
 
@@ -88,13 +93,14 @@ class Command(BaseCommand):
     else:
       path = dirname 
     paths = []
-    for r, d, f in os.walk(path):
-      for file in f:
-        x = f'{r}/{file}'.replace('//','/')
+    for root, dir, files in os.walk(path):
+      for file in files:
+        x = f'{root}/{file}'.replace('//','/')
         paths.append(x)
     for path in paths:
       raw = path.split('/')[-1].split('.')
-      self.load(path, resource_name=raw[0], ext=raw[1])
+      result = self.load(path, resource_name=raw[0], ext=raw[1])
+      # print(result)
     return True 
 
   # 2 
@@ -114,9 +120,11 @@ class Command(BaseCommand):
   # 3
   def import_one(self, filename, resource_name, ext):
     result = self.load(filename, resource_name, ext)
+    # result = result['status']
     return result 
 
   def load(self, filename, resource_name, ext):
+    errors = []
     Resource = get_resource(resource_name)
     # print(Resource)
     dataset  = Dataset()
@@ -131,12 +139,21 @@ class Command(BaseCommand):
       for error in result.row_errors():
         row = error[0]
         error = error[1][0]
-        print(error.traceback)
+        try:
+          raise error.error
+          # raise Exception(error.error)
+        except ObjectDoesNotExist:
+          errors.append(error.error)
         print(f"ERROR IN {row} LINE IN FILE {filename}:", error.error)
-        # raise Exception(error.error)
-      return False 
+        # return self.load(filename,resource_name,ext)
+      return {
+        "status":"OK",
+        "errors":errors,
+      } 
 
 
+
+import import_export
 
 
 
