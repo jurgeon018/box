@@ -65,9 +65,9 @@ class ItemList(generics.ListCreateAPIView):
     is_discount  = data.get('is_discount', None)
     ordering     = data.get('ordering', None)
     attributes   = data.get('attributes', [])
-    if attributes:
-      attributes   = json.loads(attributes)
+    if attributes: attributes   = json.loads(attributes)
   
+
     # TODO: добавити сюда пошук по modelsearch, 
     #  get_items_in_favours, get_items_in_cart
 
@@ -82,8 +82,11 @@ class ItemList(generics.ListCreateAPIView):
     if min_price:
       queryset = queryset.filter(price__gte=min_price)
     # if is_discount is not None:
+    print(is_discount)
     if is_discount == 'true' or is_discount is True:
-      queryset = queryset.exclude(discount__isnull=True)
+      print(queryset.count())
+      queryset = queryset.exclude(discount=0)
+      print(queryset.count())
     if ordering is not None:
       queryset = queryset.order_by(ordering)
     for attribute in attributes:

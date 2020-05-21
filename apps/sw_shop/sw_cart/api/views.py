@@ -100,7 +100,7 @@ def add_favour_to_cart(request, id):
   favour_item = FavourItem.objects.get(id=id)
   cart_item, _ = CartItem.objects.get_or_create(
     cart=get_cart(request),
-    item__id=favour_item.item.id,
+    item=favour_item.item,
     ordered=False,
   )
   if _: cart_item.quantity = 1
@@ -116,7 +116,7 @@ def add_favours_to_cart(request):
   for favour in favours:
     cart_item, _ = CartItem.objects.get_or_create(
       cart=get_cart(request),
-      item__id=favour.item.id,
+      item=favour.item,
       ordered=False,
     )
     if _: cart_item.quantity = 1
