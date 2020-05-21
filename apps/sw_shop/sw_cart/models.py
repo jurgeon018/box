@@ -36,72 +36,46 @@ class Cart(models.Model):
     verbose_name = _('Корзина')
     verbose_name_plural = _('Корзини')
 
+  def create_cart_items_with_attributes(self, item, quantity, attributes):
+    cart_item = CartItem.objects.create(item=item, cart=self)
+    cart_item.quantity=quantity
+    cart_item.save()
+    CartItemAttribute.objects.filter(cart_item=cart_item).delete()
+    for attribute in attributes:
+      attribute_name  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
+      attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+      CartItemAttribute.objects.create(
+        cart_item=cart_item,
+        attribute_name=attribute_name,
+        value=attribute_value,
+        price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
+      )
+
+  def get_cart_item_attributes(self, item, attribute, attributes):
+    # cart_item_attributes = CartItemAttribute.objects.filter(
+    #   cart_item__item=item,
+    #   cart_item__cart=self,
+    #   attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
+    #   value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
+    # )
+    # return cart_item_attributes
+
+
+    for cart_item in CartItem.objects.filter(item=item, cart=self):
+      cart_item_attributes = CartItemAttribute.objects.filter(
+        cart_item=cart_item,
+        attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
+        value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
+      )
+      if cart_item_attributes.exists():
+        return cart_item_attributes
+
+
   def add_item(self, item_id, quantity, attributes=None):
     try: quantity = int(quantity)
     except: quantity = 1
     item = Item.objects.get(pk=int(item_id))
-    if attributes:
-      # Якшо в корзину добавляється товар з атрибутами, 
-      # то для кожного присланного з фронту об'єкту з атрибутами  
-      # перевіряється чи в корзині поточного юзера існує товар з таким атрибутом.
-      for attribute in attributes:
-        cart_item_attributes = CartItemAttribute.objects.filter(
-          cart_item__item=item,
-          cart_item__cart=self,
-          attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-          value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-        )
-        sdf = CartItemAttribute.objects.filter(
-          cart_item__item=item,
-          cart_item__cart=self,
-          attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-          value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-        )
-        print("cart_item_attributes", cart_item_attributes)
-        if not cart_item_attributes.exists():
-          # Якщо в корзині не існує товару хотя б з одним таким атрибутом
-          # то цей товар створюється в корзині з всіма атрибутами, шо прийшли з фронту і з кількістю.
-          # Після того як створились всі атрибути нового товару в корзині, то 
-          # виходимо з циклу, бо всі атрибути вже перестворились(видалились і загрузились в циклі).
-          cart_item = CartItem.objects.create(item=item, cart=self)
-          cart_item.quantity=quantity
-          cart_item.save()
-          CartItemAttribute.objects.filter(cart_item=cart_item).delete()
-          for attribute in attributes:
-            attribute_name  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
-            attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
-            CartItemAttribute.objects.create(
-              cart_item=cart_item,
-              attribute_name=attribute_name,
-              value=attribute_value,
-              price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
-            )
-          break
-      else:
-        # Якщо було знайдено всі атрибути, які прийшли з фронту,
-        # то це означає шо товар в корзині з таким атрибутом вже існує. 
-        # Треба знайти цей товар і збільшити його кількість.
-        # Проходиться по всіх товарах в корзині, 
-        # і для кожного атрибута пробує знайти товар з таким атрибутом.
-        # Якшо такого товара немає - значить шось пішло не так.
-        for attribute in attributes:
-          for cart_item in CartItem.objects.filter(item=item, cart=self):
-            print()
-            print("attribute:\n", attribute)
-            try:
-              attr = CartItemAttribute.objects.get(
-                cart_item=cart_item,
-                attribute_name__id=attribute['item_attribute_id'],
-                value__id=attribute['item_attribute_value_id'],
-              )
-            except CartItemAttribute.DoesNotExist as e:
-              print(e)
-              break
-          else:
-            break
-        cart_item.quantity += quantity
-        cart_item.save()
-    elif not attributes:
+    if not attributes:
       # Якшо в корзину добавляється товар без атрибутів, то створюється або дістається товар в корзині.
       # Якщо товару в корзині не існує, то кількість = 1.
       # Якщо товар в корзині існує, то кількість збільшується на 1.
@@ -112,6 +86,51 @@ class Cart(models.Model):
       if created: cart_item.quantity = quantity
       elif not created: cart_item.quantity += quantity
       cart_item.save()
+    elif attributes:
+      # Якшо в корзину добавляється товар з атрибутами, 
+      # то для кожного присланного з фронту об'єкту з атрибутами  
+      # перевіряється чи в корзині поточного юзера існує товар з таким атрибутом.
+      for attribute in attributes:
+        cart_item_attributes = self.get_cart_item_attributes(item, attribute, attributes)
+        print(cart_item_attributes)
+        if not cart_item_attributes:
+        # if not cart_item_attributes.exists():
+          # Якщо в корзині не існує товару хотя б з одним таким атрибутом
+          # то цей товар створюється в корзині з всіма атрибутами, шо прийшли з фронту і з кількістю.
+          self.create_cart_items_with_attributes(item, quantity, attributes)
+          # Після того як створились всі атрибути нового товару в корзині, то 
+          # виходимо з циклу, бо всі атрибути вже перестворились(видалились і загрузились в циклі).
+          break
+      else:
+        # Якщо було знайдено всі атрибути, які прийшли з фронту,
+        # то це означає шо товар в корзині з таким атрибутом вже існує. 
+        # Треба знайти цей товар і збільшити його кількість.
+        cart_item = self.get_cart_item_with_attributes(item, attributes)
+        cart_item.quantity += quantity
+        cart_item.save()
+
+  def get_cart_item_with_attributes(self, item, attributes):
+    # Проходиться по всіх товарах в корзині, 
+    # і для кожного атрибута пробує знайти товар з таким атрибутом.
+    # Якшо такого товара немає - значить шось пішло не так.
+    for attribute in attributes:
+      for cart_item in CartItem.objects.filter(item=item, cart=self):
+        print()
+        print("attribute:\n", attribute)
+        try:
+          attr = CartItemAttribute.objects.get(
+            cart_item=cart_item,
+            attribute_name__id=attribute['item_attribute_id'],
+            value__id=attribute['item_attribute_value_id'],
+          )
+        except CartItemAttribute.DoesNotExist as e:
+          print(e)
+          break
+      else:
+        # cart_item_with_attributes = cart_item 
+        break
+    # return cart_item_with_attributes 
+    return cart_item 
 
   def change_cart_item_amount(self, cart_item_id, quantity):
     try: quantity = int(quantity)
