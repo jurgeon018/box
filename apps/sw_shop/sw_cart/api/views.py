@@ -53,7 +53,8 @@ def cart_item(request, id):
     return Response(data=response, status=202)
   elif request.method == 'DELETE':
     get_cart(request).remove_cart_item(id)
-    return Response(get_cart_info(request), status=204)
+    response = get_cart_info(request)
+    return Response(response, status=200)
 
 
 @api_view(['GET','POST','DELETE'])
