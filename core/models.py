@@ -159,10 +159,12 @@ class AbstractRecipientEmail(models.Model):
   
   @classmethod
   def get_recipient_list(self):
-
-    return self._meta.model.objects.filter(
+	recipient_list = self._meta.model.objects.filter(
       is_active=True
     ).values_list('email', flat=True)
+	recipient_list.extend(core_settings.DEFAULT_RECIPIENT_LIST)
+	recipient_list = set(recipient_list)
+    return recipient_list
   
   def __str__(self):
     return f'{self.email}, {self.is_active}' 
