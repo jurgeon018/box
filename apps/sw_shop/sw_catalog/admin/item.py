@@ -147,9 +147,12 @@ class ItemAdmin(
         'show_image',
         'title',
         'price',
+        'discount',
+        'discount_type',
         'category',
         # 'currency',
         'amount',
+        # 'unit',
         'is_active',
         # "clone_link",
         'show_site_link',
@@ -159,8 +162,11 @@ class ItemAdmin(
     list_editable = [
         'price',
         # 'currency',
-        # 'category',
+        'category',
+        'discount',
+        'discount_type',
         'amount',
+        # 'unit',
         'is_active',
     ]
     list_display_links = [
