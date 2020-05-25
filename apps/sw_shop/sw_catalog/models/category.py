@@ -23,7 +23,9 @@ class ItemCategory(AbstractPage, MPTTModel):
     ordering = ['order']
 
   def get_absolute_url(self):
-    return reverse(catalog_settings.ITEM_CATEGORY_URL_NAME, kwargs={"slug": self.slug})
+    if self.slug:
+      return reverse(catalog_settings.ITEM_CATEGORY_URL_NAME, kwargs={"slug": self.slug})
+    
  
 
   

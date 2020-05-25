@@ -9,13 +9,16 @@ from adminsortable.models import SortableMixin
 from .managers import BasicManager, ActiveManager
 from django.db.models.manager import BaseManager
 from box.core.helpers import get_admin_url
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
+
+
 
 __all__ = [
     "BaseMixin",
     "AbstractPage",
 ]
-
-
 
 class BaseMixin(models.Model):
 	code            = models.SlugField(
@@ -66,17 +69,11 @@ class BaseMixin(models.Model):
 	def modeltranslation_fields(self):
 		return []
 
-
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-import os
-
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, *args, **kwargs):
         if self.exists(name):
             os.remove(os.path.join(settings.MEDIA_ROOT, name))
         return name
-
 
 class AbstractPage(BaseMixin):
 	meta_title = models.TextField(
@@ -150,7 +147,6 @@ class AbstractPage(BaseMixin):
 	
 	def get_absolute_url(self):
 		return reverse("page", kwargs={"slug": self.slug})
-	
 
 class AbstractRecipientEmail(models.Model):
 
@@ -159,17 +155,20 @@ class AbstractRecipientEmail(models.Model):
   
   @classmethod
   def get_recipient_list(self):
-	recipient_list = self._meta.model.objects.filter(
-      is_active=True
+    recipient_list = self._meta.model.objects.filter(
+        is_active=True
     ).values_list('email', flat=True)
-	recipient_list.extend(core_settings.DEFAULT_RECIPIENT_LIST)
-	recipient_list = set(recipient_list)
+    recipient_list = list(recipient_list)
+    recipient_list.extend(core_settings.DEFAULT_RECIPIENT_LIST)
+    recipient_list = set(recipient_list)
     return recipient_list
-  
+
   def __str__(self):
     return f'{self.email}, {self.is_active}' 
 
   class Meta:
     abstract = True 
+
+
 
 
