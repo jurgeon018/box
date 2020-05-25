@@ -99,8 +99,6 @@ class AttributeValue(models.Model):
         return ['value']
 
 
-
-
 class ItemAttributeValue(models.Model):
     item_attribute = models.ForeignKey(
         to="sw_catalog.ItemAttribute", verbose_name=_("Атрибут товару"), on_delete=models.CASCADE,
@@ -151,9 +149,6 @@ class ItemAttributeValue(models.Model):
         ]
 
 
-
-
-
 class ItemAttribute(models.Model):
     item = models.ForeignKey(
         verbose_name=_("Товар"), to="sw_catalog.Item", 
@@ -166,14 +161,13 @@ class ItemAttribute(models.Model):
     is_option = models.BooleanField(
         verbose_name=_("Опція?"), default=False
     )
-   
+
     def get_values(self):
         return ItemAttributeValue.objects.filter(item_attribute=self)
 
     @property
     def has_multiple_values(self):
         return self.values.all().count() > 1
-
 
     def __str__(self):
         try:
