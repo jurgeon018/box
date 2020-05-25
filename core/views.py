@@ -41,20 +41,26 @@ from django.urls import translate_url
 from django.utils.translation import get_language_from_request, check_for_language
 # def set_lang(request, lang=None):
 def set_lang(request, new_lang, old_lang=None):
-  # old_lang     = get_language_from_request(request, check_path=True)
-  # old_lang     = get_language()
+  # old_langg     = get_language_from_request(request, check_path=True)
+  # old_langg     = get_language()
   default_lang = settings.LANGUAGE_CODE
   splitted     = request.META['HTTP_REFERER'].split('/')
   old_lang = default_lang
   if check_for_language(splitted[3]):
     old_lang = splitted[3]
   if   new_lang == old_lang and new_lang == default_lang:
-    pass 
-  elif (new_lang == old_lang and new_lang != default_lang) or (new_lang != old_lang and new_lang != default_lang):
+    print('1')
+  elif (new_lang == old_lang and new_lang != default_lang):
+    print('2')
     splitted[3] = new_lang
+  elif (new_lang != old_lang and new_lang != default_lang):
+    print('3')
+    splitted.insert(3, new_lang)
   elif new_lang != old_lang and new_lang == default_lang:
+    print('4')
     del splitted[3]
   elif new_lang != old_lang and new_lang != default_lang:
+    print('5')
     splitted.insert(3, new_lang)
   translation.activate(new_lang)
   request.session[translation.LANGUAGE_SESSION_KEY] = new_lang

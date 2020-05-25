@@ -25,10 +25,7 @@ class ItemCategory(AbstractPage, MPTTModel):
   def get_absolute_url(self):
     if self.slug:
       return reverse(catalog_settings.ITEM_CATEGORY_URL_NAME, kwargs={"slug": self.slug})
-    
- 
 
-  
   def __str__(self):     
     result = f'{self.tree_title}'
     if self.currency:
