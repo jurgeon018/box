@@ -74,47 +74,66 @@ class Cart(models.Model):
     if not cart_items:
       self.create_cart_items_with_attributes(item, quantity, attributes)
     else:
-      # for cart_item in cart_items:
-      #   for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=cart_item):
-      #     for attribute in attributes:
-      #       attribute_name = ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-      #       attribute_name = attribute_name.attribute
-      #       value          = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-      #       value          = value.value
-      #       cart_item_attribute_name  = cart_item.attribute_name.attribute
-      #       cart_item_attribute_value = cart_item.attribute_value.value
+      # Знахожу всі атрибути всіх товарів в корзині 
       cart_item_attributes = CartItemAttribute.objects.filter(cart_item__in=cart_items)
+      # break_loop = False
+      # Порівнюю кожен атрибут кожного товара в корзині з кожним атрибутом який прийшов з фронту
+      seeked_cart_item = None 
       for cart_item_attribute in cart_item_attributes:
         for attribute in attributes:
-          item_attrs     = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
+          # Дістаю реальний атрибут товару і значення атрибуту товару 
+          # з тих айдішніків які прийшли з фронту 
+          item_attr     = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
           item_value     = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
-          attribute_name = item_attrs.attribute
-          value          = item_value.value
-          cart_item_attribute_name  = cart_item_attribute.attribute_name.attribute
-          cart_item_attribute_value = cart_item_attribute.value.value
-          attrs = CartItemAttribute.objects.filter( 
-            cart_item__item=item,
-            cart_item__cart=self,
-            attribute_name=item_attrs,
-            value=item_value,
-          )
-          '''
-          :attrs: Атрибути всіх існуючих товарів в корзині з спільним айтемом 
-          Якшо вони не існують
-          '''
-          if not attrs:
-            self.create_cart_items_with_attributes(item, quantity, attributes)
-          elif attrs:
-            if attribute_name == cart_item_attribute_name:
-              if value == cart_item_attribute_value:
-                ...
-              elif value == cart_item_attribute_value:
-                ...
-            elif attribute_name != cart_item_attribute_name:
-              if value == cart_item_attribute_value:
-                ...
-              elif value == cart_item_attribute_value:
-                ...
+          # Дістаю атрибут і значення атрибуту з атрибуту товару і значень атрибуту товару, айдішніки якого прийшли з фронту
+          # attribute_name = item_attr.attribute
+          # value          = item_value.value
+          # Дістаю атрибут і значення атрибута з атрибута і значення атрибута товара в корзині 
+          cart_item_attribute_name  = cart_item_attribute.attribute_name
+          cart_item_attribute_value = cart_item_attribute.value
+          # 
+          # cart_item_attribute_name  = cart_item_attribute_name.attribute
+          # cart_item_attribute_value = cart_item_attribute_value.value
+          # 
+          # Задача:
+          # Як перевірити чи товар з item_attr і item_value вже існує в корзині?
+          # 
+          print(f'''
+          item_attr: {item_attr}
+          item_value: {item_value}
+          cart_item_attribute_name: {cart_item_attribute_name}
+          cart_item_attribute_value: {cart_item_attribute_value}          
+          ''')
+          # Товара немає в корзині, якщо немає 
+          # Атрибут товара в корзині == атрибуту з фронта 
+          if item_attr == cart_item_attribute_name:
+            # Значення товара в козрині == значенню з фронта
+            if item_value == cart_item_attribute_value:
+              # Всьо класно, атрибут з значенням в корзині є 
+              ci = cart_item_attribute.cart_item 
+              ci.quantity += quantity 
+              ci.save()
+              # ...
+              # continue
+              break 
+            elif item_value != cart_item_attribute_value:
+              self.create_cart_items_with_attributes(item, quantity, attributes)
+              # ...
+              # continue
+              break 
+          # elif item_attr != cart_item_attribute_name:
+          #   if item_value == cart_item_attribute_value:
+          #     ...
+          #   elif item_value != cart_item_attribute_value:
+          #     ...
+        else:
+          # Виконається тільки в тому випадку, якшо внутрішній цикл пройде без break. 
+          # Якщо цикл по всіх атрибутах товарів пройшовся без break, то 
+          # всьо класно і цикл йде дальше. 
+          # Якшо в внутрішньому циклі був break, то і в зовнішньому циклі
+          # треба зробити break.  
+          continue
+        break 
 
   def add_item(self, item_id, quantity, attributes=None):
     try: quantity = int(quantity)
@@ -132,11 +151,11 @@ class Cart(models.Model):
       elif not created: cart_item.quantity += quantity
       cart_item.save()
     elif attributes:
-      self.handle_attributes1(attributes, item, quantity)
+      # self.handle_attributes1(attributes, item, quantity)
       # self.handle_attributes2(attributes, item, quantity)
       ##################################################################################
       # Робочий кривий варіант
-      # self.handle_attributes(attributes, item, quantity)
+      self.handle_attributes(attributes, item, quantity)
       ##################################################################################
 
   def get_cart_item_with_attributes(self, item, attributes):
@@ -236,6 +255,7 @@ class CartItemAttribute(models.Model):
     verbose_name=_("Значення"), unique=False,
   )
   price = models.FloatField(
+    # verbose_name=_("Ціна"), default=0,
     # verbose_name=_("Ціна"), null=False, blank=False, default=0,
     verbose_name=_("Ціна"), null=True, blank=True, default=0,
   )
