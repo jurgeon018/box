@@ -21,8 +21,6 @@ SETTINGS = settings.FEEDS
 
 current_site = Site.objects.get_current()
 
-
-
 class GoogleProductsFeed(Rss201rev2Feed):
     """
     This class will output most of the non type-specific fields from the
@@ -248,6 +246,19 @@ class GoogleProducts(Feed):
         return Product.live_objects.all().select_related()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 class CustomSyndicationFeed(SyndicationFeed):
 
     mime_type = 'application/xml'
@@ -257,36 +268,37 @@ class CustomSyndicationFeed(SyndicationFeed):
         handler = SimplerXMLGenerator(outfile, encoding)
         handler.startDocument()
         handler.startElement("root", self.root_attributes())
-        # self.add_root_elements(handler)
-        # self.write_items(handler)
-        # handler.endElement("root")
+        self.add_root_elements(handler)
+        self.write_items(handler)
+        handler.endElement("root")
 
-    # def add_root_elements(self, handler):
-    #     # Add root elements here
-    #     handler.addQuickElement("my_feed_title", self.feed['title'])
-    #     handler.addQuickElement("my_feed_url", self.feed['link'])
+    def add_root_elements(self, handler):
+        # Add root elements here
+        handler.addQuickElement("my_feed_title", self.feed['title'])
+        handler.addQuickElement("my_feed_url", self.feed['link'])
 
-    # def write_items(self, handler):
-    #     for item in self.items:
-    #         handler.startElement('my_item', self.item_attributes(item))
-    #         self.add_item_elements(handler, item)
-    #         handler.endElement("my_item")
+    def write_items(self, handler):
+        for item in self.items:
+            handler.startElement('my_item', self.item_attributes(item))
+            self.add_item_elements(handler, item)
+            handler.endElement("my_item")
 
-    # @staticmethod
-    # def _safe_add_element(handler, item, attr):
-    #     # Add attribute to xml only if it is present, no empty tags
-    #     if item.get(attr):
-    #         handler.addQuickElement(attr, item[attr])
+    @staticmethod
+    def _safe_add_element(handler, item, attr):
+        # Add attribute to xml only if it is present, no empty tags
+        if item.get(attr):
+            handler.addQuickElement(attr, item[attr])
 
-    # def add_item_elements(self, handler, item):
-    #     # Handle each element that needs to be added to an xml item
-    #     # 'item' is a dict of attributes
-    #     handler.addQuickElement('title', item['title'])
-    #     # handler.addQuickElement('date', item['date'])
-    #     # handler.addQuickElement('link', item['link'])
-    #     handler.addQuickElement('description', item['description'])
+    def add_item_elements(self, handler, item):
+        # Handle each element that needs to be added to an xml item
+        # 'item' is a dict of attributes
+        handler.addQuickElement('title', item['title'])
+        # handler.addQuickElement('date', item['date'])
+        # handler.addQuickElement('link', item['link'])
+        handler.addQuickElement('description', item['description'])
 
-    #     self._safe_add_element(handler, item, 'city')
-    #     self._safe_add_element(handler, item, 'postalcode')
+        self._safe_add_element(handler, item, 'city')
+        self._safe_add_element(handler, item, 'postalcode')
+
 
 

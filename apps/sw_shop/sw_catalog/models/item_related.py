@@ -187,6 +187,7 @@ class ItemReview(BaseMixin):
         verbose_name_plural = _('Відгуки')
         ordering = ['order']
 
+
 class ItemStock(models.Model):
     text         = models.CharField(verbose_name=_('Текст'), max_length=255, unique=True)
     availability = models.BooleanField(verbose_name=_('Можливість покупки'), default=True)
