@@ -1,5 +1,5 @@
 # CELERY_BROKER_URL = 'amqp://127.0.0.1//'
-
+# BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 
 # REDIS_HOST = 'localhost'
@@ -44,7 +44,12 @@
 
 
 """
+
 commands:
+sudo apt-get remove --auto-remove rabbitmq-server
+sudo apt-get purge --auto-remove rabbitmq-server
+sudo apt-get install rabbitmq-server
+
 
 celery -A core worker -l info
 celery -A core beat -l info 
