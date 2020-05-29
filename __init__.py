@@ -18,7 +18,7 @@ cd src
 *******
 
 git clone git@github.com:jurgeon018/box
-cp -rp ./box/core/project_boilerplate/* . 
+cp -rp ./box/core/sw_project_boilerplate/* . 
 git add . 
 git commit -m 's'
 git push origin master 
