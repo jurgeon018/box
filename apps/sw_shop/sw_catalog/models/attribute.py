@@ -138,7 +138,7 @@ class ItemAttributeValue(models.Model):
         return ['description',]
 
     def __str__(self):
-        return f'{self.value}'
+        return f'{self.id} {self.value}'
 
     class Meta:
         verbose_name = _('значення атрибутів товарів')
@@ -170,10 +170,7 @@ class ItemAttribute(models.Model):
         return self.values.all().count() > 1
 
     def __str__(self):
-        try:
-            return f'{self.attribute.name}'
-        except:
-            return f'{self.id}'
+        return f'{self.id} {self.attribute}'
 
     class Meta:
         verbose_name = _("атрибут товару")
@@ -182,3 +179,8 @@ class ItemAttribute(models.Model):
             'item',
             'attribute',
         ]
+
+
+
+
+
