@@ -66,9 +66,9 @@ class BoxUserAdmin(
     inlines = [
         # OrderInline,
     ]
-    fieldsets = (
-        (_('Personal info'), {
-            'fields': (
+    fieldsets = [
+        [_('Personal info'), {
+            'fields': [
                 'username', 
                 'password',
                 (
@@ -83,11 +83,11 @@ class BoxUserAdmin(
                 'address',
                 # 'group',
                 ),
-            ),
+            ],
             'classes':[
                 'wide',
             ]
-        }),
+        }],
         (_('Permissions'), {
             'fields': (
                 'is_active', 
@@ -109,7 +109,7 @@ class BoxUserAdmin(
                 'collapse'
             ]
         }),
-    )
+    ]
     add_fieldsets = (
         (None, {
             'classes': (
