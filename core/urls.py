@@ -89,8 +89,6 @@ for app in box_apps:
   except:
     pass 
 
-
-
 multilingual = i18n_patterns(
   path('admin/',    admin.site.urls),
   path('accounts/', include('allauth.urls')),
@@ -106,6 +104,66 @@ multilingual = i18n_patterns(
   # prefix_default_language=core_settings.PREFIX_DEFAULT_LANGUAGE,
 )
 
+
+
+
+# from django.views.i18n import set_language
+
+import itertools
+import json
+import os
+import re
+from urllib.parse import unquote
+
+from django.apps import apps
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.template import Context, Engine
+from django.urls import translate_url
+from django.utils.formats import get_format
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import (
+    LANGUAGE_SESSION_KEY, check_for_language, get_language,
+)
+from django.utils.translation.trans_real import DjangoTranslation
+from django.views.generic import View
+
+LANGUAGE_QUERY_PARAMETER = 'language'
+
+
+def set_language(request):
+  next = request.POST.get('next', request.GET.get('next'))
+  if (
+      (next or not request.is_ajax()) and
+      not url_has_allowed_host_and_scheme(
+          url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+      )
+  ):
+    next = request.META.get('HTTP_REFERER')
+    next = next and unquote(next)  # HTTP_REFERER may be encoded.
+    if not url_has_allowed_host_and_scheme(
+        url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+    ):
+        next = '/'
+  response  = HttpResponseRedirect(next) if next else HttpResponse(status=204)
+  query     = request.POST or request.GET
+  lang_code = query.get('language')
+  print("lang_code:", lang_code)
+  if lang_code and check_for_language(lang_code):
+      response = HttpResponseRedirect(translate_url(next, lang_code))
+      # response.set_cookie(
+      #     settings.LANGUAGE_COOKIE_NAME, lang_code,
+      #     max_age=settings.LANGUAGE_COOKIE_AGE,
+      #     path=settings.LANGUAGE_COOKIE_PATH,
+      #     domain=settings.LANGUAGE_COOKIE_DOMAIN,
+      #     secure=settings.LANGUAGE_COOKIE_SECURE,
+      #     httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+      #     samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+      # )
+      print(response)
+  return response
+
+
 urlpatterns = [
   *static_urlpatterns,
   path('sitemap.xml/',     sitemap, {'sitemaps':sitemaps}, name='sitemap'),
@@ -113,19 +171,21 @@ urlpatterns = [
   # path('sitemap.xml/',     cache_page(60)(sitemap), {'sitemaps': sitemaps}, name='cached-sitemap'),
   # path('robots.txt/',      include('robots.urls')),
   path('i18n/',            include('django.conf.urls.i18n')),
-  path('set_lang/<new_lang>/', set_lang,         name="set_lang"),
+
+  path('set_lang/<new_lang>/', set_lang,     name="set_lang"),
+  # path('setlang/',             set_language, name="set_lang"),
   path('jsi18n/',          js_cat.as_view(), name='javascript-catalog'),
   path('admin_tools/',     include('admin_tools.urls')),
   path('grappelli/',       include('grappelli.urls')),
 
-  path('froala_editor/',   include('froala_editor.urls')),
-  path('tinymce/',         include('tinymce.urls')),
-  path('ckeditor/',        include('ckeditor_uploader.urls')),
-  path('summernote/',      include('django_summernote.urls')),
+  # path('froala_editor/',   include('froala_editor.urls')),
+  # path('tinymce/',         include('tinymce.urls')),
+  # path('ckeditor/',        include('ckeditor_uploader.urls')),
+  # path('summernote/',      include('django_summernote.urls')),
   # path('markdown/',        include('django_markdown.urls')),
-  path('markdownx/',       include('markdownx.urls')),
-  path('filer/',           include('filer.urls')),
+  # path('markdownx/',       include('markdownx.urls')),
 
+  path('filer/',           include('filer.urls')),
   path('api-auth/',        include('rest_framework.urls', namespace='rest_framework')),
   path('auth/',            include('djoser.urls')),
   path('auth/',            include('djoser.urls.authtoken')),
