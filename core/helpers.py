@@ -8,3 +8,6 @@ def get_admin_url(obj=None, action='change'):
         return f"/admin/{app_label}/{model_name}/{id}/{action}"
     return ''
 
+
+
+
