@@ -106,7 +106,6 @@ multilingual = i18n_patterns(
 
 
 
-
 # from django.views.i18n import set_language
 
 import itertools

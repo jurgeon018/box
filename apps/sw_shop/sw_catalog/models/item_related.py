@@ -90,7 +90,7 @@ class ItemImage(models.Model):
         upload_to=item_image_folder, 
         blank=True, null=True, 
     )
-    alt       = models.CharField(
+    alt = models.CharField(
         verbose_name=_("Альт"), max_length=255, blank=True, null=True,
     )
 
@@ -113,7 +113,7 @@ class ItemImage(models.Model):
         # x = self.add_watermark(self.image, 'watermarks/sample.png')
         # self.image = x
         print(x)
-    
+
     def add_watermark(self, image, watermark, opacity=1, wm_interval=0):
         assert opacity >= 0 and opacity <= 1
         if opacity < 1:
