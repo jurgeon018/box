@@ -39,9 +39,11 @@ third_party = [
     'rosetta',
     'colorfield',
     'adminsortable2',
+    
     "rest_framework",
     'rest_framework.authtoken',
     "djoser",
+
     "rangefilter",
     'debug_toolbar',
     'nested_admin',
