@@ -186,9 +186,9 @@ urlpatterns = [
 
   path('filer/',           include('filer.urls')),
   path('api-auth/',        include('rest_framework.urls', namespace='rest_framework')),
-  path('auth/',            include('djoser.urls')),
-  path('auth/',            include('djoser.urls.authtoken')),
-  path('auth/',            include('djoser.urls.jwt')),
+  # path('auth/',            include('djoser.urls')),
+  # path('auth/',            include('djoser.urls.authtoken')),
+  # path('auth/',            include('djoser.urls.jwt')),
   path('_nested_admin/',   include('nested_admin.urls')),
   path('filebrowser/',     site.urls),
   *box,

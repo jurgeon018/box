@@ -42,7 +42,7 @@ third_party = [
     
     "rest_framework",
     'rest_framework.authtoken',
-    "djoser",
+    # "djoser",
 
     "rangefilter",
     'debug_toolbar',
