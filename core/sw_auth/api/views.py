@@ -178,27 +178,20 @@ def sw_login(request):
             },
             'status':'BAD',
         })
-
     user = users.first() 
-
     if not user.check_password(password):
-        print('sdf',password)
-        print(user.check_password('sdfsdf'))
         return JsonResponse({
             'error_fields':{
                 'password':_('Неправильний пароль'),
             },
             'status':'BAD',
         })
-
     if not user.is_active:
         return JsonResponse({
             'message':_('Цей користувач неактивний'),
             'status':'BAD',
         })
-
     user = authenticate(username=user.username, password=password)
-
     # if user is not None:
     #     if user.is_active:
     #         login(request, user)
@@ -207,7 +200,6 @@ def sw_login(request):
     #         return JsonResponse('inactive')
     # else:
     #     return JsonResponse('bad')
-    'profile'
     login(request, user)
     return JsonResponse({
         'status':'OK',
