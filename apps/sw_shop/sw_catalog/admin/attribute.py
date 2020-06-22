@@ -226,7 +226,7 @@ class AttributeValueAdmin(AttrBaseMixin):
 
     resource_class = AttributeValueResource
     readonly_fields = [
-        'code',
+        # 'code',
     ]
     list_display = [
         'id',
