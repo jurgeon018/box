@@ -21,7 +21,7 @@ from io import BytesIO
 from django.core.files import File
 from box.core.models import OverwriteStorage
 
-from . import ItemAttribute, ItemAttributeValue, Attribute, AttributeValue
+from . import ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature 
 
 
 
@@ -235,6 +235,10 @@ class Item(AbstractPage):
             )
         )
         return values 
+    
+    def get_item_features(self):
+        item_features = ItemFeature.objects.filter(item=self, is_active=True)
+        return item_features
 
     def create_visit(self, request):
         visits = request.session.get('visits', [])
