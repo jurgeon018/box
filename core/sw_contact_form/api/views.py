@@ -7,12 +7,19 @@ from ..models import *
 from box.core.mail import box_send_mail 
 
 from django.utils.translation import ugettext_lazy as _
+ 
 
+import json 
+from rest_framework.decorators import api_view
 
-@csrf_exempt
+# @csrf_exempt
+@api_view(['GET', 'POST'])
 def sw_contact(request):
+    # query = request.body.decode('utf-8')
+    # query = json.loads(query)
     query    = request.POST or request.GET
-    print(query)
+    if not query:
+        query = request.data 
     name     = query.get('name',    '---')
     email    = query.get('email',   '---')
     phone    = query.get('phone',   '---')

@@ -121,7 +121,7 @@ class BoxAbstractUser(models.Model):
     EMAIL_FIELD     = 'email'
     USERNAME_FIELD  = 'username'
     REQUIRED_FIELDS = ['email']
-
+    
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
