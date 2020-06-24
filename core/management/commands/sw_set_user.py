@@ -34,7 +34,6 @@ class Command(BaseCommand):
     first_name    = kwargs['first_name']
     last_name     = kwargs['last_name']
     try:
-        User.objects.filter(username=username)
         User.objects.create_superuser(
             username     = username, 
             email        = email, 
