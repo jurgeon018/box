@@ -11,6 +11,13 @@ from django.utils.xmlutils import SimplerXMLGenerator
 from .models import Item
 
 
+from django.http import HttpResponse 
+
+
+def prom_export(request):
+  return HttpResponse('ok')
+
+
 class GoogleProductsFeed(Rss201rev2Feed):
   content_type = 'application/xml; charset=utf-8'
 

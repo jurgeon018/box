@@ -120,6 +120,7 @@ class ItemAttributeValue(models.Model):
 		verbose_name=_("Кількість"), blank=True, null=True, default=None,
 		help_text=_('0 - товар з таким значенням характеристики відсутній. Порожнє поле - необмежена кількість.'),
 	)
+    proposition = models.ForeignKey(verbose_name="Товарна пропозиція", to='sw_catalog.Item', blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(
         verbose_name=_("Опис"), blank=True, null=True, 
     )
@@ -138,7 +139,7 @@ class ItemAttributeValue(models.Model):
         return ['description',]
 
     def __str__(self):
-        return f'{self.value}'
+        return f'{self.id} {self.value}'
 
     class Meta:
         verbose_name = _('значення атрибутів товарів')
@@ -161,6 +162,7 @@ class ItemAttribute(models.Model):
     is_option = models.BooleanField(
         verbose_name=_("Опція?"), default=False
     )
+    # item = models.
 
     def get_values(self):
         return ItemAttributeValue.objects.filter(item_attribute=self)
@@ -170,10 +172,7 @@ class ItemAttribute(models.Model):
         return self.values.all().count() > 1
 
     def __str__(self):
-        try:
-            return f'{self.attribute.name}'
-        except:
-            return f'{self.id}'
+        return f'{self.id} {self.attribute}'
 
     class Meta:
         verbose_name = _("атрибут товару")
@@ -182,3 +181,8 @@ class ItemAttribute(models.Model):
             'item',
             'attribute',
         ]
+
+
+
+
+

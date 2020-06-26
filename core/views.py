@@ -50,12 +50,16 @@ def set_lang(request, new_lang, old_lang=None):
     old_lang = splitted[3]
   if   new_lang == old_lang and new_lang == default_lang:
     print('1')
-  elif (new_lang == old_lang and new_lang != default_lang):
+  elif new_lang == old_lang and new_lang != default_lang:
     print('2')
     splitted[3] = new_lang
-  elif (new_lang != old_lang and new_lang != default_lang):
+  elif new_lang != old_lang and new_lang != default_lang:
     print('3')
-    splitted.insert(3, new_lang)
+    print(splitted)
+    if old_lang == default_lang:
+      splitted.insert(3, new_lang)
+    else:
+      splitted[3] = new_lang
   elif new_lang != old_lang and new_lang == default_lang:
     print('4')
     del splitted[3]
