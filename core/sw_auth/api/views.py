@@ -154,7 +154,7 @@ def current_user_info(request):
 def sw_login(request):
     query = request.POST or request.GET
     print(query)
-    response    = redirect(request.META['HTTP_REFERER'])
+    # response    = redirect(request.META['HTTP_REFERER'])
     password    = query['password']
     username    = query.get('username') or query.get('email').split('@')[0]
     email       = query.get('email')
