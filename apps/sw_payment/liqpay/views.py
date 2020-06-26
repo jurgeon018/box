@@ -8,3 +8,13 @@ def pay_callback(request):
   return redirect('thank_you')
 
 
+from django.http import HttpResponse 
+
+
+from django.shortcuts import render 
+
+
+def test_part(request):
+  return render(request, 'liqpay/test_part.html', locals())
+
+
