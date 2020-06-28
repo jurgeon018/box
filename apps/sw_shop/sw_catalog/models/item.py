@@ -24,8 +24,13 @@ from box.core.models import OverwriteStorage
 from . import ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature 
 
 
+class GoogleFieldsMixin(models.Model):
+    # https://support.google.com/merchants/answer/7052112?hl=ru
+    multipack = models.PositiveIntegerField(verbose_name="Мультиупаковка", blank=True, null=True)
+    class Meta:
+        abstract = True 
 
-class Item(AbstractPage):
+class Item(AbstractPage, GoogleFieldsMixin):
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',

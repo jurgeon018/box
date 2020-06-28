@@ -8,7 +8,7 @@ from django.utils.feedgenerator import (
 
 from django.contrib.syndication.views import Feed
 from django.utils.xmlutils import SimplerXMLGenerator
-from .models import Item, ItemCategory
+from .models import Item, ItemCategory, ItemFeature
 
 
 from django.http import HttpResponse 
@@ -206,11 +206,11 @@ def create_worksheet_with_items( workbook, items):
       cell.value = column_title
   for item in items:
       discount = None
-      # if item.discount_type == 'v':
-      #   discount = f'{item.discount}
-      # elif item.discount_type == 'p':
-      #   discount = f'{item.discount}
-      #   discount += '%'
+      if item.discount_type == 'v':
+        discount = f'{item.discount}'
+      elif item.discount_type == 'p':
+        discount = f'{item.discount}'
+        discount += '%'
 
       if item.unit and item.unit.name.lower() in units:
         unit = item.unit.name.lower()
@@ -228,7 +228,6 @@ def create_worksheet_with_items( workbook, items):
       #   print(item)
       #   print('item!')
       # print(item, images)
-      print(item, item.id)
       for image in images:
         domain     = Site.objects.get_current().domain
         image_name = image.image.url
@@ -408,27 +407,48 @@ class GoogleProductsFeed(Rss201rev2Feed):
 
   def add_item_elements(self, handler, item):
     super().add_item_elements(handler, item)
+
     if item.get('id') is not None:
       handler.addQuickElement(u"g:id", item['id'])
+
     if item.get('mpn') is not None:
       handler.addQuickElement(u"g:mpn", item['mpn'])
+
     if item.get('condition') is not None:
       handler.addQuickElement(u"g:condition", item['condition'])
+
     if item.get('price') is not None:
       handler.addQuickElement(u"g:price", item['price'])
+
     if item.get('availability') is not None:
       handler.addQuickElement(u"g:availability", item['availability'])
+
     if item.get('brand') is not None:
       handler.addQuickElement(u"g:brand", item['brand'])
+
     if item.get('adult') is not None:
       handler.addQuickElement(u"g:adult", item['adult'])
+
     if item.get('product_type') is not None:
       handler.addQuickElement(u"g:product_type", item['product_type'])
+
+    if item.get('multipack') is not None:
+      handler.addQuickElement(u"g:multipack", item['multipack'])
+
     if item.get('image_links') is not None:
       key = u"g:image_link"
       for img in item['image_links']:
           handler.addQuickElement(key, img)
           key = u"g:additional_image_link"
+
+    if item.get('product_details') is not None:
+      for product_detail in item['product_details']:
+        handler.startElement(u'g:product_detail', {})
+        if product_detail.category:
+          handler.addQuickElement(u"g:section_name", product_detail.category.name)
+        handler.addQuickElement(u"g:attribute_name", product_detail.name.name)
+        handler.addQuickElement(u"g:attribute_value", product_detail.value.value)
+        handler.endElement(u'g:product_detail')
 
 from django.contrib.sites.models import Site 
 from .models import ItemImage 
@@ -453,7 +473,10 @@ class GoogleMerchant(Feed):
       return item.title
 
   def item_description(self, item):
-      return item.description
+      return item.description+'sdf'
+  
+  # def item_multipack(self, item):
+  #   return item.multipack
 
   def item_extra_kwargs(self, item):
     image_links = []
@@ -461,6 +484,8 @@ class GoogleMerchant(Feed):
     for image in ItemImage.objects.filter(item=item):
       image_links.append(f'https://{current_site}{image.image.url}')
     product_type = item.category.tree_title.replace('->','>') 
+    product_details = ItemFeature.objects.filter(item=item)
+    # print(item.multipack, item)
     item_data = {
         "id":str(item.id),
         "mpn":str(item.id),
@@ -470,7 +495,9 @@ class GoogleMerchant(Feed):
         "brand":getattr(item.brand, "title", None),
         "adult":"false",
         "product_type":product_type,
+        "multipack": item.multipack,
         "image_links":image_links,
+        "product_details":product_details,
     }
     return item_data
 
