@@ -483,7 +483,9 @@ class GoogleMerchant(Feed):
     current_site = Site.objects.get_current().domain
     for image in ItemImage.objects.filter(item=item):
       image_links.append(f'https://{current_site}{image.image.url}')
-    product_type = item.category.tree_title.replace('->','>') 
+    product_type = None 
+    if item.category:
+      product_type = item.category.tree_title.replace('->','>') 
     product_details = ItemFeature.objects.filter(item=item)
     # print(item.multipack, item)
     item_data = {
