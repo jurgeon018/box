@@ -618,19 +618,22 @@ class Parser(object):
 
 
 class ExportMixin(Parser):
+
   def create_worksheet_with_items(self, workbook, items):
     worksheet1 = workbook.create_sheet(
-        title='Товары',
+        title='Export Products Sheet',
         index=1,
     )
 
     columns = self.get_products_sheet(site='box').keys()
+    columns = list(columns)
+    print("columns", columns)
     
     biggest_item = items.first()
     for item in items:
-        if item.features.all().count() > biggest_item.features.all().count():
+        if item.get_item_features().all().count() > biggest_item.get_item_features().all().count():
             biggest_item = item 
-    for i in range(int(biggest_item.features.all().count())):
+    for i in range(int(biggest_item.get_item_features().all().count())):
         columns.append("Название_Характеристики")
         columns.append("Значение_Характеристики")
     row_num = 1
@@ -648,36 +651,47 @@ class ExportMixin(Parser):
             item.code,
             item.category.slug,
             item.slug,
-            item.old_price,
+            item.price,
+            # item.old_price,
             item.price,
             ','.join([image.image.url for image in item.images.all()]),
         ]
         features = []
-        for feature in item.features.all():
+        for feature in item.get_item_features().all():
             features.append(feature.name)
             features.append(feature.value)
         row.extend(features)
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet1.cell(row=row_num, column=col_num)
+            if cell_value.__class__.__name__ == 'Feature':
+              cell_value = cell_value.name 
+            if cell_value.__class__.__name__ == 'FeatureValue':
+              cell_value = cell_value.value 
             cell.value = cell_value
     return workbook
 
   def create_worksheet_with_categories(self, workbook, categories):
     worksheet2 = workbook.create_sheet(
-        title='Категории',
+        title='Export Groups Sheet',
         index=2,
     )
-    columns = self.get_categories_sheet(site='box').keys()
+    columns = self.get_categories_sheet(site='prom').keys()
     row_num = 1
     for col_num, column_title in enumerate(columns, 1):
         cell = worksheet2.cell(row=row_num, column=col_num)
         cell.value = column_title
     for category in categories:
         row_num += 1
+        parent_id = None 
+        if category.parent:
+          parent_id = category.parent.id
         row = [
             category.title,
-            category.slug,
-            category.parent_slug,
+            # category.slug,
+            # category.parent_slug,
+            category.id,
+            parent_id,
+
         ]
         for col_num, cell_value in enumerate(row, 1):
             cell = worksheet2.cell(row=row_num, column=col_num)
@@ -773,7 +787,7 @@ class ExportMixin(Parser):
 
   def admin_delete_items_features(self, request, queryset):
     for item in queryset:
-      item.features.all().delete()
+      item.get_item_features().all().delete()
   
   # ! admin 
 
@@ -1409,67 +1423,4 @@ class ImportMixin(Parser):
   def import_items_from_xml(self, filename, *args, **kwargs):
     import_items_from_xml_by_xml_etree(filename)
     return True 
-
-
-class Content(object):
-  def import_content(self, filename, *args, **kwargs):
-      texts = [dct for dct in map(dict, csv.DictReader(open(filename)))]
-      # data = list(csv.reader(open(filename)))
-      for text in texts:
-        print(text)
-        code = text['code']
-        page = text.get('page')
-        value_uk = text['value_uk']
-        value_en = text['value_en']
-        value_ru = text['value_ru']
-
-        feature, _ = Text.objects.get_or_create(code=code)
-        feature.value_uk = value_uk 
-        feature.value_en = value_en 
-        feature.value_ru = value_ru 
-        if page:
-          pages = Page.objects.filter(
-            id=page,
-            # or
-            # code=page,
-          )
-          if pages.exists():
-            feature.page = pages.first()
-        feature.save() 
-  
-  def export_content(self, filename, *args, **kwargs):
-    from django.conf import settings 
-    data = {
-      "page":"",
-      "code":"",
-      "value_uk":"",
-      "value_ru":"",
-      "value_en":"",
-    }
-    with open(filename, 'w') as f:
-      writer = csv.DictWriter(f, fieldnames=list(data.keys()))
-      writer.writeheader()
-    for feature in Text.objects.all():
-      with open(filename, 'a') as f:
-        writer = csv.DictWriter(f, fieldnames=list(data.keys()))
-        data['code']     = feature.code
-        for k in dict(settings.LANGUAGES).keys():
-          data[f'value_{k}'] = getattr(feature, f'value_{k}')
-        page = feature.page
-        if page:
-          data['page']     = page.id
-        writer.writerow(data)
-
-  def admin_import_content(self, filename, *args, **kwargs):
-    # TODO:
-    pass 
-  def admin_export_content(self, filename, *args, **kwargs):
-    # TODO:
-    pass 
-  def import_slide(self, filename, *args, **kwargs):
-    # TODO:
-    pass 
-  def export_slide(self, filename, *args, **kwargs):
-    # TODO:
-    pass 
 
