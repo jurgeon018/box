@@ -4,12 +4,31 @@ from django.db import models
 class FeatureCategory(models.Model):
     name = models.CharField(verbose_name="Назва", max_length=255)
 
+    @classmethod
+    def modeltranslation_fields(self):
+        return ['name']
+    
+    def get_item_features(self, item):
+        return ItemFeature.objects.filter(item=item,category=self)
+
+
+    class Meta:
+        verbose_name = 'категорія характеристик'
+        verbose_name_plural = 'категорії характеристик'
+
+    def __str__(self):
+        return f'{self.name}'
+
 
 class FeatureValue(models.Model):
     value = models.CharField(verbose_name="Значення", max_length=255)
 
     def __str__(self):
         return f'{self.value}'
+
+    @classmethod
+    def modeltranslation_fields(self):
+        return ['value']
 
     class Meta:
         verbose_name = 'значення характеристики'
@@ -21,6 +40,10 @@ class Feature(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+    
+    @classmethod
+    def modeltranslation_fields(self):
+        return ['name']
 
     class Meta:
         verbose_name = 'назва характеристики'

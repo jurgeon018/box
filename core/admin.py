@@ -47,17 +47,22 @@ try:
     admin.site.unregister(FlatPage)
 except: 
     pass 
-try:
-    from allauth.socialaccount.models import * 
-    admin.site.unregister(SocialApp)
-    admin.site.unregister(SocialToken)
-    admin.site.unregister(SocialAccount)
-except: 
-    pass
-
+# try:
+#     from allauth.socialaccount.models import * 
+#     admin.site.unregister(SocialApp)
+#     admin.site.unregister(SocialToken)
+#     admin.site.unregister(SocialAccount)
+# except: 
+#     pass
 
 try:
     from rest_framework.authtoken.admin import Token
     admin.site.unregister(Token)
 except:
     pass 
+
+
+
+
+
+

@@ -5,7 +5,7 @@ from box.core.sw_currency.models import Currency
 
 class AttributeCategory(models.Model):
     name   = models.CharField(
-        verbose_name=_("Назва"), max_length=255, unique=True
+        verbose_name=_("Назва"), max_length=255, #unique=True
     )
     def __str__(self):
         return f'{self.name}'
@@ -15,6 +15,10 @@ class AttributeCategory(models.Model):
             self.name = self.name.lower().strip()
         super().save(*args, **kwargs)
 
+    # def get_category_attributes(self, item):
+    #     category_attributes = 
+    #     return category_attributes
+    
     class Meta:
         verbose_name = _('категорія атрибутів')
         verbose_name_plural = _('категорії атрибутів')
@@ -29,7 +33,7 @@ class Attribute(models.Model):
         verbose_name=_("Код"), max_length=255, unique=True, blank=True, null=True
     )
     name = models.CharField(
-        verbose_name=_("Назва"), max_length=50, unique=True, 
+        verbose_name=_("Назва"), max_length=50#, unique=True, 
     )
     category = models.ForeignKey(
         verbose_name=_("Категорія"), to="sw_catalog.AttributeCategory", 
@@ -79,7 +83,7 @@ class AttributeValue(models.Model):
         null=True,
     )
     value = models.CharField(
-        verbose_name=_("Значення"), max_length=255, unique=True,
+        verbose_name=_("Значення"), max_length=255, #unique=True,
     )
 
     def __str__(self):

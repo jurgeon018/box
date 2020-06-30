@@ -21,7 +21,10 @@ from io import BytesIO
 from django.core.files import File
 from box.core.models import OverwriteStorage
 
-from . import ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature 
+from . import (
+    ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature,
+    FeatureCategory, AttributeCategory
+)
 
 
 class GoogleFieldsMixin(models.Model):
@@ -230,8 +233,25 @@ class Item(AbstractPage, GoogleFieldsMixin):
             img    = img.resize((width,height), Image.ANTIALIAS)
             img.save(image.path) 
         
+    def get_feature_categories(self):
+        feature_categories = self.get_item_features().values_list('category__id', flat=True).distinct()
+        feature_categories = FeatureCategory.objects.filter(id__in=feature_categories)
+        print("feature_categories", feature_categories)
+        return feature_categories
+    
+    def get_attribute_categories(self):
+        ids = self.get_item_attributes().values_list('attribute__category__id', flat=True).distinct()
+        attribute_categories = AttributeCategory.objects.filter(id__in=ids)
+        return attribute_categories
+
+    def get_item_features(self):
+        return ItemFeature.objects.filter(item=self, is_active=True)
+
     def get_item_attributes(self):
-        return ItemAttribute.objects.filter(item=self)    
+        return ItemAttribute.objects.filter(item=self, is_option=False)
+
+    def get_item_options(self):
+        return ItemAttribute.objects.filter(item=self, is_option=True)
 
     def get_item_attribute_values(self, code):
         values = ItemAttributeValue.objects.filter(
@@ -240,11 +260,11 @@ class Item(AbstractPage, GoogleFieldsMixin):
             )
         )
         return values 
-    
+
     def get_item_features(self):
         item_features = ItemFeature.objects.filter(item=self, is_active=True)
         return item_features
-
+    
     def create_visit(self, request):
         visits = request.session.get('visits', [])
         # visits.insert(0, {
@@ -267,4 +287,3 @@ class Item(AbstractPage, GoogleFieldsMixin):
         from box.apps.sw_shop.sw_cart.utils import get_cart
         return self.id in get_cart(request).items.all().values_list('item__id', flat=True)
 
-        
