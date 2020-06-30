@@ -36,6 +36,7 @@ from .filters import *
 from .views import * 
 from .item_inlines import * 
 from .attribute import * 
+from .features import * 
 from ..resources import * 
 
 import nested_admin
@@ -85,6 +86,7 @@ class ItemAdmin(
         SimilarInline,
         ItemImageInline,
         ItemAttributeInline,
+        ItemFeatureInline,
         # ItemReviewInline, 
     ]  
     item_fields = [

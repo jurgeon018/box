@@ -23,9 +23,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{page.meta_descr}}"/>
     <meta name="keywords" content="{{page.meta_key}}" />
+    {% block meta_robots %}
     {% if global_config.robots %}
     <meta name="robots" content="{{global_config.robots}}" />
     {% endif %}
+    {% endblock meta_robots %}
     
     {% block hreflang %}
       {% for language_code, language_name in LANGUAGES %}

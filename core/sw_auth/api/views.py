@@ -78,7 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
         old_password= query.get('old_password')
         first_name  = query.get('first_name','')
         last_name   = query.get('last_name','')
-        phone_number       = query.get('phone_number', '')
+        phone_number= query.get('phone_number', '')
         email_qs    = get_user_model().objects.filter(email=email)
         username_qs = get_user_model().objects.filter(username=username)
 
@@ -154,7 +154,7 @@ def current_user_info(request):
 def sw_login(request):
     query = request.POST or request.GET
     print(query)
-    response    = redirect(request.META['HTTP_REFERER'])
+    # response    = redirect(request.META['HTTP_REFERER'])
     password    = query['password']
     username    = query.get('username') or query.get('email').split('@')[0]
     email       = query.get('email')

@@ -48,8 +48,24 @@ class AttrBaseMixin(
 
 class ItemAttributeValueInline(nested_admin.NestedTabularInline):
     autocomplete_fields = [
-        'value'
+        'value',
+        'proposition',
     ]
+    # fieldsets = (
+    #     (None, {
+    #         "fields": (
+    #             'value',
+    #             'price',
+    #             'currency',
+    #             'proposition',
+    #             (
+    #                 'amount',
+    #                 'description',
+    #             ),
+    #         ),
+    #     }),
+    # )
+    
     extra = 0
     classes = [
         'collapse',
@@ -210,7 +226,7 @@ class AttributeValueAdmin(AttrBaseMixin):
 
     resource_class = AttributeValueResource
     readonly_fields = [
-        'code',
+        # 'code',
     ]
     list_display = [
         'id',

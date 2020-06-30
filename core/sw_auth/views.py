@@ -7,3 +7,8 @@ def sw_logout(request):
     logout(request)
     x = auth_settings.LOGOUT_REDIRECT_URL
     return redirect(reverse(x))
+
+
+
+
+
