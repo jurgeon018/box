@@ -14,7 +14,11 @@
   {% endblock head_top_scripts %}
 
   {% block head %}
-    <title>{{page.meta_title}}</title>
+    <title>
+      {% if page.meta_title %}
+        {{page.meta_title}}
+      {% endif %}
+    </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{page.meta_descr}}"/>

@@ -7,8 +7,6 @@ from .serializers import *
 
 
 
-
-
 def parse_currencies(pb_date=date.today().strftime('%d.%m.%Y')):
 	# TODO: з адмінки вибирати джерело парсингу валют(pb, нацбанк і тд)
     url        = f'https://api.privatbank.ua/p24api/exchange_rates?json&date={pb_date}'

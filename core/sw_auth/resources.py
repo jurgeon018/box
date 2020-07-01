@@ -13,10 +13,10 @@ class BoxUserResource(ModelResource):
         model = get_user_model() 
         exclude = [
             "group",            # TODO: customer_group 
-            "groups",           # TODO: groups 
-            "user_permissions", # TODO: permissions 
-            "last_login",
-            "date_joined",
+            # "groups",           # TODO: groups 
+            # "user_permissions", # TODO: permissions 
+            # "last_login",
+            # "date_joined",
         ]
 
     def get_export_order(self):
@@ -34,6 +34,12 @@ class BoxUserResource(ModelResource):
             "birth_date",
             "gender",
             "password",
+
+            "groups",
+            "user_permissions",
+            "last_login",
+            "date_joined",
+
         ]
         return export_order
 
@@ -42,5 +48,18 @@ class BoxUserResource(ModelResource):
             'id',
         ]
         return import_id_fields
+
+
+class GroupResource(ModelResource):
+    class Meta:
+        model = Group 
+        exclude = []
+    
+class PermissionResource(ModelResource):
+    class Meta:
+        model = Permission 
+        exclude = []
+
+
 
 
