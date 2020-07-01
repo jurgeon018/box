@@ -71,6 +71,9 @@ class ItemList(generics.ListCreateAPIView):
 
     if category_id is not None:
       cat = ItemCategory.objects.get(id=category_id)
+      descentant_ids = list(cat.get_descendants().values_list('id', flat=True))
+      descentant_ids.append(cat.id) 
+      queryset = queryset.filter(category__id__in=descentant_ids)
 
       # if item_settings.FILTER_BY_CATEGORY
       #   queryset = queryset.filter(category__id=category_id)
@@ -78,8 +81,6 @@ class ItemList(generics.ListCreateAPIView):
       #   descentant_ids = cat.get_descendants()
       #   queryset = queryset.filter(category__id__in=descentant_ids)
       
-      descentant_ids = cat.get_descendants()
-      queryset = queryset.filter(category__id__in=descentant_ids)
 
     if category_ids is not None:
       queryset = queryset.filter(category__id__in=[category_ids])
