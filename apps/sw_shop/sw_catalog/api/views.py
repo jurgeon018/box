@@ -59,11 +59,11 @@ class ItemList(generics.ListCreateAPIView):
     queryset     = super().get_queryset().filter(is_active=True).order_by('order')
     data         = self.request.query_params
     category_id  = data.get('category_id', None)
-    category_ids = data.get('category_ids', None)
     max_price    = data.get('max_price', None)
     min_price    = data.get('min_price', None)
     is_discount  = data.get('is_discount', None)
     ordering     = data.get('ordering', None)
+    category_ids = data.get('category_ids', [])
     attributes   = data.get('attributes', [])
   
     # TODO: добавити сюда пошук по modelsearch, 
@@ -81,8 +81,8 @@ class ItemList(generics.ListCreateAPIView):
       #   descentant_ids = cat.get_descendants()
       #   queryset = queryset.filter(category__id__in=descentant_ids)
       
-
-    if category_ids is not None:
+    if category_ids: category_ids = json.loads(category_ids)
+    if category_ids:
       queryset = queryset.filter(category__id__in=[category_ids])
     
     # if max_price is not None:
