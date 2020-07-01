@@ -81,7 +81,7 @@ class UserViewSet(viewsets.ModelViewSet):
         phone_number= query.get('phone_number', '')
         email_qs    = get_user_model().objects.filter(email=email)
         username_qs = get_user_model().objects.filter(username=username)
-
+        
         # if email and email2 and email != email2:
         #     return JsonResponse({
         #         'status':'BAD',
