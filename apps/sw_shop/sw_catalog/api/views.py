@@ -65,30 +65,44 @@ class ItemList(generics.ListCreateAPIView):
     is_discount  = data.get('is_discount', None)
     ordering     = data.get('ordering', None)
     attributes   = data.get('attributes', [])
-    if attributes: attributes   = json.loads(attributes)
   
-
     # TODO: добавити сюда пошук по modelsearch, 
     #  get_items_in_favours, get_items_in_cart
 
     if category_id is not None:
-      queryset = queryset.filter(category__id=category_id)
+      cat = ItemCategory.objects.get(id=category_id)
+
+      # if item_settings.FILTER_BY_CATEGORY
+      #   queryset = queryset.filter(category__id=category_id)
+      # elif item_settings.FILTER_BY_SUBCATEGORIES:
+      #   descentant_ids = cat.get_descendants()
+      #   queryset = queryset.filter(category__id__in=descentant_ids)
+      
+      descentant_ids = cat.get_descendants()
+      queryset = queryset.filter(category__id__in=descentant_ids)
+
     if category_ids is not None:
       queryset = queryset.filter(category__id__in=[category_ids])
+    
     # if max_price is not None:
     if max_price:
       queryset = queryset.filter(price__lte=max_price)
+    
     # if min_price is not None:
     if min_price:
       queryset = queryset.filter(price__gte=min_price)
+    
+    # print(is_discount)
     # if is_discount is not None:
-    print(is_discount)
     if is_discount == 'true' or is_discount is True:
-      print(queryset.count())
+      # print(queryset.count())
       queryset = queryset.exclude(discount=0)
-      print(queryset.count())
+      # print(queryset.count())
+
     if ordering is not None:
       queryset = queryset.order_by(ordering)
+
+    if attributes: attributes = json.loads(attributes)
     for attribute in attributes:
       if attribute.get('attribute_id') and attribute.get('value_ids'):
         values = AttributeValue.objects.filter(id__in=attribute['value_ids'])
