@@ -174,7 +174,7 @@ def sw_login(request):
         return JsonResponse({
             'error_fields':{
                 'email':_("'Такого користувача не існує'"),
-                # 'username':_("'Такого користувача не існує'"),
+                'username':_("'Такого користувача не існує'"),
             },
             'status':'BAD',
         })
