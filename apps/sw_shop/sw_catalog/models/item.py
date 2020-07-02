@@ -216,7 +216,8 @@ class Item(AbstractPage, GoogleFieldsMixin):
         images = ItemImage.objects.filter(item=self)
         if images.exists():
             image = images.first().image 
-            if image:
+            if image and self.slug:
+                # print('!!!!', self.slug, image.name, image.name.split('/'))
                 name = self.slug + image.name.split("/")[-1]
                 try:
                     self.image.save(name, image, save=False)
@@ -291,3 +292,26 @@ class Item(AbstractPage, GoogleFieldsMixin):
         from box.apps.sw_shop.sw_cart.utils import get_cart
         return self.id in get_cart(request).items.all().values_list('item__id', flat=True)
 
+    def get_stars_total(self):
+      stars_total = 0
+      for review in self.reviews.all():
+        stars_total += int(review.rating)
+      return stars_total
+
+    @property
+    def rounded_stars(self):
+      total = self.get_stars_total()
+      try:
+        stars = round(total/self.reviews.all().count())
+      except:
+        stars = 0
+      return str(stars)
+
+    @property
+    def stars(self):
+      total = self.get_stars_total()
+      try:
+        stars = total/self.reviews.all().count()
+      except:
+        stars = 0
+      return str(stars)

@@ -149,9 +149,9 @@ def create_review(request):
       name=name,
       rating=rating,
     )
-    if GlobalConfig.get_solo().auto_review_approval:
-      review.is_active = True 
-      review.save()
+    # if GlobalConfig.get_solo().auto_review_approval:
+    #   review.is_active = True 
+    #   review.save()
     json_review = ItemReviewSerializer(review).data
     response = {
       "review":json_review,
@@ -162,8 +162,8 @@ def create_review(request):
       "is_active":review.is_active,
     }
     box_send_mail(
-      subject=_(f"Отримано відгук до товару {item.title}"),
-      template='sw_catalog/item_review_mail.html', 
+      subject=(f"Отримано відгук до товару {item.title}"),
+      template='mail/item_review_mail.html', 
       email_config=CatalogRecipientEmail,
       model=review,
     )
