@@ -75,7 +75,7 @@ class UserViewSet(viewsets.ModelViewSet):
         username    = query.get('username') or email.split('@')[0]
         password    = query['password']
         password2   = query['password2']
-        old_password= query.get('old_password')
+        # old_password= query.get('old_password')
         first_name  = query.get('first_name','')
         last_name   = query.get('last_name','')
         phone_number= query.get('phone_number', '')
@@ -126,13 +126,13 @@ class UserViewSet(viewsets.ModelViewSet):
             last_name    = last_name, 
             phone_number = phone_number,
         )
-        if old_password and not user.check_password(old_password):
-            return JsonResponse({
-                'error_fields':{
-                    'old_password':_('Неправильний старий пароль'),
-                },
-                'status':'BAD',
-            })
+        # if old_password and not user.check_password(old_password):
+        #     return JsonResponse({
+        #         'error_fields':{
+        #             'old_password':_('Неправильний старий пароль'),
+        #         },
+        #         'status':'BAD',
+        #     })
         user.set_password(password)
         user.is_active = True 
         # user.is_active = False 

@@ -24,6 +24,7 @@ from .paginators import *
 
 import json 
 
+from ast import literal_eval
 
 import logging
 
@@ -80,7 +81,6 @@ class ItemList(generics.ListCreateAPIView):
       # elif item_settings.FILTER_BY_SUBCATEGORIES:
       #   descentant_ids = cat.get_descendants()
       #   queryset = queryset.filter(category__id__in=descentant_ids)
-    from ast import literal_eval
     if category_ids: category_ids = json.loads(category_ids)#; category_ids = literal_eval(category_ids)
     print(category_ids)
     if category_ids:
