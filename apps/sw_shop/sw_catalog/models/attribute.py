@@ -14,10 +14,9 @@ class AttributeCategory(models.Model):
         if self.name:
             self.name = self.name.lower().strip()
         super().save(*args, **kwargs)
-
-    # def get_category_attributes(self, item):
-    #     category_attributes = 
-    #     return category_attributes
+   
+    def get_category_attributes(self, item):
+        return ItemAttribute.objects.filter(item=item, attribute__category=self) 
     
     class Meta:
         verbose_name = _('категорія атрибутів')

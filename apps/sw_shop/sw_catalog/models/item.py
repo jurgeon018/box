@@ -260,6 +260,10 @@ class Item(AbstractPage, GoogleFieldsMixin):
             )
         )
         return values 
+    
+    def get_attributes_without_categories(self):
+        attributes_without_categories = ItemAttribute.objects.filter(item=self, attribute__category__isnull=True)
+        return attributes_without_categories
 
     def get_item_features(self):
         item_features = ItemFeature.objects.filter(item=self, is_active=True)
