@@ -162,6 +162,7 @@ def create_review(request):
       "rounded_stars":item.rounded_stars,
       "stars":item.stars,
       "is_active":review.is_active,
+      "status":"OK"
     }
     box_send_mail(
       subject=(f"Отримано відгук до товару {item.title}"),
