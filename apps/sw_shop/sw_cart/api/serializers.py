@@ -21,6 +21,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     exclude = []
 
 
+
 class FavourItemSerializer(serializers.ModelSerializer):
   item = ItemDetailSerializer(read_only=True)
   class Meta:
