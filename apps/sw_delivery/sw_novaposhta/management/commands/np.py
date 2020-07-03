@@ -37,6 +37,8 @@ class Command(BaseCommand):
         action  = refresh, browse
         content = warehouses, settlements 
         type    = gen_json, from_api, from_json 
+
+        python3 manage.py np -c settlements
         '''
 
     def handle(self, *args, **kwargs):

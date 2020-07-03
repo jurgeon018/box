@@ -77,21 +77,29 @@ class Cart(models.Model):
   def get_cart_item(self, item, attributes):
     cart_items = CartItem.objects.filter(cart=self, item=item)
     sdf = []
+    # Проходиться по всіх товарах в корзині
     for cart_item in cart_items:
       cart_item_attributes = CartItemAttribute.objects.filter(cart_item=cart_item)
+      # Проходиться по всіх атрибутах присланих з фронту
       for attribute in attributes:
         item_attr  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
         item_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+        # Проходиться по всіх атрибутах поточного товара в корзині
         for cart_item_attribute in cart_item_attributes:
           cart_attr  = cart_item_attribute.attribute_name
           cart_value = cart_item_attribute.value
+          # Якшо атрибут з фронта і атрибут товара в корзині співпадають ... 
           if item_attr == cart_attr:
+            # ... а значення атрибута з фронта і атрибута товара в корзині не співпадають ... 
             if item_value != cart_value:
+              # ... то такого товара немає в корзині 
               sdf.append({
                 "cart_item":cart_item,
                 "status":False
                 })
+              # Виходить з циклу 
               break
+        # якшо всі товари в корзині співпадають то продовж...........
         else:
           continue
         break

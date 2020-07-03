@@ -84,9 +84,13 @@ class SettlementsList(generics.ListCreateAPIView):
     queryset = Settlement.objects.all() 
     pagination_class = StandardPageNumberPagination
     def get_queryset(self):
-        queryset = super().get_queryset()
-        data     = self.request.query_params
-        region_id    = data.get('region_id')
+        queryset  = super().get_queryset()
+        data      = self.request.query_params
+        region_id = data.get('region_id')
+        title     = data.get('title')
+        if title:
+            # queryset = queryset.filter(title__icontains=title.lower())
+            queryset = queryset.filter(title__icontains=title)
         if region_id:
             queryset = queryset.filter(region__id=region_id)
         return queryset
