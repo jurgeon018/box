@@ -25,6 +25,12 @@ def get_category_attributes(category, item=None):
     return category.get_category_attributes(item)
 
 
+@register.simple_tag
+def get_price_by_currency(item, currency):
+    return item.get_price_by_currency(currency)
+
+
+
 
 
 

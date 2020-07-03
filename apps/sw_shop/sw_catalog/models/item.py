@@ -118,14 +118,27 @@ class Item(AbstractPage, GoogleFieldsMixin):
         verbose_name_plural = _('товари')
         # ordering = ['order']
 
+    def get_price_by_currency(self, currency):
+        print("\n\nget_price_by_currency:", currency.get_rate())
+        price = self.price
+        return price
+    
+    def get_price(self):
+        price = 0
+        return price 
+
+    def discount_price(self):
+        price = 0 
+        if self.price and self.discount:
+            discount = self.discount 
+            if self.discount_type == 'p':
+                discount = self.price * discount/ 100
+            price = self.price - discount
+        return round(price, 2)
 
     def get_cart_price(self):
         cart_price = self.converted_discount_price() or self.converted_price()
         return cart_price
-    
-    # def get_final_price(self):
-    #     final_price = 
-    #     return final_price
     
     def converted_price(self):
         price = 0 
@@ -142,16 +155,6 @@ class Item(AbstractPage, GoogleFieldsMixin):
     def final_unconverted_price(self):
         final_unconverted_price = self.discount_price() or self.price 
         return final_unconverted_price
-
-    def discount_price(self):
-        price = 0 
-        
-        if self.price and self.discount:
-            discount = self.discount 
-            if self.discount_type == 'p':
-                discount = self.price * discount/ 100
-            price = self.price - discount
-        return round(price, 2)
 
     def main_currency(self):
         return Currency.objects.get(is_main=True)
@@ -237,7 +240,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
     def get_feature_categories(self):
         feature_categories = self.get_item_features().values_list('category__id', flat=True).distinct()
         feature_categories = FeatureCategory.objects.filter(id__in=feature_categories)
-        print("feature_categories", feature_categories)
+        # print("feature_categories", feature_categories)
         return feature_categories
     
     def get_attribute_categories(self):

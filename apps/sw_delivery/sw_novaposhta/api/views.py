@@ -33,6 +33,7 @@ class WarehousesList(generics.ListCreateAPIView):
     serializer_class = WarehouseSerializer 
     queryset = Warehouse.objects.all() 
     pagination_class = StandardPageNumberPagination
+    
     def get_queryset(self):
         queryset = super().get_queryset()
         data     = self.request.query_params
