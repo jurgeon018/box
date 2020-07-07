@@ -69,6 +69,7 @@ class BaseMixin(models.Model):
 	def modeltranslation_fields(self):
 		return []
 
+
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, *args, **kwargs):
         if self.exists(name):
