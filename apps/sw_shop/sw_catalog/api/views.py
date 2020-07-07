@@ -24,6 +24,7 @@ from .paginators import *
 
 import json 
 
+from ast import literal_eval
 
 import logging
 
@@ -59,36 +60,51 @@ class ItemList(generics.ListCreateAPIView):
     queryset     = super().get_queryset().filter(is_active=True).order_by('order')
     data         = self.request.query_params
     category_id  = data.get('category_id', None)
-    category_ids = data.get('category_ids', None)
     max_price    = data.get('max_price', None)
     min_price    = data.get('min_price', None)
     is_discount  = data.get('is_discount', None)
     ordering     = data.get('ordering', None)
+    category_ids = data.get('category_ids', [])
     attributes   = data.get('attributes', [])
-    if attributes: attributes   = json.loads(attributes)
   
-
     # TODO: добавити сюда пошук по modelsearch, 
     #  get_items_in_favours, get_items_in_cart
 
     if category_id is not None:
-      queryset = queryset.filter(category__id=category_id)
-    if category_ids is not None:
-      queryset = queryset.filter(category__id__in=[category_ids])
+      cat = ItemCategory.objects.get(id=category_id)
+      descentant_ids = list(cat.get_descendants().values_list('id', flat=True))
+      descentant_ids.append(cat.id) 
+      queryset = queryset.filter(category__id__in=descentant_ids)
+
+      # if item_settings.FILTER_BY_CATEGORY
+      #   queryset = queryset.filter(category__id=category_id)
+      # elif item_settings.FILTER_BY_SUBCATEGORIES:
+      #   descentant_ids = cat.get_descendants()
+      #   queryset = queryset.filter(category__id__in=descentant_ids)
+    if category_ids: category_ids = json.loads(category_ids)#; category_ids = literal_eval(category_ids)
+    print(category_ids)
+    if category_ids:
+      queryset = queryset.filter(category__id__in=category_ids)
+    
     # if max_price is not None:
     if max_price:
       queryset = queryset.filter(price__lte=max_price)
+    
     # if min_price is not None:
     if min_price:
       queryset = queryset.filter(price__gte=min_price)
+    
+    # print(is_discount)
     # if is_discount is not None:
-    print(is_discount)
     if is_discount == 'true' or is_discount is True:
-      print(queryset.count())
+      # print(queryset.count())
       queryset = queryset.exclude(discount=0)
-      print(queryset.count())
+      # print(queryset.count())
+
     if ordering is not None:
       queryset = queryset.order_by(ordering)
+
+    if attributes: attributes = json.loads(attributes)
     for attribute in attributes:
       if attribute.get('attribute_id') and attribute.get('value_ids'):
         values = AttributeValue.objects.filter(id__in=attribute['value_ids'])
@@ -121,21 +137,23 @@ class ReviewViewSet(ModelViewSet):
 @csrf_exempt
 def create_review(request):
     item_id = request.POST['item_id']
-    text    = request.POST['text']
-    phone   = request.POST['phone']
-    name    = request.POST['name']
     rating  = request.POST['product_rating']
+    text    = request.POST.get('text', '---')
+    name    = request.POST.get('name', '---')
+    phone   = request.POST.get('phone', '---')
+    email   = request.POST.get('email', '---')
     item    = Item.objects.get(id=item_id)
     review  = ItemReview.objects.create(
       item=item,
       text=text,
       phone=phone,
+      email=email,
       name=name,
       rating=rating,
     )
-    if GlobalConfig.get_solo().auto_review_approval:
-      review.is_active = True 
-      review.save()
+    # if GlobalConfig.get_solo().auto_review_approval:
+    #   review.is_active = True 
+    #   review.save()
     json_review = ItemReviewSerializer(review).data
     response = {
       "review":json_review,
@@ -144,10 +162,11 @@ def create_review(request):
       "rounded_stars":item.rounded_stars,
       "stars":item.stars,
       "is_active":review.is_active,
+      "status":"OK"
     }
     box_send_mail(
-      subject=_(f"Отримано відгук до товару {item.title}"),
-      template='sw_catalog/item_review_mail.html', 
+      subject=(f"Отримано відгук до товару {item.title}"),
+      template='mail/item_review_mail.html', 
       email_config=CatalogRecipientEmail,
       model=review,
     )

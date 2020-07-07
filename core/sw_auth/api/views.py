@@ -75,13 +75,13 @@ class UserViewSet(viewsets.ModelViewSet):
         username    = query.get('username') or email.split('@')[0]
         password    = query['password']
         password2   = query['password2']
-        old_password= query.get('old_password')
+        # old_password= query.get('old_password')
         first_name  = query.get('first_name','')
         last_name   = query.get('last_name','')
-        phone_number       = query.get('phone_number', '')
+        phone_number= query.get('phone_number', '')
         email_qs    = get_user_model().objects.filter(email=email)
         username_qs = get_user_model().objects.filter(username=username)
-
+        
         # if email and email2 and email != email2:
         #     return JsonResponse({
         #         'status':'BAD',
@@ -126,13 +126,13 @@ class UserViewSet(viewsets.ModelViewSet):
             last_name    = last_name, 
             phone_number = phone_number,
         )
-        if old_password and not user.check_password(old_password):
-            return JsonResponse({
-                'error_fields':{
-                    'old_password':_('Неправильний старий пароль'),
-                },
-                'status':'BAD',
-            })
+        # if old_password and not user.check_password(old_password):
+        #     return JsonResponse({
+        #         'error_fields':{
+        #             'old_password':_('Неправильний старий пароль'),
+        #         },
+        #         'status':'BAD',
+        #     })
         user.set_password(password)
         user.is_active = True 
         # user.is_active = False 
@@ -154,7 +154,7 @@ def current_user_info(request):
 def sw_login(request):
     query = request.POST or request.GET
     print(query)
-    response    = redirect(request.META['HTTP_REFERER'])
+    # response    = redirect(request.META['HTTP_REFERER'])
     password    = query['password']
     username    = query.get('username') or query.get('email').split('@')[0]
     email       = query.get('email')
@@ -174,7 +174,7 @@ def sw_login(request):
         return JsonResponse({
             'error_fields':{
                 'email':_("'Такого користувача не існує'"),
-                # 'username':_("'Такого користувача не існує'"),
+                'username':_("'Такого користувача не існує'"),
             },
             'status':'BAD',
         })

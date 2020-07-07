@@ -21,11 +21,19 @@ from io import BytesIO
 from django.core.files import File
 from box.core.models import OverwriteStorage
 
-from . import ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature 
+from . import (
+    ItemAttribute, ItemAttributeValue, Attribute, AttributeValue, ItemFeature,
+    FeatureCategory, AttributeCategory
+)
 
 
+class GoogleFieldsMixin(models.Model):
+    # https://support.google.com/merchants/answer/7052112?hl=ru
+    multipack = models.PositiveIntegerField(verbose_name="Мультиупаковка", blank=True, null=True)
+    class Meta:
+        abstract = True 
 
-class Item(AbstractPage):
+class Item(AbstractPage, GoogleFieldsMixin):
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',
@@ -110,14 +118,27 @@ class Item(AbstractPage):
         verbose_name_plural = _('товари')
         # ordering = ['order']
 
+    def get_price_by_currency(self, currency):
+        print("\n\nget_price_by_currency:", currency.get_rate())
+        price = self.price
+        return price
+    
+    def get_price(self):
+        price = 0
+        return price 
+
+    def discount_price(self):
+        price = 0 
+        if self.price and self.discount:
+            discount = self.discount 
+            if self.discount_type == 'p':
+                discount = self.price * discount/ 100
+            price = self.price - discount
+        return round(price, 2)
 
     def get_cart_price(self):
         cart_price = self.converted_discount_price() or self.converted_price()
         return cart_price
-    
-    # def get_final_price(self):
-    #     final_price = 
-    #     return final_price
     
     def converted_price(self):
         price = 0 
@@ -134,16 +155,6 @@ class Item(AbstractPage):
     def final_unconverted_price(self):
         final_unconverted_price = self.discount_price() or self.price 
         return final_unconverted_price
-
-    def discount_price(self):
-        price = 0 
-        
-        if self.price and self.discount:
-            discount = self.discount 
-            if self.discount_type == 'p':
-                discount = self.price * discount/ 100
-            price = self.price - discount
-        return round(price, 2)
 
     def main_currency(self):
         return Currency.objects.get(is_main=True)
@@ -208,7 +219,8 @@ class Item(AbstractPage):
         images = ItemImage.objects.filter(item=self)
         if images.exists():
             image = images.first().image 
-            if image:
+            if image and self.slug:
+                # print('!!!!', self.slug, image.name, image.name.split('/'))
                 name = self.slug + image.name.split("/")[-1]
                 try:
                     self.image.save(name, image, save=False)
@@ -225,8 +237,25 @@ class Item(AbstractPage):
             img    = img.resize((width,height), Image.ANTIALIAS)
             img.save(image.path) 
         
+    def get_feature_categories(self):
+        feature_categories = self.get_item_features().values_list('category__id', flat=True).distinct()
+        feature_categories = FeatureCategory.objects.filter(id__in=feature_categories)
+        # print("feature_categories", feature_categories)
+        return feature_categories
+    
+    def get_attribute_categories(self):
+        ids = self.get_item_attributes().values_list('attribute__category__id', flat=True).distinct()
+        attribute_categories = AttributeCategory.objects.filter(id__in=ids)
+        return attribute_categories
+
+    def get_item_features(self):
+        return ItemFeature.objects.filter(item=self, is_active=True)
+
     def get_item_attributes(self):
-        return ItemAttribute.objects.filter(item=self)    
+        return ItemAttribute.objects.filter(item=self, is_option=False)
+
+    def get_item_options(self):
+        return ItemAttribute.objects.filter(item=self, is_option=True)
 
     def get_item_attribute_values(self, code):
         values = ItemAttributeValue.objects.filter(
@@ -236,10 +265,14 @@ class Item(AbstractPage):
         )
         return values 
     
+    def get_attributes_without_categories(self):
+        attributes_without_categories = ItemAttribute.objects.filter(item=self, attribute__category__isnull=True)
+        return attributes_without_categories
+
     def get_item_features(self):
         item_features = ItemFeature.objects.filter(item=self, is_active=True)
         return item_features
-
+    
     def create_visit(self, request):
         visits = request.session.get('visits', [])
         # visits.insert(0, {
@@ -262,4 +295,26 @@ class Item(AbstractPage):
         from box.apps.sw_shop.sw_cart.utils import get_cart
         return self.id in get_cart(request).items.all().values_list('item__id', flat=True)
 
-        
+    def get_stars_total(self):
+      stars_total = 0
+      for review in self.reviews.all():
+        stars_total += int(review.rating)
+      return stars_total
+
+    @property
+    def rounded_stars(self):
+      total = self.get_stars_total()
+      try:
+        stars = round(total/self.reviews.all().count())
+      except:
+        stars = 0
+      return str(stars)
+
+    @property
+    def stars(self):
+      total = self.get_stars_total()
+      try:
+        stars = total/self.reviews.all().count()
+      except:
+        stars = 0
+      return str(stars)

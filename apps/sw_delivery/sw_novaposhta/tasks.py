@@ -17,17 +17,11 @@ def load_warehouses_from_json():
     # handle_np(action='refresh', content='warehouses', type='from_api')
 
 
-
-
-
 # @periodic_task(run_every=timedelta(seconds=100))
 @periodic_task(run_every=timedelta(days=30)) 
 def load_warehouses():
     print('load_warehouses')
     load_warehouses_from_json.delay()
-
-
-
 
 
 @periodic_task(run_every=timedelta(seconds=10))
