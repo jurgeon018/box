@@ -162,6 +162,13 @@ def set_language(request):
       print(response)
   return response
 
+# from django.conf.urls import url
+# from django.urls import path 
+
+# from tinymce.views import spell_check, filebrowser, css, spell_check_callback
+
+# urlpatterns = [
+# ]
 
 urlpatterns = [
   *static_urlpatterns,
@@ -176,9 +183,10 @@ urlpatterns = [
   path('jsi18n/',          js_cat.as_view(), name='javascript-catalog'),
   path('admin_tools/',     include('admin_tools.urls')),
   path('grappelli/',       include('grappelli.urls')),
+  # url(r'^tinymce4.css', css, name='tinymce-css'),
 
   # path('froala_editor/',   include('froala_editor.urls')),
-  # path('tinymce/',         include('tinymce.urls')),
+  path('tinymce/',         include('tinymce.urls')),
   # path('ckeditor/',        include('ckeditor_uploader.urls')),
   # path('summernote/',      include('django_summernote.urls')),
   # path('markdown/',        include('django_markdown.urls')),
@@ -195,6 +203,7 @@ urlpatterns = [
   *PROJECT_CORE,
   *multilingual,
 ]
+
 
 # if settings.DEBUG:
 if core_settings.DJANGO_DEBUG_TOOLBAR_ON:

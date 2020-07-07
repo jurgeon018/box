@@ -56,42 +56,50 @@ class Cart(models.Model):
         price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
       )
 
-  def handle_attributes(self, attributes, item, quantity):
-    attributes_is_broken = False 
-    for attribute in attributes:
-      cart_item_attributes = CartItemAttribute.objects.filter( 
-        cart_item__item=item,
-        cart_item__cart=self,
-        attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-        value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-      )
-      if not cart_item_attributes:
-        self.create_cart_items_with_attributes(item, quantity, attributes)
-        attributes_is_broken = True 
-        break
-    if not attributes_is_broken:
-      cart_item = self.get_cart_item_with_attributes(item, attributes)
-      cart_item.quantity += quantity
-      cart_item.save()
+  # def handle_attributes(self, attributes, item, quantity):
+  #   attributes_is_broken = False 
+  #   for attribute in attributes:
+  #     cart_item_attributes = CartItemAttribute.objects.filter( 
+  #       cart_item__item=item,
+  #       cart_item__cart=self,
+  #       attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
+  #       value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
+  #     )
+  #     if not cart_item_attributes:
+  #       self.create_cart_items_with_attributes(item, quantity, attributes)
+  #       attributes_is_broken = True 
+  #       break
+  #   if not attributes_is_broken:
+  #     cart_item = self.get_cart_item_with_attributes(item, attributes)
+  #     cart_item.quantity += quantity
+  #     cart_item.save()
 
   def get_cart_item(self, item, attributes):
     cart_items = CartItem.objects.filter(cart=self, item=item)
     sdf = []
+    # Проходиться по всіх товарах в корзині
     for cart_item in cart_items:
       cart_item_attributes = CartItemAttribute.objects.filter(cart_item=cart_item)
+      # Проходиться по всіх атрибутах присланих з фронту
       for attribute in attributes:
         item_attr  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
         item_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+        # Проходиться по всіх атрибутах поточного товара в корзині
         for cart_item_attribute in cart_item_attributes:
-          cart_attr = cart_item_attribute.attribute_name
+          cart_attr  = cart_item_attribute.attribute_name
           cart_value = cart_item_attribute.value
+          # Якшо атрибут з фронта і атрибут товара в корзині співпадають ... 
           if item_attr == cart_attr:
+            # ... а значення атрибута з фронта і атрибута товара в корзині не співпадають ... 
             if item_value != cart_value:
+              # ... то такого товара немає в корзині 
               sdf.append({
                 "cart_item":cart_item,
                 "status":False
                 })
+              # Виходить з циклу 
               break
+        # якшо всі товари в корзині співпадають то продовж...........
         else:
           continue
         break
@@ -131,34 +139,31 @@ class Cart(models.Model):
       cart_item.save()
     elif attributes:
       self.handle_attributes1(attributes, item, quantity)
-      # self.handle_attributes2(attributes, item, quantity)
-      ##################################################################################
       # Робочий кривий варіант
       # self.handle_attributes(attributes, item, quantity)
-      ##################################################################################
 
-  def get_cart_item_with_attributes(self, item, attributes):
-    # Проходиться по всіх товарах в корзині, 
-    # і для кожного атрибута пробує знайти товар з таким атрибутом.
-    # Якшо такого товара немає - значить шось пішло не так.
-    result = None 
-    attributes_is_broken = False 
-    for attribute in attributes:
-      for cart_item in CartItem.objects.filter(item=item, cart=self):
-        # print()
-        # print("attribute:\n", attribute)
-        try:
-          attr = CartItemAttribute.objects.get(
-            cart_item=cart_item,
-            attribute_name__id=attribute['item_attribute_id'],
-            value__id=attribute['item_attribute_value_id'],
-          )
-        except CartItemAttribute.DoesNotExist as e:
-          # print(e)
-          break
-      else:
-        break
-    return cart_item  
+  # def get_cart_item_with_attributes(self, item, attributes):
+  #   # Проходиться по всіх товарах в корзині, 
+  #   # і для кожного атрибута пробує знайти товар з таким атрибутом.
+  #   # Якшо такого товара немає - значить шось пішло не так.
+  #   result = None 
+  #   attributes_is_broken = False 
+  #   for attribute in attributes:
+  #     for cart_item in CartItem.objects.filter(item=item, cart=self):
+  #       # print()
+  #       # print("attribute:\n", attribute)
+  #       try:
+  #         attr = CartItemAttribute.objects.get(
+  #           cart_item=cart_item,
+  #           attribute_name__id=attribute['item_attribute_id'],
+  #           value__id=attribute['item_attribute_value_id'],
+  #         )
+  #       except CartItemAttribute.DoesNotExist as e:
+  #         # print(e)
+  #         break
+  #     else:
+  #       break
+  #   return cart_item  
 
   def change_cart_item_amount(self, cart_item_id, quantity):
     try: quantity = int(quantity)
@@ -229,7 +234,10 @@ class CartItemAttribute(models.Model):
   )
   value = models.ForeignKey(
     to="sw_catalog.ItemAttributeValue", on_delete=models.CASCADE,
-    verbose_name=_("Значення"), unique=False,
+    verbose_name=_("Значення"), unique=False, related_name="cart_item_attributes",
+  )
+  values = models.ManyToManyField(
+    to="sw_catalog.ItemAttributeValue", verbose_name=_("Значення"), 
   )
   price = models.FloatField(
     # verbose_name=_("Ціна"), default=0,

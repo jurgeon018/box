@@ -26,9 +26,6 @@ import pandas as pd
 import sys 
 
 
-
-
-
 def load_xlsx(filename, sheet_name):
   data = pd.read_excel(filename, sheet_name=sheet_name)
   data = data.to_csv()

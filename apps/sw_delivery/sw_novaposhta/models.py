@@ -82,7 +82,8 @@ class Type(models.Model):
 
 class Settlement(models.Model):
     title     = models.CharField(verbose_name=_('Title'),     max_length=255, db_index=True)
-    type      = models.CharField(verbose_name=_("Type"),      max_length=255)
+    # type      = models.CharField(verbose_name=_("Type"),      max_length=255)
+    type      = models.ForeignKey(verbose_name=_("Type"), on_delete=models.SET_NULL, null=True, blank=True, to="sw_novaposhta.Type")
     latitude  = models.CharField(verbose_name=_("latitude"),  max_length=255)
     longitude = models.CharField(verbose_name=_("longitude"), max_length=255)
     region    = models.ForeignKey(verbose_name=_("Region"), to='sw_novaposhta.Region', on_delete=models.SET_NULL, null=True)

@@ -74,3 +74,9 @@ def validate_coupon(coupon_code, user):
         return assemble_invalid_message(message="Invalid coupon!")
 
     return VALID_TEMPLATE
+
+
+
+
+
+
