@@ -126,3 +126,18 @@ class ItemCategory(AbstractPage, MPTTModel):
     # 	result = self.title
     return result
 
+  def get_items(self):
+    from .item import Item 
+    items = Item.objects.filter(category=self,is_active=True)
+    return items
+
+
+
+
+
+
+
+
+
+
+
