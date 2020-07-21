@@ -12,6 +12,7 @@ from box.apps.sw_shop.sw_catalog.models import (
 import re
 from django.db.models import Q
 
+from box.apps.sw_shop.sw_order.models import OrderAdditionalPrice
 
 
 class Cart(models.Model):
@@ -213,10 +214,18 @@ class Cart(models.Model):
   @property
   def total_price(self):
     total_price = 0
-    for cart_item in self.items.all():
-    # for cart_item in CartItem.objects.filter(cart=self):
+    # for cart_item in self.items.all():
+    for cart_item in CartItem.objects.filter(cart=self):
       if cart_item.total_price:
         total_price += cart_item.total_price
+    for additional_price in OrderAdditionalPrice.objects.all(): 
+      price = additional_price.price 
+      if additional_price.currency == self.currency:
+        price = price
+      else:
+        # todo: КОНВЕРТУВАТИ ЦІНУ ДО ВАЛЮТИ
+        price = price 
+      total_price += price 
     return float(total_price)
 
   @property

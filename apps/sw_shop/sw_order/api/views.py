@@ -39,7 +39,6 @@ def order_items(request):
   phone        = query.get('phone', "---")
   address      = query.get('address', "---")
   comments     = query.get('comments', "---")
-
   payment_opt  = query.get('payment_opt', "---")
   delivery_opt = query.get('delivery_opt', "---")
 
