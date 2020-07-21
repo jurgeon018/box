@@ -104,6 +104,8 @@ class Cart(models.Model):
           continue
         break
       else:
+        # TODO: вияснити чого не працює
+        # return cart_item 
         sdf.append({
           'cart_item':cart_item,
           "status":True,
@@ -200,7 +202,6 @@ class Cart(models.Model):
   @property
   def items_quantity(self):
     items_quantity = 0
-    # for cart_item in self.items.all():
     for cart_item in CartItem.objects.filter(cart=self):
       items_quantity += cart_item.quantity
     return items_quantity
