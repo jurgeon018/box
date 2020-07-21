@@ -132,14 +132,14 @@ class Order(models.Model):
     cart.save()
     cart_items = CartItem.objects.filter(cart=cart)
     context = {'cart_items':cart_items}
-    box_send_mail(
-      subject      = _(f'Отримано замовлення товарів # {self.id}'),
-      template     = 'sw_order/mail.html', 
-      email_config = OrderRecipientEmail, 
-      model        = self, 
-      fail_silently= False,
-      context      = context,
-    )
+    # box_send_mail(
+    #   subject      = _(f'Отримано замовлення товарів # {self.id}'),
+    #   template     = 'sw_order/mail.html', 
+    #   email_config = OrderRecipientEmail, 
+    #   model        = self, 
+    #   fail_silently= False,
+    #   context      = context,
+    # )
 
   def save(self, *args, **kwargs):
     if not self.status:
