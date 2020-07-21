@@ -192,6 +192,7 @@ class ItemStock(models.Model):
     text         = models.CharField(verbose_name=_('Текст'), max_length=255, unique=True)
     availability = models.BooleanField(verbose_name=_('Можливість покупки'), default=True)
     colour       = ColorField(verbose_name=_('Колір'),  max_length=255)
+
     def __str__(self):
         return f"{self.text}"
     
