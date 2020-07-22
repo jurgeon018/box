@@ -30,9 +30,12 @@ def cart_items(request):
     quantity   = query.get('quantity', 1)
     item_id    = query['item_id']
     attributes = query.get('attributes', [])
+    options    = query.get('options', [])
     if attributes:
       attributes = json.loads(attributes)
-    cart.add_item(item_id, quantity, attributes)
+    if options:
+      options = json.loads(options)
+    cart.add_item(item_id, quantity, attributes, options)
     return Response(data=get_cart_info(request), status=203)
   if request.method == 'DELETE':
     cart.clear()

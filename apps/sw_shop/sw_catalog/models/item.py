@@ -250,7 +250,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
         ids = self.get_item_attributes().values_list('attribute__category__id', flat=True).distinct()
         attribute_categories = AttributeCategory.objects.filter(id__in=ids)
         return attribute_categories
-
+    
     def get_item_features(self):
         return ItemFeature.objects.filter(item=self, is_active=True)
 

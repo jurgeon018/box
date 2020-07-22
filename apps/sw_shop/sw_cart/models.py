@@ -49,31 +49,22 @@ class Cart(models.Model):
     CartItemAttribute.objects.filter(cart_item=cart_item).delete()
     for attribute in attributes:
       attribute_name  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
-      attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
-      CartItemAttribute.objects.create(
-        cart_item=cart_item,
-        attribute_name=attribute_name,
-        value=attribute_value,
-        price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
-      )
-
-  # def handle_attributes(self, attributes, item, quantity):
-  #   attributes_is_broken = False 
-  #   for attribute in attributes:
-  #     cart_item_attributes = CartItemAttribute.objects.filter( 
-  #       cart_item__item=item,
-  #       cart_item__cart=self,
-  #       attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-  #       value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-  #     )
-  #     if not cart_item_attributes:
-  #       self.create_cart_items_with_attributes(item, quantity, attributes)
-  #       attributes_is_broken = True 
-  #       break
-  #   if not attributes_is_broken:
-  #     cart_item = self.get_cart_item_with_attributes(item, attributes)
-  #     cart_item.quantity += quantity
-  #     cart_item.save()
+      if attribute_name.is_option:
+        attribute_values = ItemAttributeValue.objects.get(id__in=attribute['item_attribute_value_ids'])
+        cart_item_attribute = CartItemAttribute.objects.create(
+          cart_item=cart_item,
+          attribute_name=attribute_name,
+          price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
+        )
+        cart_item_attribute.values.add(attribute_values)
+      else:
+        attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+        CartItemAttribute.objects.create(
+          cart_item=cart_item,
+          attribute_name=attribute_name,
+          value=attribute_value,
+          price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
+        )
 
   def get_cart_item(self, item, attributes):
     cart_items = CartItem.objects.filter(cart=self, item=item)
@@ -105,7 +96,7 @@ class Cart(models.Model):
           continue
         break
       else:
-        # TODO: вияснити чого не працює
+        # TODO: вияснити чого не працює return cart_item 
         # return cart_item 
         sdf.append({
           'cart_item':cart_item,
@@ -116,7 +107,7 @@ class Cart(models.Model):
       if i['status'] == True:
         return i['cart_item']
 
-  def handle_attributes1(self, attributes, item, quantity):
+  def handle_attributes(self, attributes, item, quantity):
     cart_items = CartItem.objects.filter(cart=self, item=item)
     if not cart_items:
       self.create_cart_items_with_attributes(item, quantity, attributes)
@@ -128,7 +119,7 @@ class Cart(models.Model):
       else:
         self.create_cart_items_with_attributes(item, quantity, attributes)
 
-  def add_item(self, item_id, quantity, attributes=None):
+  def add_item(self, item_id, quantity, attributes=[], options=[]):
     try: quantity = int(quantity)
     except: quantity = 1
     item = Item.objects.get(pk=int(item_id))
@@ -141,32 +132,7 @@ class Cart(models.Model):
       elif not created: cart_item.quantity += quantity
       cart_item.save()
     elif attributes:
-      self.handle_attributes1(attributes, item, quantity)
-      # Робочий кривий варіант
-      # self.handle_attributes(attributes, item, quantity)
-
-  # def get_cart_item_with_attributes(self, item, attributes):
-  #   # Проходиться по всіх товарах в корзині, 
-  #   # і для кожного атрибута пробує знайти товар з таким атрибутом.
-  #   # Якшо такого товара немає - значить шось пішло не так.
-  #   result = None 
-  #   attributes_is_broken = False 
-  #   for attribute in attributes:
-  #     for cart_item in CartItem.objects.filter(item=item, cart=self):
-  #       # print()
-  #       # print("attribute:\n", attribute)
-  #       try:
-  #         attr = CartItemAttribute.objects.get(
-  #           cart_item=cart_item,
-  #           attribute_name__id=attribute['item_attribute_id'],
-  #           value__id=attribute['item_attribute_value_id'],
-  #         )
-  #       except CartItemAttribute.DoesNotExist as e:
-  #         # print(e)
-  #         break
-  #     else:
-  #       break
-  #   return cart_item  
+      self.handle_attributes(attributes, item, quantity)
 
   def change_cart_item_amount(self, cart_item_id, quantity):
     try: quantity = int(quantity)
@@ -233,6 +199,26 @@ class Cart(models.Model):
     return Currency.objects.get(is_main=True).code
 
 
+# class CartItemOption(models.Model):
+#   cart_item = models.ForeignKey(
+#     verbose_name=_("Товар в корзині"), on_delete=models.CASCADE,
+#     to="sw_cart.CartItem", related_name='attributes',
+#   )
+#   attribute_name = models.ForeignKey(
+#     to="sw_catalog.ItemAttribute", on_delete=models.CASCADE,
+#     verbose_name=_("Атрибут"), unique=False,
+#   )
+
+#   class Meta: 
+#     verbose_name = _('вибраний атрибут у товара в корзині')
+#     verbose_name_plural = _('вибрані атрибути у товарів в корзині')
+  
+#   def __str__(self):
+#     # return f'{self.cart_item.item.title}, {self.attribute_name.name}:{self.value.value}'
+#     return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.value.value.value}'
+
+
+
 class CartItemAttribute(models.Model):
   cart_item = models.ForeignKey(
     verbose_name=_("Товар в корзині"), on_delete=models.CASCADE,
@@ -250,9 +236,9 @@ class CartItemAttribute(models.Model):
     to="sw_catalog.ItemAttributeValue", verbose_name=_("Значення"), 
   )
   price = models.FloatField(
-    # verbose_name=_("Ціна"), default=0,
+    verbose_name=_("Ціна"), default=0,
     # verbose_name=_("Ціна"), null=False, blank=False, default=0,
-    verbose_name=_("Ціна"), null=True, blank=True, default=0,
+    # verbose_name=_("Ціна"), null=True, blank=True, default=0,
   )
 
   class Meta: 
@@ -346,3 +332,35 @@ class FavourItem(models.Model):
 
 
 
+
+'''
+
+
+[
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_id":int, 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_id":int, 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+]
+
+'''

@@ -131,7 +131,7 @@ class ItemAttributeValue(models.Model):
     # TODO: виводити тільки ті характеристики товару у яких amount > 0 
     # TODO: відмінусовувати amount у характеристики товару при заказі 
     # TODO: виводити тільки ті характеристики товару у яких is_active=True
-
+    
     def save(self, *args, **kwargs):
       if not self.currency:
         self.currency = Currency.objects.get(is_main=True)
