@@ -41,10 +41,15 @@ class ItemAttributeValueSerializer(serializers.ModelSerializer):
     model = ItemAttributeValue
     exclude = []
   
+class AttributeSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Attribute
+    exclude = []
+
 
 class ItemAttributeSerializer(serializers.ModelSerializer):
   item_attribute_values = ItemAttributeValueSerializer(read_only=True, many=True)
-  
+  attribute = AttributeSerializer(read_only=True)
   class Meta:
     model = ItemAttribute
     exclude = []
