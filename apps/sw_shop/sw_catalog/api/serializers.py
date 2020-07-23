@@ -43,6 +43,7 @@ class AttributeSerializer(serializers.ModelSerializer):
 
 class ItemAttributeValueSerializer(serializers.ModelSerializer):
   value = AttributeValueSerializer(read_only=True)
+  currency = CurrencySerializer(read_only=True)
   class Meta:
     model = ItemAttributeValue
     exclude = []

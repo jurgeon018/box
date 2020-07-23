@@ -131,6 +131,28 @@ class ReviewViewSet(ModelViewSet):
   queryset = ItemReview.objects.all().filter(is_active=True)
   serializer_class = ItemReviewSerializer
 
+from django.http import Http404
+from rest_framework.decorators import api_view
+from box.apps.sw_shop.sw_cart.models import CartItemAttribute
+
+@api_view(['GET','POST','DELETE'])
+def delete_option(request):
+  if request.method == 'GET':
+    data = request.query_params
+  else:
+    data = request.data
+  cart_item_attribute_id   = data.get('cart_item_attribute_id')
+  item_attribute_value_id  = data.get('item_attribute_value_id')
+  cart_item_attribute      = CartItemAttribute.objects.get(pk=cart_item_attribute_id)
+  item_attribute_value     = ItemAttributeValue.objects.get(pk=item_attribute_value_id)
+  cart_item_attribute.values.remove(item_attribute_value)
+  response = {'status':'ok'}
+  return Response(response)
+
+
+    
+
+
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -154,12 +176,9 @@ class ItemAttributeList(generics.ListAPIView):
       queryset = queryset.filter(item__id=item_id)
     return queryset
 
-
 class ItemAttributeRetrieve(generics.RetrieveAPIView):
   queryset = ItemAttribute.objects.all()#.filter(is_active=True)
   serializer_class = ItemAttributeSerializer
-  
-
 
 class ItemAttributeValueList(generics.ListAPIView):
   queryset = ItemAttributeValue.objects.all()#.filter(is_active=True)
