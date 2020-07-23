@@ -150,14 +150,21 @@ class Order(models.Model):
     cart.order = self 
     cart.ordered = True
     cart.save()
+    from box.core.helpers import get_admin_url
+    from django.contrib.sites.models import Site 
+    site = Site.objects.get_current().domain
+    order_admin_url = site + get_admin_url(self)
     cart_items = CartItem.objects.filter(cart=cart)
-    context = {'cart_items':cart_items}
+    context = {
+      'cart_items':cart_items,
+      'order_admin_url':order_admin_url,
+    }
     box_send_mail(
       subject      = _(f'Отримано замовлення товарів # {self.id}'),
       template     = 'sw_order/mail.html', 
       email_config = OrderRecipientEmail, 
       model        = self, 
-      fail_silently= False,
+      fail_silently= True,
       context      = context,
     )
 
@@ -169,7 +176,7 @@ class Order(models.Model):
 
   def __str__(self):
     return f'{self.phone}|{self.name}|{self.email}|{self.address}' 
-
+  
   @property
   def currency(self):
     return self.cart.currency
