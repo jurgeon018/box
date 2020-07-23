@@ -146,6 +146,8 @@ def delete_option(request):
   cart_item_attribute      = CartItemAttribute.objects.get(pk=cart_item_attribute_id)
   item_attribute_value     = ItemAttributeValue.objects.get(pk=item_attribute_value_id)
   cart_item_attribute.values.remove(item_attribute_value)
+  if cart_item_attribute.values.all().count == 0:
+    cart_item_attribute.delete()
   response = {'status':'ok'}
   return Response(response)
 
