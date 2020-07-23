@@ -127,16 +127,11 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
   pagination_class = StandardPageNumberPagination
 
 
-
 class ReviewViewSet(ModelViewSet):
   queryset = ItemReview.objects.all().filter(is_active=True)
   serializer_class = ItemReviewSerializer
 
 
-class ItemAttributeRetrieve(generics.RetrieveAPIView):
-  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
-  serializer_class = ItemAttributeSerializer
-  
 from rest_framework.pagination import PageNumberPagination
 
 class CustomPageNumberPagination(PageNumberPagination):
@@ -158,6 +153,36 @@ class ItemAttributeList(generics.ListAPIView):
     if item_id:
       queryset = queryset.filter(item__id=item_id)
     return queryset
+
+
+class ItemAttributeRetrieve(generics.RetrieveAPIView):
+  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeSerializer
+  
+
+
+class ItemAttributeValueList(generics.ListAPIView):
+  queryset = ItemAttributeValue.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeValueSerializer
+  pagination_class = CustomPageNumberPagination
+  
+  def get_queryset(self):
+    queryset     = super().get_queryset()
+    request      = self.request 
+    query_params = request.query_params
+    item_attribute_id      = query_params.get('item_attribute_id')
+    if item_attribute_id:
+      queryset = queryset.filter(item_attribute__id=item_attribute_id)
+    return queryset
+
+
+class ItemAttributeValueRetrieve(generics.RetrieveAPIView):
+  queryset = ItemAttributeValue.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeValueSerializer
+  
+
+
+
 
 
 @csrf_exempt

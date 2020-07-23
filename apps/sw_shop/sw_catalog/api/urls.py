@@ -7,6 +7,8 @@ urlpatterns = [
   path('items/<pk>/', ItemDetail.as_view()),
   path('item_attributes/', ItemAttributeList.as_view()),
   path('item_attributes/<pk>/', ItemAttributeRetrieve.as_view()),
+  path('item_attribute_values/', ItemAttributeValueList.as_view()),
+  path('item_attribute_values/<pk>/', ItemAttributeValueRetrieve.as_view()),
   
   path('create_review/', create_review),
   path('get_items/', get_items, name='get_items'),

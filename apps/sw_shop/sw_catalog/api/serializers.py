@@ -35,20 +35,22 @@ class AttributeValueSerializer(serializers.ModelSerializer):
     exclude = []
 
 
-class ItemAttributeValueSerializer(serializers.ModelSerializer):
-  value = AttributeValueSerializer(read_only=True)
-  class Meta:
-    model = ItemAttributeValue
-    exclude = []
-  
 class AttributeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Attribute
     exclude = []
 
 
+class ItemAttributeValueSerializer(serializers.ModelSerializer):
+  value = AttributeValueSerializer(read_only=True)
+  class Meta:
+    model = ItemAttributeValue
+    exclude = []
+
+
 class ItemAttributeSerializer(serializers.ModelSerializer):
-  item_attribute_values = ItemAttributeValueSerializer(read_only=True, many=True)
+  # item_attribute_values = ItemAttributeValueSerializer(read_only=True, many=True)
+  # item_attribute_values = serializers.ListSerializer()
   attribute = AttributeSerializer(read_only=True)
   class Meta:
     model = ItemAttribute
