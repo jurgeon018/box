@@ -133,6 +133,32 @@ class ReviewViewSet(ModelViewSet):
   serializer_class = ItemReviewSerializer
 
 
+class ItemAttributeRetrieve(generics.RetrieveAPIView):
+  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeSerializer
+  
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPageNumberPagination(PageNumberPagination):
+  page_size             = 2
+  page_size_query_param = 'page_size'
+  max_page_size         = 3
+  page_query_param      = 'page_number'
+
+class ItemAttributeList(generics.ListAPIView):
+  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeSerializer
+  pagination_class = CustomPageNumberPagination
+  
+  def get_queryset(self):
+    queryset     = super().get_queryset()
+    request      = self.request 
+    query_params = request.query_params
+    item_id      = query_params.get('item_id')
+    if item_id:
+      queryset = queryset.filter(item__id=item_id)
+    return queryset
+
 
 @csrf_exempt
 def create_review(request):

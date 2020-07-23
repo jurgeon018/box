@@ -29,6 +29,27 @@ class ItemImageSerializer(serializers.ModelSerializer):
     ]
 
 
+class AttributeValueSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = AttributeValue 
+    exclude = []
+
+
+class ItemAttributeValueSerializer(serializers.ModelSerializer):
+  value = AttributeValueSerializer(read_only=True)
+  class Meta:
+    model = ItemAttributeValue
+    exclude = []
+  
+
+class ItemAttributeSerializer(serializers.ModelSerializer):
+  item_attribute_values = ItemAttributeValueSerializer(read_only=True, many=True)
+  
+  class Meta:
+    model = ItemAttribute
+    exclude = []
+
+
 class ItemSubcategorySerializer(serializers.ModelSerializer):
   class Meta:
     model = ItemCategory

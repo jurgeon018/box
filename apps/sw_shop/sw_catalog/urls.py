@@ -7,3 +7,6 @@ urlpatterns = [
   path('google.xml/', GoogleMerchant()),
   path('prom.csv/', prom_export),
 ]
+
+
+
