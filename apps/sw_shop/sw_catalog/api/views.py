@@ -127,10 +127,81 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
   pagination_class = StandardPageNumberPagination
 
 
-
 class ReviewViewSet(ModelViewSet):
   queryset = ItemReview.objects.all().filter(is_active=True)
   serializer_class = ItemReviewSerializer
+
+
+from django.http import Http404
+from rest_framework.decorators import api_view
+from box.apps.sw_shop.sw_cart.models import CartItemAttribute
+
+
+@api_view(['GET','POST','DELETE'])
+def delete_option(request):
+  if request.method == 'GET':
+    data = request.query_params
+  else:
+    data = request.data
+  cart_item_attribute_id   = data.get('cart_item_attribute_id')
+  item_attribute_value_id  = data.get('item_attribute_value_id')
+  cart_item_attribute      = CartItemAttribute.objects.get(pk=cart_item_attribute_id)
+  item_attribute_value     = ItemAttributeValue.objects.get(pk=item_attribute_value_id)
+  cart_item_attribute.values.remove(item_attribute_value)
+  if cart_item_attribute.values.all().count == 0:
+    cart_item_attribute.delete()
+  response = {'status':'ok'}
+  return Response(response)
+
+
+from rest_framework.pagination import PageNumberPagination
+
+
+class CustomPageNumberPagination(PageNumberPagination):
+  page_size             = 2
+  page_size_query_param = 'page_size'
+  max_page_size         = 3
+  page_query_param      = 'page_number'
+
+class ItemAttributeList(generics.ListAPIView):
+  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeSerializer
+  pagination_class = CustomPageNumberPagination
+  
+  def get_queryset(self):
+    queryset     = super().get_queryset()
+    request      = self.request 
+    query_params = request.query_params
+    item_id      = query_params.get('item_id')
+    if item_id:
+      queryset = queryset.filter(item__id=item_id)
+    return queryset
+
+class ItemAttributeRetrieve(generics.RetrieveAPIView):
+  queryset = ItemAttribute.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeSerializer
+
+class ItemAttributeValueList(generics.ListAPIView):
+  queryset = ItemAttributeValue.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeValueSerializer
+  pagination_class = CustomPageNumberPagination
+  
+  def get_queryset(self):
+    queryset     = super().get_queryset()
+    request      = self.request 
+    query_params = request.query_params
+    item_attribute_id      = query_params.get('item_attribute_id')
+    if item_attribute_id:
+      queryset = queryset.filter(item_attribute__id=item_attribute_id)
+    return queryset
+
+
+class ItemAttributeValueRetrieve(generics.RetrieveAPIView):
+  queryset = ItemAttributeValue.objects.all()#.filter(is_active=True)
+  serializer_class = ItemAttributeValueSerializer
+  
+
+
 
 
 

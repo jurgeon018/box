@@ -105,12 +105,13 @@ class AttributeValue(models.Model):
 class ItemAttributeValue(models.Model):
     item_attribute = models.ForeignKey(
         to="sw_catalog.ItemAttribute", verbose_name=_("Атрибут товару"), on_delete=models.CASCADE,
-        related_name='variants',
+        related_name='item_attribute_values',
     )
     value = models.ForeignKey(
         verbose_name=_("Значення"), 
         to='sw_catalog.AttributeValue', 
         on_delete=models.CASCADE,
+
     )
     price = models.DecimalField(
         verbose_name=_("Ціна"), max_digits=9, decimal_places=2, default=0,

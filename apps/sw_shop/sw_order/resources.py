@@ -20,3 +20,9 @@ class OrderRecipientEmailResource(ModelResource):
         exclude =  []
 
 
+class OrderAdditionalPriceResource(ModelResource):
+    class Meta:
+        model = OrderAdditionalPrice
+        exclude =  []
+
+

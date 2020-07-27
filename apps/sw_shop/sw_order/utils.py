@@ -3,7 +3,8 @@ from box.apps.sw_shop.sw_cart.utils import get_cart
 from box.apps.sw_shop.sw_cart.models import CartItem
 from box.apps.sw_payment.liqpay.utils import get_liqpay_context
 from box.apps.sw_payment.liqpay.models import LiqpayConfig
-
+from django.utils import timezone 
+from datetime import datetime 
 
 def get_order_liqpay_context(request, params={}):
   cart  = get_cart(request)
@@ -14,10 +15,13 @@ def get_order_liqpay_context(request, params={}):
   amount = 0 
   for cart_item in CartItem.objects.filter(cart=cart):
     amount += cart_item.total_price
+  order_id = str(order.id)
+  order_id += datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  print(order_id)
   def_params = {
     'amount': amount,
     'description': str(order.comments),
-    'order_id': str(order.id),
+    'order_id': order_id,
     'action': 'pay',
     'currency': 'UAH',
     'version': '3',

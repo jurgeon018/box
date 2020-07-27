@@ -30,14 +30,15 @@ from django.utils.translation import gettext_lazy as _
 
 @csrf_exempt
 def order_items(request):
+  print("query!!!")
   query        = request.POST or request.GET
+  print(query)
   # import pdb; pdb.set_trace()
   name         = query.get('name', "---")
   email        = query.get('email', "---")
   phone        = query.get('phone', "---")
   address      = query.get('address', "---")
   comments     = query.get('comments', "---")
-
   payment_opt  = query.get('payment_opt', "---")
   delivery_opt = query.get('delivery_opt', "---")
 
@@ -63,6 +64,7 @@ def order_items(request):
     order.make_order(request)
     url = reverse('thank_you')
     return JsonResponse({"url":url})
+  
 
 from rest_framework.decorators import api_view
 

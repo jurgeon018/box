@@ -8,10 +8,11 @@ from box.apps.sw_shop.sw_catalog.models import (
   Item, Currency, Attribute, AttributeValue, ItemAttribute, ItemAttributeValue
 )
 
-
+import json 
 import re
 from django.db.models import Q
 
+from box.apps.sw_shop.sw_order.models import OrderAdditionalPrice
 
 
 class Cart(models.Model):
@@ -48,84 +49,94 @@ class Cart(models.Model):
     CartItemAttribute.objects.filter(cart_item=cart_item).delete()
     for attribute in attributes:
       attribute_name  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
-      attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
-      CartItemAttribute.objects.create(
-        cart_item=cart_item,
-        attribute_name=attribute_name,
-        value=attribute_value,
-        price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
-      )
-
-  # def handle_attributes(self, attributes, item, quantity):
-  #   attributes_is_broken = False 
-  #   for attribute in attributes:
-  #     cart_item_attributes = CartItemAttribute.objects.filter( 
-  #       cart_item__item=item,
-  #       cart_item__cart=self,
-  #       attribute_name=ItemAttribute.objects.get(id=attribute['item_attribute_id']),
-  #       value=ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id']),
-  #     )
-  #     if not cart_item_attributes:
-  #       self.create_cart_items_with_attributes(item, quantity, attributes)
-  #       attributes_is_broken = True 
-  #       break
-  #   if not attributes_is_broken:
-  #     cart_item = self.get_cart_item_with_attributes(item, attributes)
-  #     cart_item.quantity += quantity
-  #     cart_item.save()
+      if attribute_name.is_option:
+        attribute_values = ItemAttributeValue.objects.filter(id__in=attribute['item_attribute_value_ids'])
+        price = 0
+        for attribute_value in attribute_values:
+          price += attribute_value.price 
+        cart_item_attribute = CartItemAttribute.objects.create(
+          cart_item      = cart_item,
+          attribute_name = attribute_name,
+          price          = price, # TODO: забрати price, бо вона і так є у ItemAttributeValue
+          # values         = attribute_values,
+        )
+        cart_item_attribute.values.add(*attribute_values)
+        # cart_item_attribute.values.set(attribute_values)
+      else:
+        attribute_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+        CartItemAttribute.objects.create(
+          cart_item=cart_item,
+          attribute_name=attribute_name,
+          value=attribute_value,
+          price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
+        )
 
   def get_cart_item(self, item, attributes):
+    print(attributes)
     cart_items = CartItem.objects.filter(cart=self, item=item)
     sdf = []
     # Проходиться по всіх товарах в корзині
     for cart_item in cart_items:
       cart_item_attributes = CartItemAttribute.objects.filter(cart_item=cart_item)
+      # print("cart_item_attributes:", cart_item_attributes)
+      # print("cart_item:", cart_item)
       # Проходиться по всіх атрибутах присланих з фронту
+      # print(attributes)
       for attribute in attributes:
         item_attr  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
-        item_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
+        if item_attr.is_option:
+          item_value = ItemAttributeValue.objects.filter(id__in=attribute['item_attribute_value_ids'])
+          item_value = set(list(item_value))
+        else:
+          item_value = ItemAttributeValue.objects.get(id=attribute['item_attribute_value_id'])
         # Проходиться по всіх атрибутах поточного товара в корзині
         for cart_item_attribute in cart_item_attributes:
           cart_attr  = cart_item_attribute.attribute_name
-          cart_value = cart_item_attribute.value
+          if item_attr.is_option:
+            cart_value = cart_item_attribute.values.all()
+            cart_value = set(list(cart_value))
+          else:
+            cart_value = cart_item_attribute.value
           # Якшо атрибут з фронта і атрибут товара в корзині співпадають ... 
+          # print()
+          # print("item_value:",item_value)
+          # print("cart_value:",cart_value)
+          # print()
+          # https://stackoverflow.com/questions/45217691/django-check-if-querysets-are-equals
+
           if item_attr == cart_attr:
             # ... а значення атрибута з фронта і атрибута товара в корзині не співпадають ... 
             if item_value != cart_value:
               # ... то такого товара немає в корзині 
-              sdf.append({
-                "cart_item":cart_item,
-                "status":False
-                })
+              # sdf.append({
+              #   "cart_item":cart_item,
+              #   "status":False
+              #   })
               # Виходить з циклу 
               break
         # якшо всі товари в корзині співпадають то продовж...........
         else:
           continue
         break
+      # Якщо цикли for attribute in attributes: 
+      # і for cart_item_attribute in cart_item_attributes:
+      # виконались без брейків, тобто 
+      # всі значення атрибутів товарів в корзині 
+      # і всі значення атрибутів присланних з фронту співпали,
+      # то товар в корзині і існує і його треба вернути
       else:
-        sdf.append({
-          'cart_item':cart_item,
-          "status":True,
-        })
-        pass 
+        if cart_item_attributes:
+          sdf.append({
+            'cart_item':cart_item,
+            "status":True,
+          })
+          # TODO: вияснити чого не працює return cart_item 
+          # return cart_item 
     for i in sdf:
       if i['status'] == True:
         return i['cart_item']
 
-  def handle_attributes1(self, attributes, item, quantity):
-    cart_items = CartItem.objects.filter(cart=self, item=item)
-    if not cart_items:
-      self.create_cart_items_with_attributes(item, quantity, attributes)
-    else:
-      cart_item = self.get_cart_item(item, attributes)
-      if cart_item:
-        cart_item.quantity += quantity
-        cart_item.save()
-      else:
-        self.create_cart_items_with_attributes(item, quantity, attributes)
-
-  def add_item(self, item_id, quantity, attributes=None):
+  def add_item(self, item_id, quantity, attributes=[]):
     try: quantity = int(quantity)
     except: quantity = 1
     item = Item.objects.get(pk=int(item_id))
@@ -138,32 +149,17 @@ class Cart(models.Model):
       elif not created: cart_item.quantity += quantity
       cart_item.save()
     elif attributes:
-      self.handle_attributes1(attributes, item, quantity)
-      # Робочий кривий варіант
-      # self.handle_attributes(attributes, item, quantity)
-
-  # def get_cart_item_with_attributes(self, item, attributes):
-  #   # Проходиться по всіх товарах в корзині, 
-  #   # і для кожного атрибута пробує знайти товар з таким атрибутом.
-  #   # Якшо такого товара немає - значить шось пішло не так.
-  #   result = None 
-  #   attributes_is_broken = False 
-  #   for attribute in attributes:
-  #     for cart_item in CartItem.objects.filter(item=item, cart=self):
-  #       # print()
-  #       # print("attribute:\n", attribute)
-  #       try:
-  #         attr = CartItemAttribute.objects.get(
-  #           cart_item=cart_item,
-  #           attribute_name__id=attribute['item_attribute_id'],
-  #           value__id=attribute['item_attribute_value_id'],
-  #         )
-  #       except CartItemAttribute.DoesNotExist as e:
-  #         # print(e)
-  #         break
-  #     else:
-  #       break
-  #   return cart_item  
+      cart_items = CartItem.objects.filter(cart=self, item=item)
+      if not cart_items:
+        self.create_cart_items_with_attributes(item, quantity, attributes)
+      else:
+        cart_item = self.get_cart_item(item, attributes)
+        print(cart_item)
+        if cart_item:
+          cart_item.quantity += quantity
+          cart_item.save()
+        else:
+          self.create_cart_items_with_attributes(item, quantity, attributes)
 
   def change_cart_item_amount(self, cart_item_id, quantity):
     try: quantity = int(quantity)
@@ -200,7 +196,6 @@ class Cart(models.Model):
   @property
   def items_quantity(self):
     items_quantity = 0
-    # for cart_item in self.items.all():
     for cart_item in CartItem.objects.filter(cart=self):
       items_quantity += cart_item.quantity
     return items_quantity
@@ -212,10 +207,18 @@ class Cart(models.Model):
   @property
   def total_price(self):
     total_price = 0
-    for cart_item in self.items.all():
-    # for cart_item in CartItem.objects.filter(cart=self):
+    # for cart_item in self.items.all():
+    for cart_item in CartItem.objects.filter(cart=self):
       if cart_item.total_price:
         total_price += cart_item.total_price
+    for additional_price in OrderAdditionalPrice.objects.all(): 
+      price = additional_price.price 
+      if additional_price.currency == self.currency:
+        price = price
+      else:
+        # todo: КОНВЕРТУВАТИ ЦІНУ ДО ВАЛЮТИ
+        price = price 
+      total_price += price 
     return float(total_price)
 
   @property
@@ -233,16 +236,18 @@ class CartItemAttribute(models.Model):
     verbose_name=_("Атрибут"), unique=False,
   )
   value = models.ForeignKey(
-    to="sw_catalog.ItemAttributeValue", on_delete=models.CASCADE,
+    to="sw_catalog.ItemAttributeValue", 
+    # on_delete=models.CASCADE,
+    on_delete=models.SET_NULL, blank=True, null=True,
     verbose_name=_("Значення"), unique=False, related_name="cart_item_attributes",
   )
   values = models.ManyToManyField(
-    to="sw_catalog.ItemAttributeValue", verbose_name=_("Значення"), 
+    to="sw_catalog.ItemAttributeValue", verbose_name=_("Значення"), blank=True
   )
   price = models.FloatField(
-    # verbose_name=_("Ціна"), default=0,
+    verbose_name=_("Ціна"), default=0,
     # verbose_name=_("Ціна"), null=False, blank=False, default=0,
-    verbose_name=_("Ціна"), null=True, blank=True, default=0,
+    # verbose_name=_("Ціна"), null=True, blank=True, default=0,
   )
 
   class Meta: 
@@ -251,7 +256,10 @@ class CartItemAttribute(models.Model):
   
   def __str__(self):
     # return f'{self.cart_item.item.title}, {self.attribute_name.name}:{self.value.value}'
-    return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.value.value.value}'
+    if self.attribute_name.is_option:
+      return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.values.all()}'
+    else:
+      return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.value.value.value}'
 
 
 class CartItem(models.Model):
@@ -296,8 +304,23 @@ class CartItem(models.Model):
 
   @property
   def total_price(self):
-    total_price = self.price_per_item * self.quantity
+    total_price = float(self.price_of_quantity) + float(self.price_of_attributes)
     return total_price 
+
+  @property
+  def price_of_quantity(self):
+    total_price = self.price_per_item * self.quantity
+    return total_price
+  
+  @property
+  def price_of_attributes(self):
+    price = 0
+    for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
+      for value in cart_item_attribute.values.all():
+        price += float(value.price)
+      if cart_item_attribute.value:
+        price += float(cart_item_attribute.value.price)
+    return price 
 
   @property
   def price_per_item(self):
@@ -334,5 +357,35 @@ class FavourItem(models.Model):
     verbose_name_plural=_("Улюблені товари")
 
 
+'''
 
+
+attributes: [
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_id":int, 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_id":int, 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+    {
+        "item_attribute_id":int,
+        "item_attribute_value_ids":[int,int,int,...,int], 
+    },
+]
+
+'''
 

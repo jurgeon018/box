@@ -292,10 +292,16 @@ class OrderRecipientEmailInline(admin.TabularInline):
   exclude = []
   extra = 0
 
+class OrderAdditionalPriceInline(admin.TabularInline):
+  model = OrderAdditionalPrice
+  exclude = []
+  extra = 0
+
 
 @admin.register(OrderConfig)
 class OrderConfigAdmin(SingletonModelAdmin):
   inlines = [
     OrderStatusInline,
-    OrderRecipientEmailInline
+    OrderRecipientEmailInline,
+    OrderAdditionalPriceInline,
   ]

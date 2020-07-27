@@ -17,8 +17,11 @@ def get_liqpay_context(params):
   liqpay    = LiqPay(public, private)
   return liqpay.cnb_signature(params), liqpay.cnb_data(params)  
 
+# from django.http import JsonResponse 
 
 def get_response(request):
+  # if request.method == 'GET':
+  #   return JsonResponse({'Hello':'Hello'})
   data      = request.POST.get('data')
   signature = request.POST.get('signature')
   config    = LiqpayConfig.get_solo()

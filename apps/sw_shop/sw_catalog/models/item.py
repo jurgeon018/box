@@ -232,11 +232,14 @@ class Item(AbstractPage, GoogleFieldsMixin):
             image  = self.image 
             width  = 400
             # height = 400
-            img    = Image.open(image.path)
-            height = int((float(img.size[1])*float((width/float(img.size[0])))))
-            img    = img.resize((width,height), Image.ANTIALIAS)
-            img.save(image.path) 
-        
+            try:
+                img    = Image.open(image.path)
+                height = int((float(img.size[1])*float((width/float(img.size[0])))))
+                img    = img.resize((width,height), Image.ANTIALIAS)
+                img.save(image.path) 
+            except Exception as e:
+                print(e)
+            
     def get_feature_categories(self):
         feature_categories = self.get_item_features().values_list('category__id', flat=True).distinct()
         feature_categories = FeatureCategory.objects.filter(id__in=feature_categories)
@@ -247,7 +250,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
         ids = self.get_item_attributes().values_list('attribute__category__id', flat=True).distinct()
         attribute_categories = AttributeCategory.objects.filter(id__in=ids)
         return attribute_categories
-
+    
     def get_item_features(self):
         return ItemFeature.objects.filter(item=self, is_active=True)
 

@@ -15,9 +15,9 @@ class Command(BaseCommand):
       parser.add_argument(
           'email',
       )
-      parser.add_argument(
-          'phone_number',
-      )
+    #   parser.add_argument(
+    #       'phone_number',
+    #   )
       parser.add_argument(
           'first_name',
       )
@@ -30,16 +30,15 @@ class Command(BaseCommand):
     username      = kwargs['username']
     password      = kwargs['password']
     email         = kwargs['email']
-    phone_number  = kwargs['phone_number']
+    # phone_number  = kwargs['phone_number']
     first_name    = kwargs['first_name']
     last_name     = kwargs['last_name']
     try:
-        User.objects.filter(username=username)
         User.objects.create_superuser(
             username     = username, 
             email        = email, 
             password     = password,
-            phone_number = phone_number,
+            # phone_number = phone_number,
             first_name   = first_name,
             last_name    = last_name,
         )

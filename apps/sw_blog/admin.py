@@ -108,6 +108,7 @@ class PostAdmin(
     autocomplete_fields = [
         'author',
         'category',
+        'similars',
         'markers',
     ]
     inlines = [
@@ -120,6 +121,7 @@ class PostAdmin(
                 'title',
                 'category',
                 'author',
+                'similars',
                 'markers',
                 'image',
                 'content',
