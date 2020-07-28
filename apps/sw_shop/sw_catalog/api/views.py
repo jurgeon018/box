@@ -131,9 +131,11 @@ class ReviewViewSet(ModelViewSet):
   queryset = ItemReview.objects.all().filter(is_active=True)
   serializer_class = ItemReviewSerializer
 
+
 from django.http import Http404
 from rest_framework.decorators import api_view
 from box.apps.sw_shop.sw_cart.models import CartItemAttribute
+
 
 @api_view(['GET','POST','DELETE'])
 def delete_option(request):
@@ -152,11 +154,8 @@ def delete_option(request):
   return Response(response)
 
 
-    
-
-
-
 from rest_framework.pagination import PageNumberPagination
+
 
 class CustomPageNumberPagination(PageNumberPagination):
   page_size             = 100

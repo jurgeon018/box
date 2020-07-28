@@ -226,25 +226,6 @@ class Cart(models.Model):
     return Currency.objects.get(is_main=True).code
 
 
-# class CartItemOption(models.Model):
-#   cart_item = models.ForeignKey(
-#     verbose_name=_("Товар в корзині"), on_delete=models.CASCADE,
-#     to="sw_cart.CartItem", related_name='attributes',
-#   )
-#   attribute_name = models.ForeignKey(
-#     to="sw_catalog.ItemAttribute", on_delete=models.CASCADE,
-#     verbose_name=_("Атрибут"), unique=False,
-#   )
-
-#   class Meta: 
-#     verbose_name = _('вибраний атрибут у товара в корзині')
-#     verbose_name_plural = _('вибрані атрибути у товарів в корзині')
-  
-#   def __str__(self):
-#     # return f'{self.cart_item.item.title}, {self.attribute_name.name}:{self.value.value}'
-#     return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.value.value.value}'
-
-
 class CartItemAttribute(models.Model):
   cart_item = models.ForeignKey(
     verbose_name=_("Товар в корзині"), on_delete=models.CASCADE,

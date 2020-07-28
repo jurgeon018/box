@@ -1,5 +1,4 @@
-
-
+{{order_admin_url}}
 
 Імя: {{model.name}}
 Емейл: {{model.email}}
@@ -11,13 +10,18 @@
 
 Товари:
 {% for cart_item in cart_items %}
-{{cart_item.item.title}}  {{cart_item.quantity}} {{cart_item.item.units}}
+{{forloop.counter}}) {{cart_item.item.title}}  {{cart_item.quantity}} шт 
 {% if cart_item.get_attributes.exists %}
 Атрибути:
     {% for attribute in cart_item.get_attributes %}
-        {{attribute.attribute_name.attribute.name}}: {{attribute.value.value}}
+    {% if attribute.attribute_name.is_option %}
+    {{attribute.attribute_name.attribute.name}}: 
+    {% for attribute_value in attribute.values.all %} 
+        + {{attribute_value.value}};
+    {% endfor %}
+    {% else%}
+    {{attribute.attribute_name.attribute.name}}: {{attribute.value.value}}
+    {% endif %}
     {% endfor %}
 {% endif %}
 {% endfor %}
-
-
