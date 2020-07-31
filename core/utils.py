@@ -42,7 +42,12 @@ def paginate(request, klass):
     query        = request.GET
     page_number  = query.get('page_number', 1)
     per_page     = query.get('per_page', 4)
-    page         = Paginator(klass.objects.all(), per_page=per_page).get_page(page_number)
+    try:
+      objects      = klass.objects.all()
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
+    except:
+      objects      = klass
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
     is_paginated = page.has_other_pages()
     current_page = page.number
     last_page    = page.paginator.num_pages
