@@ -51,10 +51,14 @@ class PostCategoryAdmin(
         }),
         seo,
     )
-    readonly_fields = ['code',]
     prepopulated_fields = {
         "slug": ("title",),
     }
+    readonly_fields = [
+        # 'code',
+        'updated',
+        'created',
+    ]
     save_on_top = True 
     # changelist
     search_fields = [
