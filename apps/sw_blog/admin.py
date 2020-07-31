@@ -55,7 +55,7 @@ class PostCategoryAdmin(
         "slug": ("title",),
     }
     readonly_fields = [
-        # 'code',
+        'code',
         'updated',
         'created',
     ]
