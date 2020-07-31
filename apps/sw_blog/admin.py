@@ -45,11 +45,13 @@ class PostCategoryAdmin(
                 'image',
                 'created',
                 'updated',
+                'code',
             ),
             'classes':('collapse'),
         }),
         seo,
     )
+    readonly_fields = ['code',]
     prepopulated_fields = {
         "slug": ("title",),
     }
