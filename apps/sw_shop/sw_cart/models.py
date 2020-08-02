@@ -225,6 +225,10 @@ class Cart(models.Model):
     return Currency.objects.get(is_main=True).code
 
 
+  def get_currency(self):
+    return Currency.objects.get(is_main=True)
+
+
 class CartItemAttribute(models.Model):
   cart_item = models.ForeignKey(
     verbose_name=_("Товар в корзині"), on_delete=models.CASCADE,
@@ -332,6 +336,9 @@ class CartItem(models.Model):
   @property
   def currency(self):
     return self.cart.currency
+
+  def get_currency(self):
+    return self.cart.get_currency()
 
   def __str__(self):
     return f'''
