@@ -3,15 +3,9 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from box.core.sw_solo.models import SingletonModel
-
-from box.apps.sw_shop.sw_cart.models import CartItem
-from box.apps.sw_shop.sw_cart.utils import get_cart
-from box.apps.sw_shop.sw_catalog.models import ItemStock 
-from box.core.sw_global_config.models import GlobalConfig
 from box.core.mail import box_send_mail
 from box.core.models import AbstractRecipientEmail
 from colorfield.fields import ColorField
-
 
 User = get_user_model()
 
@@ -24,7 +18,28 @@ class OrderConfig(SingletonModel):
   class Meta:
     verbose_name = _("Налаштування замовленя")
     verbose_name_plural = verbose_name
-    
+
+
+class OrderAdditionalPrice(models.Model):
+  price    = models.FloatField(verbose_name="Ціна")
+  name     = models.CharField(verbose_name="Назва", max_length=255)
+  currency = models.ForeignKey(
+    verbose_name="Валюта", to="sw_currency.Currency", 
+    on_delete=models.CASCADE,
+  )
+  config   = models.ForeignKey(
+    verbose_name=_("Налаштування"),to="sw_order.OrderConfig", 
+    on_delete=models.CASCADE, related_name='prices',
+  )
+
+  def __str__(self):
+    return f'{self.price} {self.currency.code}'
+
+  class Meta:
+      verbose_name = _('емейл для сповіщень про замовлення')
+      verbose_name_plural = _("емейли для сповіщень про замовлення")
+
+
 
 class OrderRecipientEmail(AbstractRecipientEmail):
   config = models.ForeignKey(
@@ -34,6 +49,11 @@ class OrderRecipientEmail(AbstractRecipientEmail):
   class Meta:
       verbose_name = _('емейл для сповіщень про замовлення')
       verbose_name_plural = _("емейли для сповіщень про замовлення")
+
+from box.apps.sw_shop.sw_cart.models import CartItem
+from box.apps.sw_shop.sw_cart.utils import get_cart
+from box.apps.sw_shop.sw_catalog.models import ItemStock 
+from box.core.sw_global_config.models import GlobalConfig
 
 
 class OrderStatus(models.Model):
@@ -130,14 +150,21 @@ class Order(models.Model):
     cart.order = self 
     cart.ordered = True
     cart.save()
+    from box.core.helpers import get_admin_url
+    from django.contrib.sites.models import Site 
+    site = Site.objects.get_current().domain
+    order_admin_url = site + get_admin_url(self)
     cart_items = CartItem.objects.filter(cart=cart)
-    context = {'cart_items':cart_items}
+    context = {
+      'cart_items':cart_items,
+      'order_admin_url':order_admin_url,
+    }
     box_send_mail(
       subject      = _(f'Отримано замовлення товарів # {self.id}'),
       template     = 'sw_order/mail.html', 
       email_config = OrderRecipientEmail, 
       model        = self, 
-      fail_silently= False,
+      fail_silently= True,
       context      = context,
     )
 
@@ -149,7 +176,7 @@ class Order(models.Model):
 
   def __str__(self):
     return f'{self.phone}|{self.name}|{self.email}|{self.address}' 
-
+  
   @property
   def currency(self):
     return self.cart.currency

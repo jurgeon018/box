@@ -147,7 +147,7 @@ class SlideResource(ModelResource):
     def before_import_row(self, row, **kwargs):
         # if row['page']:
         #     row['page'] = Page.objects.get_or_create(code=row['page'])[0].id
-        if row['slider']:
+        if row.get('slider'):
             row['slider'] = Slider.objects.get_or_create(code=row['slider'])[0].id
 
 

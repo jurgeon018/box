@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-14 15:41+0000\n"
+"POT-Creation-Date: 2020-06-23 12:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,85 +37,85 @@ msgstr ""
 msgid "Російська"
 msgstr ""
 
-#: box/core/models.py:22 box/core/sw_content/models.py:20
+#: box/core/models.py:25 box/core/sw_content/models.py:20
 #: box/core/sw_content/models.py:129 box/core/sw_content/models.py:198
-#: box/core/sw_global_config/models.py:197
-#: box/core/sw_global_config/models.py:221
+#: box/core/sw_global_config/models.py:79
+#: box/core/sw_global_config/models.py:103
 msgid "Код"
 msgstr ""
 
-#: box/core/models.py:39
+#: box/core/models.py:42
 msgid "Порядок"
 msgstr ""
 
-#: box/core/models.py:42 box/core/models.py:158
+#: box/core/models.py:45 box/core/models.py:154
 msgid "Активність"
 msgstr ""
 
-#: box/core/models.py:42
+#: box/core/models.py:45
 msgid "Відображення на сайті"
 msgstr ""
 
-#: box/core/models.py:45
+#: box/core/models.py:48
 msgid "Створено"
 msgstr ""
 
-#: box/core/models.py:48
+#: box/core/models.py:51
 msgid "Оновлено"
 msgstr ""
 
-#: box/core/models.py:83
+#: box/core/models.py:80
 msgid "Мета-заголовок"
 msgstr ""
 
-#: box/core/models.py:83
+#: box/core/models.py:80
 msgid ""
 "Заголовок сторінки в браузері, який відображається у видачі пошукових систем"
 msgstr ""
 
-#: box/core/models.py:86
+#: box/core/models.py:83
 msgid "Мета-опис"
 msgstr ""
 
-#: box/core/models.py:86
+#: box/core/models.py:83
 msgid "__"
 msgstr ""
 
-#: box/core/models.py:89
+#: box/core/models.py:86
 msgid "Ключові слова"
 msgstr ""
 
-#: box/core/models.py:89
+#: box/core/models.py:86
 msgid "Список ключових слів"
 msgstr ""
 
-#: box/core/models.py:92 box/core/sw_content/abstract_models.py:75
+#: box/core/models.py:89 box/core/sw_content/abstract_models.py:75
 #: box/core/sw_content/abstract_models.py:111
 msgid "Посилання"
 msgstr ""
 
-#: box/core/models.py:96
+#: box/core/models.py:93
 msgid "Альт до картинки"
 msgstr ""
 
-#: box/core/models.py:98 box/core/sw_content/abstract_models.py:119
+#: box/core/models.py:95 box/core/sw_content/abstract_models.py:119
 #: box/core/sw_content/admin/admin.py:207 box/core/sw_content/models.py:52
 msgid "Картинка"
 msgstr ""
 
-#: box/core/models.py:101 box/core/sw_auth/admin/admin.py:57
+#: box/core/models.py:98 box/core/sw_auth/admin/admin.py:57
 #: box/core/sw_content/models.py:133 box/core/sw_content/models.py:199
 #: box/core/sw_content/models.py:245 box/core/sw_currency/models.py:23
-#: box/core/sw_global_config/models.py:174
-#: box/core/sw_global_config/models.py:218
+#: box/core/sw_global_config/models.py:56
+#: box/core/sw_global_config/models.py:100
 msgid "Назва"
 msgstr ""
 
-#: box/core/models.py:103
+#: box/core/models.py:100
 msgid "Опис"
 msgstr ""
 
-#: box/core/models.py:157
+#: box/core/models.py:153
 msgid "Емайл"
 msgstr ""
 
@@ -177,15 +177,15 @@ msgstr ""
 msgid "'Такого користувача не існує'"
 msgstr ""
 
-#: box/core/sw_auth/api/views.py:189
+#: box/core/sw_auth/api/views.py:185
 msgid "Неправильний пароль"
 msgstr ""
 
-#: box/core/sw_auth/api/views.py:196
+#: box/core/sw_auth/api/views.py:191
 msgid "Цей користувач неактивний"
 msgstr ""
 
-#: box/core/sw_auth/api/views.py:214
+#: box/core/sw_auth/api/views.py:206
 msgid "Ви увійшли"
 msgstr ""
 
@@ -315,6 +315,10 @@ msgstr ""
 msgid "Зворотній звязок"
 msgstr ""
 
+#: box/core/sw_contact_form/api/views.py:36
+msgid "Отримано контактну форму"
+msgstr ""
+
 #: box/core/sw_contact_form/models.py:11
 msgid "Налаштування зворотнього звязку"
 msgstr ""
@@ -346,7 +350,7 @@ msgstr ""
 #: box/core/sw_contact_form/models.py:37
 #: box/core/sw_content/abstract_models.py:51
 #: box/core/sw_content/abstract_models.py:107 box/core/sw_content/models.py:136
-#: box/core/sw_global_config/models.py:194
+#: box/core/sw_global_config/models.py:76
 msgid "Текст"
 msgstr ""
 
@@ -568,145 +572,149 @@ msgstr ""
 msgid "Налаштування сайту"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:19
-msgid "EMAIL_HOST"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:20
-msgid "Сервер"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:26
-msgid "EMAIL_PORT"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:27
-msgid "Порт"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:33
-msgid "DEFAULT_FROM_EMAIL"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:34
-msgid "Почта відправки листів"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:40
-msgid "EMAIL_HOST_USER"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:41
-msgid "Логін"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:47
-msgid "EMAIL_HOST_PASSWORD"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:48
-msgid "Пароль"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:53
-msgid "EMAIL_USE_TLS"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:54
-#: box/core/sw_global_config/models.py:60
-msgid " "
-msgstr ""
-
+#: box/core/sw_global_config/models.py:17
 #: box/core/sw_global_config/models.py:59
-msgid "EMAIL_USE_SSL"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:65
-msgid "fail_silently"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:66
-msgid "Помилка при невдалій відправці"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:71
-msgid "timeout"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:72
-msgid "Таймаут в секундах"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:78
-msgid ""
-"\"Use TLS\" and \"Use SSL\" are mutually exclusive, so only set one of those "
-"settings to True."
-msgstr ""
-
-#: box/core/sw_global_config/models.py:87
-msgid "Meta Robots"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:90
-msgid "robots.txt"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:92
-msgid "Фавікон сайту"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:97
-msgid "og:image квадрат"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:102
-msgid "og:image прямокутник"
-msgstr ""
-
-#: box/core/sw_global_config/models.py:129
-#: box/core/sw_global_config/models.py:135
-#: box/core/sw_global_config/models.py:177
+#: box/core/sw_global_config/models.py:231
 msgid "Глобальні налаштування"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:139
+#: box/core/sw_global_config/models.py:21
 msgid "емейл для всіх сповіщень"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:140
+#: box/core/sw_global_config/models.py:22
 msgid "емейли для всіх сповіщень"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:154
+#: box/core/sw_global_config/models.py:36
 msgid "Код для вставлення"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:155
+#: box/core/sw_global_config/models.py:37
 msgid "Назва коду"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:157
+#: box/core/sw_global_config/models.py:39
 msgid "Положення коду на сторінці"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:171
+#: box/core/sw_global_config/models.py:53
 msgid "Колір"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:212
+#: box/core/sw_global_config/models.py:94
 msgid "мітка"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:213
+#: box/core/sw_global_config/models.py:95
 msgid "мітки"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:235
+#: box/core/sw_global_config/models.py:117
 msgid "маркер"
 msgstr ""
 
-#: box/core/sw_global_config/models.py:236
+#: box/core/sw_global_config/models.py:118
 msgid "маркери"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:135
+msgid "Meta Robots"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:138
+msgid "robots.txt"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:140
+msgid "Фавікон сайту"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:141
+msgid "Допустимі розширення зображень png, gif, jpg, jpeg, ico"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:145
+msgid "og:image квадрат"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:150
+msgid "og:image прямокутник"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:167
+msgid "EMAIL_HOST"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:168
+msgid "Сервер"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:173
+msgid "EMAIL_PORT"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:174
+msgid "Порт"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:179
+msgid "DEFAULT_FROM_EMAIL"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:180
+msgid "Почта відправки листів"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:185
+msgid "EMAIL_HOST_USER"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:186
+msgid "Логін"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:191
+msgid "EMAIL_HOST_PASSWORD"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:192
+msgid "Пароль"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:196
+msgid "EMAIL_USE_TLS"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:197
+#: box/core/sw_global_config/models.py:202
+msgid " "
+msgstr ""
+
+#: box/core/sw_global_config/models.py:201
+msgid "EMAIL_USE_SSL"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:206
+msgid "fail_silently"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:207
+msgid "Помилка при невдалій відправці"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:211
+msgid "timeout"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:212
+msgid "Таймаут в секундах"
+msgstr ""
+
+#: box/core/sw_global_config/models.py:217
+msgid ""
+"\"Use TLS\" and \"Use SSL\" are mutually exclusive, so only set one of those "
+"settings to True."
 msgstr ""
 
 #: box/core/sw_global_config/templates/sw_global_config/des/change_form.html:11
@@ -1759,19 +1767,19 @@ msgstr ""
 msgid "доступні мови"
 msgstr ""
 
-#: box/core/utils.py:90
+#: box/core/utils.py:95
 msgid "SEO"
 msgstr ""
 
-#: box/core/utils.py:106
+#: box/core/utils.py:113
 msgid "ОСНОВНА ІНФОРМАЦІЯ"
 msgstr ""
 
-#: box/core/utils.py:146
+#: box/core/utils.py:153
 msgid "Показати на сайті"
 msgstr ""
 
-#: box/core/utils.py:149
+#: box/core/utils.py:156
 #, python-brace-format
 msgid "{obj._meta.verbose_name} не активний"
 msgstr ""

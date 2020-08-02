@@ -26,9 +26,6 @@ import pandas as pd
 import sys 
 
 
-
-
-
 def load_xlsx(filename, sheet_name):
   data = pd.read_excel(filename, sheet_name=sheet_name)
   data = data.to_csv()
@@ -41,11 +38,16 @@ def load_csv(filename):
   return data
 
 
-def paginate(request, klass):
+def paginate(request, klass, per_page=4, page_number=1):
     query        = request.GET
-    page_number  = query.get('page_number', 1)
-    per_page     = query.get('per_page', 4)
-    page         = Paginator(klass.objects.all(), per_page=per_page).get_page(page_number)
+    page_number  = query.get('page_number', page_number)
+    per_page     = query.get('per_page', per_page)
+    try:
+      objects      = klass.objects.all()
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
+    except:
+      objects      = klass
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
     is_paginated = page.has_other_pages()
     current_page = page.number
     last_page    = page.paginator.num_pages

@@ -45,6 +45,7 @@ class PostCategoryAdmin(
                 'image',
                 'created',
                 'updated',
+                'code',
             ),
             'classes':('collapse'),
         }),
@@ -53,6 +54,11 @@ class PostCategoryAdmin(
     prepopulated_fields = {
         "slug": ("title",),
     }
+    readonly_fields = [
+        'code',
+        'updated',
+        'created',
+    ]
     save_on_top = True 
     # changelist
     search_fields = [
@@ -108,6 +114,7 @@ class PostAdmin(
     autocomplete_fields = [
         'author',
         'category',
+        'similars',
         'markers',
     ]
     inlines = [
@@ -120,6 +127,7 @@ class PostAdmin(
                 'title',
                 'category',
                 'author',
+                'similars',
                 'markers',
                 'image',
                 'content',

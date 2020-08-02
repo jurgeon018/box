@@ -6,12 +6,12 @@ project_domain = agrologistics.com.ua, visatut.in.ua, capitanauto.com
 # 1 етап. Створення юзера, установка ПО
 
 sudo apt-get update && apt-get upgrade
-hostnamectl set-hostname project_name-server
+hostnamectl set-hostname puz_server
 nano /etc/hosts
     `
 
 127.0.0.1 localhost
-172.105.84.43 project_name-server
+172.105.84.43 puz_server
 
     `
 adduser username # or usermod -aG sudo username
@@ -41,7 +41,7 @@ sudo apt-get install uwsgi               \
                      libffi-dev          \
                      shared-mime-info    \
                      supervisor          \
-                     python-certbot-nginx
+                     python3-certbot-nginx
 
 
 sudo -H pip3 install --upgrade pip
