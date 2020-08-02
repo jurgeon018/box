@@ -22,6 +22,7 @@ class FeatureCategory(models.Model):
 
 class FeatureValue(models.Model):
     value = models.CharField(verbose_name="Значення", max_length=255)
+    code  = models.SlugField(verbose_name="Код", unique=True, null=True, blank=True)
 
     def __str__(self):
         return f'{self.value}'
