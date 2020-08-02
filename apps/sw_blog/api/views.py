@@ -9,7 +9,7 @@ from .serializers import PostSerializer
 
 from box.core.mail import box_send_mail
 from box.core.sw_global_config.models import GlobalConfig
-from box.apps.sw_shop.sw_catalog.models import CatalogueConfig
+# from box.apps.sw_shop.sw_catalog.models import CatalogueConfig
 
 def filter_search(posts, query):
     search = query.get('q')
@@ -33,7 +33,8 @@ def filter_category(posts, query):
 
 def paginate(posts, query):
     page_number  = query.get('page_number')
-    per_page     = query.get('per_page', CatalogueConfig.get_solo().posts_per_page)
+    # per_page     = query.get('per_page', CatalogueConfig.get_solo().posts_per_page)
+    per_page     = query.get('per_page', 8)
     page         = Paginator(posts, per_page=per_page).get_page(page_number)
     page_posts   = PostSerializer(page, many=True, read_only=True).data
     is_paginated = page.has_other_pages()
