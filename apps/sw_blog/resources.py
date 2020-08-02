@@ -46,3 +46,16 @@ class PostResource(ModelResource):
             markers = ','.join([marker.name.lower().strip() for marker in post.markers.all()])
         return markers
 
+
+
+class PostCategoryResource(ModelResource):
+    class Meta:
+        exclude = [
+            # 'code
+        ]
+        model = PostCategory
+    
+    def before_import_row(self, row, **kwargs):
+        if row.get('code') == '': row['code'] = None 
+    
+    

@@ -13,7 +13,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 
-
+# from django.shortcuts import reverse 
 
 __all__ = [
     "BaseMixin",
