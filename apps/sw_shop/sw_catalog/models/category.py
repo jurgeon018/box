@@ -22,6 +22,10 @@ class ItemCategory(AbstractPage, MPTTModel):
     unique_together = ('title', 'parent')
     ordering = ['order']
 
+  def has_items(self):
+    from .item import Item 
+    return Item.objects.filter(category=self).exists()
+  
   def get_absolute_url(self):
     if self.slug:
       return reverse(catalog_settings.ITEM_CATEGORY_URL_NAME, kwargs={"slug": self.slug})
