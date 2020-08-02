@@ -18,7 +18,7 @@ from datetime import datetime
 
 
 from box.core.sw_imp_exp.main import ExportMixin
-
+from django.utils.html import strip_tags
 
 
 def get_products_sheet():
@@ -211,6 +211,10 @@ def create_worksheet_with_items( workbook, items):
       elif item.discount_type == 'p':
         discount = f'{item.discount}'
         discount += '%'
+      print(discount)
+      if discount == "0.0":
+        discount = None 
+      print(discount)
 
       if item.unit and item.unit.name.lower() in units:
         unit = item.unit.name.lower()
@@ -247,6 +251,11 @@ def create_worksheet_with_items( workbook, items):
       if item.manufacturer:
         manufacturer = item.manufacturer.name
       
+      availability = None
+      if item.is_available:
+        availability = '+'
+      else:
+        availability = '-'
       row_num += 1
       row = [
           # Код_товара
@@ -290,7 +299,7 @@ def create_worksheet_with_items( workbook, items):
           # Ссылка_изображения
           image_urls,
           # Наличие
-          None,
+          availability,
           # Количество
           item.amount,
           # Производитель
@@ -456,7 +465,7 @@ from .models import ItemImage
 class GoogleMerchant(Feed):
   title = "Faina Vishivanka"
   link = "/"
-  description = "Items from shop"
+  # description = "Items from shop"
   feed_type = GoogleProductsFeed
 
   def items(self):
@@ -473,10 +482,13 @@ class GoogleMerchant(Feed):
       return item.title
 
   def item_description(self, item):
-      return item.description+'sdf'
+      descr = strip_tags(item.description)
+      return descr
   
   # def item_multipack(self, item):
   #   return item.multipack
+  def item_guid(self, obj):
+      return obj.id
 
   def item_extra_kwargs(self, item):
     image_links = []
