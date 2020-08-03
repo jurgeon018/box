@@ -17,3 +17,21 @@ urlpatterns = [
     path('areas/<pk>/',        AreaDetail.as_view()),
 ]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

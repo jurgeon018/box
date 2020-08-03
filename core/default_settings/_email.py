@@ -23,3 +23,19 @@ ADMINS = [
     ('DEV', 'dev@starwayua.com'),
 ]
 MANAGERS = ADMINS 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

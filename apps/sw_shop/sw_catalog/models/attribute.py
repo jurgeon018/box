@@ -5,7 +5,7 @@ from box.core.sw_currency.models import Currency
 
 class AttributeCategory(models.Model):
     name   = models.CharField(
-        verbose_name=_("Назва"), max_length=255, unique=True
+        verbose_name=_("Назва"), max_length=255, #unique=True
     )
     def __str__(self):
         return f'{self.name}'
@@ -14,7 +14,10 @@ class AttributeCategory(models.Model):
         if self.name:
             self.name = self.name.lower().strip()
         super().save(*args, **kwargs)
-
+   
+    def get_category_attributes(self, item):
+        return ItemAttribute.objects.filter(item=item, attribute__category=self) 
+    
     class Meta:
         verbose_name = _('категорія атрибутів')
         verbose_name_plural = _('категорії атрибутів')
@@ -29,7 +32,7 @@ class Attribute(models.Model):
         verbose_name=_("Код"), max_length=255, unique=True, blank=True, null=True
     )
     name = models.CharField(
-        verbose_name=_("Назва"), max_length=50, unique=True, 
+        verbose_name=_("Назва"), max_length=50#, unique=True, 
     )
     category = models.ForeignKey(
         verbose_name=_("Категорія"), to="sw_catalog.AttributeCategory", 
@@ -79,7 +82,7 @@ class AttributeValue(models.Model):
         null=True,
     )
     value = models.CharField(
-        verbose_name=_("Значення"), max_length=255, unique=True,
+        verbose_name=_("Значення"), max_length=255, #unique=True,
     )
 
     def __str__(self):
@@ -102,12 +105,13 @@ class AttributeValue(models.Model):
 class ItemAttributeValue(models.Model):
     item_attribute = models.ForeignKey(
         to="sw_catalog.ItemAttribute", verbose_name=_("Атрибут товару"), on_delete=models.CASCADE,
-        related_name='variants',
+        related_name='item_attribute_values',
     )
     value = models.ForeignKey(
         verbose_name=_("Значення"), 
         to='sw_catalog.AttributeValue', 
         on_delete=models.CASCADE,
+
     )
     price = models.DecimalField(
         verbose_name=_("Ціна"), max_digits=9, decimal_places=2, default=0,

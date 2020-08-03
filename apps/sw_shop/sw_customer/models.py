@@ -8,7 +8,7 @@ class Customer(get_user_model()):
         proxy = True 
         verbose_name = _('покупець')
         verbose_name_plural = _('Список покупців')
-    
+
 
 class CustomerGroup(models.Model):
     name      = models.CharField(verbose_name=_("Назва"), blank=False, null=False, max_length=255)

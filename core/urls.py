@@ -79,9 +79,15 @@ box_apps          = [app for app in settings.INSTALLED_APPS if app.startswith('b
 box = []
 for app in box_apps:
   try:
-    box.append(path('', include(f'{app}.urls')))
-  except:
-    pass 
+    # print(path('', include(f'{app}.urls')))
+    url = path('', include(f'{app}.urls'))
+    box.append(url)
+  except ImportError as i_e:
+    print('i_e:', i_e)
+  # except Exception as e:
+  #   pass 
+  #   print(e)
+  #   print(app)
 box_multilingual = []
 for app in box_apps:
   try:
@@ -130,38 +136,45 @@ from django.views.generic import View
 LANGUAGE_QUERY_PARAMETER = 'language'
 
 
-def set_language(request):
-  next = request.POST.get('next', request.GET.get('next'))
-  if (
-      (next or not request.is_ajax()) and
-      not url_has_allowed_host_and_scheme(
-          url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
-      )
-  ):
-    next = request.META.get('HTTP_REFERER')
-    next = next and unquote(next)  # HTTP_REFERER may be encoded.
-    if not url_has_allowed_host_and_scheme(
-        url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
-    ):
-        next = '/'
-  response  = HttpResponseRedirect(next) if next else HttpResponse(status=204)
-  query     = request.POST or request.GET
-  lang_code = query.get('language')
-  print("lang_code:", lang_code)
-  if lang_code and check_for_language(lang_code):
-      response = HttpResponseRedirect(translate_url(next, lang_code))
-      # response.set_cookie(
-      #     settings.LANGUAGE_COOKIE_NAME, lang_code,
-      #     max_age=settings.LANGUAGE_COOKIE_AGE,
-      #     path=settings.LANGUAGE_COOKIE_PATH,
-      #     domain=settings.LANGUAGE_COOKIE_DOMAIN,
-      #     secure=settings.LANGUAGE_COOKIE_SECURE,
-      #     httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
-      #     samesite=settings.LANGUAGE_COOKIE_SAMESITE,
-      # )
-      print(response)
-  return response
+# def set_language(request):
+#   next = request.POST.get('next', request.GET.get('next'))
+#   if (
+#       (next or not request.is_ajax()) and
+#       not url_has_allowed_host_and_scheme(
+#           url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+#       )
+#   ):
+#     next = request.META.get('HTTP_REFERER')
+#     next = next and unquote(next)  # HTTP_REFERER may be encoded.
+#     if not url_has_allowed_host_and_scheme(
+#         url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+#     ):
+#         next = '/'
+#   response  = HttpResponseRedirect(next) if next else HttpResponse(status=204)
+#   query     = request.POST or request.GET
+#   lang_code = query.get('language')
+#   print("lang_code:", lang_code)
+#   if lang_code and check_for_language(lang_code):
+#       response = HttpResponseRedirect(translate_url(next, lang_code))
+#       # response.set_cookie(
+#       #     settings.LANGUAGE_COOKIE_NAME, lang_code,
+#       #     max_age=settings.LANGUAGE_COOKIE_AGE,
+#       #     path=settings.LANGUAGE_COOKIE_PATH,
+#       #     domain=settings.LANGUAGE_COOKIE_DOMAIN,
+#       #     secure=settings.LANGUAGE_COOKIE_SECURE,
+#       #     httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+#       #     samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+#       # )
+#       print(response)
+#   return response
 
+# from django.conf.urls import url
+# from django.urls import path 
+
+# from tinymce.views import spell_check, filebrowser, css, spell_check_callback
+
+# urlpatterns = [
+# ]
 
 urlpatterns = [
   *static_urlpatterns,
@@ -176,9 +189,9 @@ urlpatterns = [
   path('jsi18n/',          js_cat.as_view(), name='javascript-catalog'),
   path('admin_tools/',     include('admin_tools.urls')),
   path('grappelli/',       include('grappelli.urls')),
+  path('tinymce/',         include('tinymce.urls')),
 
   # path('froala_editor/',   include('froala_editor.urls')),
-  # path('tinymce/',         include('tinymce.urls')),
   # path('ckeditor/',        include('ckeditor_uploader.urls')),
   # path('summernote/',      include('django_summernote.urls')),
   # path('markdown/',        include('django_markdown.urls')),
@@ -195,6 +208,8 @@ urlpatterns = [
   *PROJECT_CORE,
   *multilingual,
 ]
+# for url in urlpatterns:
+#   print(url)
 
 # if settings.DEBUG:
 if core_settings.DJANGO_DEBUG_TOOLBAR_ON:

@@ -177,7 +177,9 @@ def create_settlements(response):
             area.save()
             region.save()
             settlement.save()
-            
+
+
+
 
 
 

@@ -81,10 +81,6 @@ class Parser(object):
       writer = csv.DictWriter(file, fieldnames=list(data.keys()))
       writer.writerow(data)
 
-  def write_xlsx(self, data, filename, mode='a'):
-    ''' Записывает информацию в эксель-таблицу '''
-    pass
-
   def write_json(self, data, filename, mode='a'):
     ''' Записывает в json-файл '''
     with open(filename, mode) as file:
