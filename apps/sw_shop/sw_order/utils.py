@@ -37,3 +37,6 @@ def get_order_liqpay_context(request, params={}):
     'callback_url':'/sw_order/liqpay_callback/',
   }
   return context 
+
+
+
