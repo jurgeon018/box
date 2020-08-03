@@ -165,8 +165,37 @@ class Order(models.Model):
       email_config = OrderRecipientEmail, 
       model        = self, 
       fail_silently= True,
+      # fail_silently= False,
+      context      = context,
+    )  
+
+
+  def make_orderold(self, request):
+    cart = get_cart(request)
+    self.handle_user(request)
+    self.handle_amount(request)
+    self.total_price = cart.total_price
+    self.ordered = True
+    self.save()
+    cart.order = self 
+    cart.ordered = True
+    cart.save()
+    cart_items = CartItem.objects.filter(cart=cart)
+    context = {'cart_items':cart_items}
+    box_send_mail(
+      subject      = _(f'Отримано замовлення товарів # {self.id}'),
+      template     = 'sw_order/mail.html', 
+      email_config = OrderRecipientEmail, 
+      model        = self, 
+      fail_silently= False,
       context      = context,
     )
+
+
+
+
+
+
 
   def save(self, *args, **kwargs):
     if not self.status:
