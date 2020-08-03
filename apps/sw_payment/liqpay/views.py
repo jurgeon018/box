@@ -4,6 +4,7 @@ from .utils import create_liqpay_transaction
 
 @csrf_exempt
 def pay_callback(request):
+  print('!!!!pay_callback!!!!')
   create_liqpay_transaction(request)
   return redirect('thank_you')
 

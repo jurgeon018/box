@@ -10,9 +10,11 @@ from django.http import JsonResponse
 def liqpay_callback(request):
   # if request.method == 'GET':
   #   return JsonResponse({'Hello':'Hello'})
-  print('liqpay_callback')
+  print('liqpay_callback!!!!!!!')
   form          = create_liqpay_transaction(request)
   transaction   = form.instance
+  print(transaction)
+  print(transaction.order_id)
   order = Order.objects.get(id=transaction.order_id)
   payment       = Payment.objects.create(
     order=order,
