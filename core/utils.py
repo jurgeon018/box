@@ -38,7 +38,7 @@ def load_csv(filename):
   return data
 
 
-def paginate(request, klass, per_page=4, page_number=1):
+def paginate(request, klass, per_page=4, page_number=1, ):
     query        = request.GET
     page_number  = query.get('page_number', page_number)
     per_page     = query.get('per_page', per_page)
