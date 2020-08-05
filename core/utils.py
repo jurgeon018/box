@@ -63,8 +63,7 @@ def paginate(request, klass, per_page=4, page_number=1):
 def get_resource(name):
     resources = get_resources()
     for resource in resources:
-        # print(resource)
-        # print(resource.__name__, resource.__name__=="ItemStockResource")
+        print(resource)
         if resource.__name__ == name:
             return resource 
     raise Exception(f"Resource '{name}' not found")
@@ -80,16 +79,14 @@ def get_resources():
       try:
         resource_module = appname+'.resources'
         module = import_module(resource_module) 
-      except Exception as e:
+      except ImportError as e:
         pass 
     if module:
-      for name, obj in inspect.getmembers(module):
+      for _, obj in inspect.getmembers(module):
         if inspect.isclass(obj):
           if ModelResource in obj.__mro__:
             if obj is not ModelResource:
-              package_name = inspect.getmodule(obj)
-              # print(package_name)
-              if package_name.__name__.split('.')[-1] != 'abstract_resources':
+              if inspect.getmodule(obj).__name__.split('.')[-1] != 'abstract_resources':
                 resources.append(obj)
   return resources
 
