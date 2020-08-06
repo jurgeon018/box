@@ -6,6 +6,9 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.views.decorators.cache import cache_page
+from django.apps import apps
+from django.conf import settings
+
 
 from . import settings as core_settings
 from .views import *
@@ -22,8 +25,6 @@ for project_name, path_name in settings.SITEMAP_PATHS.items():
     p, m      = path_name.rsplit('.', 1)
     mod       = import_module(p)
     met       = getattr(mod, m)
-    print(met)
-    # path_name = import_module(path_name)
     sitemaps.update({
       project_name:met
     })
@@ -50,7 +51,6 @@ if 'box.apps.sw_blog' in settings.INSTALLED_APPS:
 static_urlpatterns = []
 
 if settings.DEBUG == True:
-# if True:
   static_urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
   static_urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -73,26 +73,22 @@ excluded_apps = [
   'box.apps.sw_payment',
   'box.apps.sw_delivery',
 ]
-box_apps          = [app for app in settings.INSTALLED_APPS if app.startswith('box.') and  app not in excluded_apps]  #https://stackoverflow.com/questions/4843158/check-if-a-python-list-item-contains-a-string-inside-another-string
-# box               = [path('', include(f'{app}.urls')) for app in box_apps]
-# box_multilingual  = [path('', include(f'{app}.multilingual_urls')) for app in box_apps]
+box_apps = [app for app in settings.INSTALLED_APPS if app.startswith('box.') and  app not in excluded_apps]  #https://stackoverflow.com/questions/4843158/check-if-a-python-list-item-contains-a-string-inside-another-string
 box = []
 for app in box_apps:
   try:
-    # print(path('', include(f'{app}.urls')))
     url = path('', include(f'{app}.urls'))
     box.append(url)
   except ImportError as i_e:
-    print('i_e:', i_e)
-  # except Exception as e:
-  #   pass 
-  #   print(e)
-  #   print(app)
+    # print('i_e:', i_e)
+    pass 
 box_multilingual = []
 for app in box_apps:
   try:
     box_multilingual.append(path('', include(f'{app}.multilingual_urls')))
-  except:
+  # except:
+  except ImportError as i_e:
+    print('i_e:', i_e)
     pass 
 
 multilingual = i18n_patterns(
@@ -103,78 +99,11 @@ multilingual = i18n_patterns(
   path(core_settings.URL_403, custom_permission_denied),
   path(core_settings.URL_404, custom_page_not_found),
   path(core_settings.URL_500, custom_server_error),
-
   *box_multilingual,
   *PROJECT_CORE_MULTILINGUAL,
   prefix_default_language=False,
   # prefix_default_language=core_settings.PREFIX_DEFAULT_LANGUAGE,
 )
-
-
-
-# from django.views.i18n import set_language
-
-import itertools
-import json
-import os
-import re
-from urllib.parse import unquote
-
-from django.apps import apps
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.template import Context, Engine
-from django.urls import translate_url
-from django.utils.formats import get_format
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.translation import (
-    LANGUAGE_SESSION_KEY, check_for_language, get_language,
-)
-from django.utils.translation.trans_real import DjangoTranslation
-from django.views.generic import View
-
-LANGUAGE_QUERY_PARAMETER = 'language'
-
-
-# def set_language(request):
-#   next = request.POST.get('next', request.GET.get('next'))
-#   if (
-#       (next or not request.is_ajax()) and
-#       not url_has_allowed_host_and_scheme(
-#           url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
-#       )
-#   ):
-#     next = request.META.get('HTTP_REFERER')
-#     next = next and unquote(next)  # HTTP_REFERER may be encoded.
-#     if not url_has_allowed_host_and_scheme(
-#         url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
-#     ):
-#         next = '/'
-#   response  = HttpResponseRedirect(next) if next else HttpResponse(status=204)
-#   query     = request.POST or request.GET
-#   lang_code = query.get('language')
-#   print("lang_code:", lang_code)
-#   if lang_code and check_for_language(lang_code):
-#       response = HttpResponseRedirect(translate_url(next, lang_code))
-#       # response.set_cookie(
-#       #     settings.LANGUAGE_COOKIE_NAME, lang_code,
-#       #     max_age=settings.LANGUAGE_COOKIE_AGE,
-#       #     path=settings.LANGUAGE_COOKIE_PATH,
-#       #     domain=settings.LANGUAGE_COOKIE_DOMAIN,
-#       #     secure=settings.LANGUAGE_COOKIE_SECURE,
-#       #     httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
-#       #     samesite=settings.LANGUAGE_COOKIE_SAMESITE,
-#       # )
-#       print(response)
-#   return response
-
-# from django.conf.urls import url
-# from django.urls import path 
-
-# from tinymce.views import spell_check, filebrowser, css, spell_check_callback
-
-# urlpatterns = [
-# ]
 
 urlpatterns = [
   *static_urlpatterns,
@@ -208,8 +137,6 @@ urlpatterns = [
   *PROJECT_CORE,
   *multilingual,
 ]
-# for url in urlpatterns:
-#   print(url)
 
 # if settings.DEBUG:
 if core_settings.DJANGO_DEBUG_TOOLBAR_ON:
@@ -218,12 +145,3 @@ if core_settings.DJANGO_DEBUG_TOOLBAR_ON:
     urlpatterns.extend([
         path('__debug__/', include(debug_toolbar.urls)),
     ])
-
-
-
-
-def err(request): sdfsdafdsa 
-
-urlpatterns += [
-    path('err/', err),
-]
