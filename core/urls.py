@@ -116,8 +116,8 @@ urlpatterns = [
   path('set_lang/<new_lang>/', set_lang,     name="set_lang"),
   # path('setlang/',             set_language, name="set_lang"),
   path('jsi18n/',          js_cat.as_view(), name='javascript-catalog'),
-  path('admin_tools/',     include('admin_tools.urls')),
-  path('grappelli/',       include('grappelli.urls')),
+  # path('admin_tools/',     include('admin_tools.urls')),
+  # path('grappelli/',       include('grappelli.urls')),
   path('tinymce/',         include('tinymce.urls')),
 
   # path('froala_editor/',   include('froala_editor.urls')),
@@ -126,7 +126,7 @@ urlpatterns = [
   # path('markdown/',        include('django_markdown.urls')),
   # path('markdownx/',       include('markdownx.urls')),
 
-  path('filer/',           include('filer.urls')),
+  # path('filer/',           include('filer.urls')),
   path('api-auth/',        include('rest_framework.urls', namespace='rest_framework')),
   # path('auth/',            include('djoser.urls')),
   # path('auth/',            include('djoser.urls.authtoken')),

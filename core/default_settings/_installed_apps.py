@@ -1,9 +1,6 @@
 priority_third_party = [
     'corsheaders',
-    'box.apps.sw_admin',  
-    'admin_tools', 'admin_tools.theming', 'admin_tools.menu', 'admin_tools.dashboard',
-    'dal',
-    'dal_select2',
+    'dal', 'dal_select2',
     'admin_auto_filters',
     'modeltranslation',
 ]
@@ -21,37 +18,17 @@ django_contrib = [
 ]
 third_party = [
     "mptt",
-    "crispy_forms",
-
     "tinymce",
-    'ckeditor',
-    'ckeditor_uploader',
-    "froala_editor",
-    'django_summernote',
-    # 'django_markdown',
-    'markdownx',
-
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-
-
+    'ckeditor', 'ckeditor_uploader',
+    'allauth','allauth.account','allauth.socialaccount', 'allauth.socialaccount.providers.google',
     'import_export',
     'rosetta',
     'colorfield',
     'adminsortable2',
-    
-    "rest_framework",
-    'rest_framework.authtoken',
-    # "djoser",
-
+    "rest_framework", 'rest_framework.authtoken',
     "rangefilter",
     'debug_toolbar',
     'nested_admin',
-    'easy_thumbnails',
-    'filer',
 ]
 box_core = [
     'box.core',

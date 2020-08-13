@@ -1,58 +1,32 @@
-# django 
-django 
-django-decouple
-django-cors-headers 
-django-modeltranslation 
-django-mptt 
-django-crispy-forms
-django-allauth 
-django-import-export
+Pillow 
+django-decouple 
+transliterate
+pandas 
+bs4 
+selenium 
+xlsxwriter
+django-filebrowser-no-grappelli 
+
+django
+
+django-cors-headers
+django-autocomplete-light 
+django-admin-autocomplete-filter
+django-modeltranslation
+
+django-mptt
+django-tinymce4-lite 
+# django-tinymce
+django-ckeditor
+django-filter
 django-debug-toolbar
 
-
-# django admin 
-django-admin-tools 
-django-admin-sortable
-django-admin-sortable2
-django-admin-rangefilter
-django-admin-autocomplete-filter
-django-autocomplete-light
-django-nested-admin
-django-ckeditor
-django-tinymce4-lite 
-django-filebrowser-no-grappelli 
-django-grappelli 
+django-allauth
+django-import-export
+django-rosetta
 django-colorfield
-django-rosetta 
-
-
-# RESTful API
+django-admin-sortable2
 django-rest-framework
-djoser 
-djangorestframework_simplejwt
-
-# graphql
-
-
-# python 
-transliterate 
-pillow 
-selenium 
-bs4 
-xlsxwriter
-pandas 
-celery 
-
-
-
-
-
-django-froala-editor 
-django-summernote 
-django-markdownx
-easy-thumbnails
-django-filer
-
-
-django-suit==0.2.26
-easy-thumbnails
+django-admin-rangefilter
+django-debug-toolbar
+django-nested-admin

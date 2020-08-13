@@ -64,20 +64,24 @@ class ItemAdmin(
     # change_form_template = 'item_change_form.html'
     # form = ItemForm
     resource_class = ItemResource
-    autocomplete_fields = [
-        'similars',
-        'markers',
-        'labels',
-        'manufacturer',
-        'brand',
-        'in_stock',
-        'currency',
-        'unit',
+    from jet.filters import RelatedFieldAjaxListFilter
+    list_filter = [
+        ('manufacturer', RelatedFieldAjaxListFilter),
     ]
-    if item_settings .MULTIPLE_CATEGORY:
-        autocomplete_fields.append('categories')
-    else:
-        autocomplete_fields.append('category')
+    # autocomplete_fields = [
+    #     'similars',
+    #     'markers',
+    #     'labels',
+    #     'manufacturer',
+    #     'brand',
+    #     'in_stock',
+    #     'currency',
+    #     'unit',
+    # ]
+    # if item_settings .MULTIPLE_CATEGORY:
+    #     autocomplete_fields.append('categories')
+    # else:
+    #     autocomplete_fields.append('category')
     prepopulated_fields = {
         "slug": ("title",),
         # "code": ("title",),
@@ -138,13 +142,13 @@ class ItemAdmin(
         'title',
         'code',
     ]
-    list_filter = [
-        # "category",
-        # ('category', ItemCategoryTreeRelatedFieldListFilter),
-        CategoryFilter,
-        MarkersFilter,
-        BrandFilter,
-    ]
+    # list_filter = [
+    #     # "category",
+    #     # ('category', ItemCategoryTreeRelatedFieldListFilter),
+    #     CategoryFilter,
+    #     MarkersFilter,
+    #     BrandFilter,
+    # ]
     list_display = [
         'show_image',
         'title',

@@ -34,6 +34,9 @@ class GoogleFieldsMixin(models.Model):
         abstract = True 
 
 class Item(AbstractPage, GoogleFieldsMixin):
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'markers', 'labels', 'manufacturer',
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',
