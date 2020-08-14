@@ -21,6 +21,9 @@ class ItemCategory(AbstractPage, MPTTModel):
     verbose_name_plural = _('категорії'); 
     unique_together = ('title', 'parent')
     ordering = ['order']
+  
+  def get_active_categories(self):
+    return ItemCategory.objects.filter(parent=self, is_active=True)
 
   def has_items(self):
     from .item import Item 

@@ -54,7 +54,8 @@ class SimilarInline(nested_admin.NestedTabularInline):
     classes = ['collapse',]
     verbose_name = _('Схожий товар')
     verbose_name_plural = _('Схожі товари')
-
+if 'jet' in settings.INSTALLED_APPS:
+    from jet.filters import RelatedFieldAjaxListFilter
 
 class ItemAdmin(
     BaseAdmin,
@@ -65,36 +66,42 @@ class ItemAdmin(
     # change_form_template = 'item_change_form.html'
     # form = ItemForm
     resource_class = ItemResource
-    from jet.filters import RelatedFieldAjaxListFilter
     # list_filter = [
     #     ('manufacturer', RelatedFieldAjaxListFilter),
     # ]
-    list_filter = [
-        # "category",
-        # ('category', ItemCategoryTreeRelatedFieldListFilter),
-        # CategoryFilter,
-        # MarkersFilter,
-        # BrandFilter,
-        ('category', RelatedFieldAjaxListFilter),
-        ('manufacturer', RelatedFieldAjaxListFilter),
-        ('brand', RelatedFieldAjaxListFilter),
-        ('markers', RelatedFieldAjaxListFilter),
 
-    ]
-    # autocomplete_fields = [
-    #     'similars',
-    #     'markers',
-    #     'labels',
-    #     'manufacturer',
-    #     'brand',
-    #     'in_stock',
-    #     'currency',
-    #     'unit',
-    # ]
-    # if item_settings .MULTIPLE_CATEGORY:
-    #     autocomplete_fields.append('categories')
-    # else:
-    #     autocomplete_fields.append('category')
+    if 'jet' in settings.INSTALLED_APPS:
+
+        list_filter = [
+            ('category', RelatedFieldAjaxListFilter),
+            ('manufacturer', RelatedFieldAjaxListFilter),
+            ('brand', RelatedFieldAjaxListFilter),
+            ('markers', RelatedFieldAjaxListFilter),
+
+        ]
+    else:
+        list_filter = [
+            "category",
+            # ('category', ItemCategoryTreeRelatedFieldListFilter),
+            CategoryFilter,
+            MarkersFilter,
+            BrandFilter,
+        ]
+    if not 'jet' in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'similars',
+            'markers',
+            'labels',
+            'manufacturer',
+            'brand',
+            'in_stock',
+            'currency',
+            'unit',
+        ]
+        if item_settings .MULTIPLE_CATEGORY:
+            autocomplete_fields.append('categories')
+        else:
+            autocomplete_fields.append('category')
     prepopulated_fields = {
         "slug": ("title",),
         # "code": ("title",),
@@ -186,6 +193,7 @@ class ItemAdmin(
         # 'order',
         'title',
     ]
+    list_per_page = 40 
     def change_category(self, request, queryset):
         initial = {
             'model':ItemCategory,

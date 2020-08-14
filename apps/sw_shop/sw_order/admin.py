@@ -15,8 +15,10 @@ from .filters import *
 from .forms import * 
 
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline, TranslationTabularInline
-# from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
-from jet.filters import DateRangeFilter, DateTimeRangeFilter
+if 'jet' in settings.INSTALLED_APPS:
+  from jet.filters import DateRangeFilter, DateTimeRangeFilter
+else:
+  from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 import nested_admin
 from import_export.admin import ImportExportModelAdmin
 from .resources import * 
@@ -219,7 +221,6 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
         'tags',
         # ('created', DateTimeRangeFilter), 
         ('created', DateRangeFilter), 
-        
         # ('updated', DateTimeRangeFilter),
         ('updated', DateRangeFilter),
         
