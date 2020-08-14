@@ -98,7 +98,7 @@ class ItemAdmin(
             'currency',
             'unit',
         ]
-        if item_settings .MULTIPLE_CATEGORY:
+        if item_settings.MULTIPLE_CATEGORY:
             autocomplete_fields.append('categories')
         else:
             autocomplete_fields.append('category')
@@ -109,8 +109,8 @@ class ItemAdmin(
     inlines = [
         SimilarInline,
         ItemImageInline,
-        ItemAttributeInline,
         ItemFeatureInline,
+        ItemAttributeInline,
         # ItemReviewInline, 
     ]  
     item_fields = [

@@ -38,6 +38,9 @@ from .views import *
 from .item_inlines import * 
 from ..resources import * 
 
+zminna = True
+# zminna = False
+
 
 class AttrBaseMixin(
     TabbedTranslationAdmin,
@@ -47,7 +50,8 @@ class AttrBaseMixin(
     pass 
 
 class ItemAttributeValueInline(nested_admin.NestedTabularInline):
-    if 'jet' not in settings.INSTALLED_APPS:
+    # if 'jet' not in settings.INSTALLED_APPS:
+    if zminna:
         autocomplete_fields = [
             'value',
             'proposition',
@@ -79,10 +83,12 @@ class ItemAttributeValueInline(nested_admin.NestedTabularInline):
 
 
 class ItemAttributeInline(nested_admin.NestedTabularInline):
-    if 'jet' not in settings.INSTALLED_APPS:
+    # if 'jet' not in settings.INSTALLED_APPS:
+    if zminna:
         autocomplete_fields = [
             'attribute'
         ]
+
     extra = 0
     classes = [
         'collapse',
