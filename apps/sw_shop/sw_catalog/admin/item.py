@@ -47,9 +47,10 @@ class SimilarInline(nested_admin.NestedTabularInline):
     model = Item.similars.through
     extra = 0 
     fk_name = 'from_item'
-    autocomplete_fields = [
-        'to_item',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'to_item',
+        ]
     classes = ['collapse',]
     verbose_name = _('Схожий товар')
     verbose_name_plural = _('Схожі товари')

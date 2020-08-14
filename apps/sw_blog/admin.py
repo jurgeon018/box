@@ -111,12 +111,13 @@ class PostAdmin(
     prepopulated_fields = {
         'slug':('title',),
     }
-    autocomplete_fields = [
-        'author',
-        'category',
-        'similars',
-        'markers',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'author',
+            'category',
+            'similars',
+            'markers',
+        ]
     inlines = [
         CommentInline,
     ]

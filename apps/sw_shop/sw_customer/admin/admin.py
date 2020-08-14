@@ -1,6 +1,9 @@
 from django.contrib import admin 
 from django.utils.html import mark_safe 
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings 
+
+
 from ..models import *
 
 from box.core.sw_auth.admin import BoxUserAdmin
@@ -21,9 +24,10 @@ class CustomerGroupAdmin(admin.ModelAdmin):
         'coupon',
     ]
     list_display_links = list_display
-    autocomplete_fields = [
-        'coupon',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'coupon',
+        ]
     search_fields = [
         'name',
     ]

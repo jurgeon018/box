@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib import admin 
 from django.shortcuts import reverse, render, redirect
 from django.utils.html import mark_safe
+from django.conf import settings 
 
 from box.apps.sw_shop.sw_order.models import Order, OrderStatus, Payment
 # from box.apps.sw_payment.liqpay.admin import PaymentInline
@@ -242,11 +243,12 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
         "total_without_coupon",
         'note',
     ]
-    autocomplete_fields = [ 
-      'status',
-      'tags',
-      'coupon',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+      autocomplete_fields = [ 
+        'status',
+        'tags',
+        'coupon',
+      ]
     readonly_fields = [
         'show_user',
         'total_with_coupon',
