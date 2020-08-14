@@ -14,7 +14,8 @@ from .filters import *
 from .forms import * 
 
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline, TranslationTabularInline
-from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+# from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+from jet.filters import DateRangeFilter, DateTimeRangeFilter
 import nested_admin
 from import_export.admin import ImportExportModelAdmin
 from .resources import * 
@@ -215,8 +216,12 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
     list_filter = [
         'status',
         'tags',
-        ('created', DateTimeRangeFilter), 
-        ('updated', DateTimeRangeFilter),
+        # ('created', DateTimeRangeFilter), 
+        ('created', DateRangeFilter), 
+        
+        # ('updated', DateTimeRangeFilter),
+        ('updated', DateRangeFilter),
+        
     ]
     fields = [
         # 'user',
@@ -286,7 +291,7 @@ class ItemRequestAdmin(admin.ModelAdmin):
 class OrderStatusInline(TranslationTabularInline):
     extra = 0 
     model = OrderStatus
-     
+
 class OrderRecipientEmailInline(admin.TabularInline):
   model = OrderRecipientEmail
   exclude = []

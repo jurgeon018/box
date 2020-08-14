@@ -65,8 +65,20 @@ class ItemAdmin(
     # form = ItemForm
     resource_class = ItemResource
     from jet.filters import RelatedFieldAjaxListFilter
+    # list_filter = [
+    #     ('manufacturer', RelatedFieldAjaxListFilter),
+    # ]
     list_filter = [
+        # "category",
+        # ('category', ItemCategoryTreeRelatedFieldListFilter),
+        # CategoryFilter,
+        # MarkersFilter,
+        # BrandFilter,
+        ('category', RelatedFieldAjaxListFilter),
         ('manufacturer', RelatedFieldAjaxListFilter),
+        ('brand', RelatedFieldAjaxListFilter),
+        ('markers', RelatedFieldAjaxListFilter),
+
     ]
     # autocomplete_fields = [
     #     'similars',
@@ -142,13 +154,7 @@ class ItemAdmin(
         'title',
         'code',
     ]
-    # list_filter = [
-    #     # "category",
-    #     # ('category', ItemCategoryTreeRelatedFieldListFilter),
-    #     CategoryFilter,
-    #     MarkersFilter,
-    #     BrandFilter,
-    # ]
+
     list_display = [
         'show_image',
         'title',

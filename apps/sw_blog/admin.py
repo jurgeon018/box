@@ -13,8 +13,8 @@ from box.core.utils import (
     show_admin_link,
     AdminImageWidget, seo, 
 )
-from django_summernote.admin import SummernoteModelAdmin
-from markdownx.admin import MarkdownxModelAdmin
+# from django_summernote.admin import SummernoteModelAdmin
+# from markdownx.admin import MarkdownxModelAdmin
 
 
 

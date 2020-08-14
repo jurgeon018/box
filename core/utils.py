@@ -293,13 +293,14 @@ def move_to(self, request, queryset, initial):
       self.message_user(request, message.format(field, count))
       return redirect(request.get_full_path())
     elif not form.is_valid():
-      raise("FORM IS INVALID")
+      print(form.errors)
+      raise Exception("FORM IS INVALID")
   if not form:
     initial = {
         'model':model, 
         'widget':widget, 
         "formfield":formfield, 
-        '_selected_action':request.POST.getlist(admin.ACTION_CHECKBOX_NAME),
+        '_selected_action':request.POST.getlist(admin.helpers.ACTION_CHECKBOX_NAME),
       }
     form = ChangeForm(initial=initial)
     return render(request, 'core/admin/move_to.html', {
