@@ -25,7 +25,7 @@ third_party = [
     'rosetta',
     'colorfield',
     'adminsortable2',
-    "rest_framework", 'rest_framework.authtoken',
+    "rest_framework", 'rest_framework.authtoken', 'rest_framework_simplejwt',
     "rangefilter",
     'debug_toolbar',
     'nested_admin',

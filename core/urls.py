@@ -80,8 +80,9 @@ for app in box_apps:
     url = path('', include(f'{app}.urls'))
     box.append(url)
   except ImportError as i_e:
-    # print('i_e:', i_e)
-    pass 
+    # print('app:', app)
+    print('i_e:', i_e)
+    # pass 
 box_multilingual = []
 for app in box_apps:
   try:

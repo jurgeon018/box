@@ -33,10 +33,14 @@ class GoogleFieldsMixin(models.Model):
     class Meta:
         abstract = True 
 
+
 class Item(AbstractPage, GoogleFieldsMixin):
+
     @staticmethod
     def autocomplete_search_fields():
         return 'markers', 'labels', 'manufacturer',
+    
+    parent = models.ForeignKey(verbose_name="Батьківський товар", to="self", on_delete=models.SET_NULL, null=True, blank=True)
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',
@@ -324,3 +328,45 @@ class Item(AbstractPage, GoogleFieldsMixin):
       except:
         stars = 0
       return str(stars)
+
+
+# class ItemVariant(models.Model):
+#     pass 
+
+
+
+
+'''
+
+
+
+1 спосіб 
+
+плюси
+мінуси 
+
+
+
+Реджіна 
+id:1
+Реджіна 
+id:2
+
+ItemFeature
+item:1
+name:розмір
+value:30
+unit:cm 
+
+ItemFeature
+item:2
+name:розмір
+value:50 
+unit:cm 
+
+'''
+
+
+
+
+

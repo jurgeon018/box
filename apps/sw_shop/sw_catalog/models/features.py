@@ -53,11 +53,11 @@ class Feature(models.Model):
 
 
 class ItemFeature(models.Model):
-    category = models.ForeignKey(verbose_name='Категорія', to='sw_catalog.FeatureCategory', on_delete=models.SET_NULL, null=True, blank=True)
     # items = models.ManyToManyField(to="sw_catalog.Item", verbose_name="Товари")
-    item  = models.ForeignKey(to="sw_catalog.Item", verbose_name="Товар", on_delete=models.CASCADE)
-    name  = models.ForeignKey(to="sw_catalog.Feature", verbose_name="Назва характеристики", on_delete=models.CASCADE)
-    value = models.ForeignKey(to="sw_catalog.FeatureValue", verbose_name="Значення характеристики", on_delete=models.CASCADE)
+    item      = models.ForeignKey(to="sw_catalog.Item", verbose_name="Товар", on_delete=models.CASCADE)
+    name      = models.ForeignKey(to="sw_catalog.Feature", verbose_name="Назва характеристики", on_delete=models.CASCADE)
+    value     = models.ForeignKey(to="sw_catalog.FeatureValue", verbose_name="Значення характеристики", on_delete=models.CASCADE)
+    category  = models.ForeignKey(verbose_name='Категорія', to='sw_catalog.FeatureCategory', on_delete=models.SET_NULL, null=True, blank=True)
     is_active = models.BooleanField(verbose_name="Активність", default=True)
     code      = models.SlugField(verbose_name='Код', blank=True, null=True, unique=True)
 
@@ -67,8 +67,6 @@ class ItemFeature(models.Model):
     class Meta:
         verbose_name = 'характеристика товара'
         verbose_name_plural = 'характеристики товара'
-
-
 
 
 

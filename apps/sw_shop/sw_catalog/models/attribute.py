@@ -166,8 +166,7 @@ class ItemAttribute(models.Model):
     is_option = models.BooleanField(
         verbose_name=_("Опція?"), default=False
     )
-    # item = models.
-
+    
     def get_values(self):
         return ItemAttributeValue.objects.filter(item_attribute=self)
 

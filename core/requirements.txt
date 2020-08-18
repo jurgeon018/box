@@ -27,6 +27,7 @@ django-rosetta
 django-colorfield
 django-admin-sortable2
 django-rest-framework
+djangorestframework-simplejwt
 django-admin-rangefilter
 django-debug-toolbar
 django-nested-admin
