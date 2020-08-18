@@ -41,8 +41,9 @@ class Attribute(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if self.name:
-            self.name = self.name.lower().strip()
+        # if self.name:
+            # self.name = self.name.lower().strip()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -166,8 +167,7 @@ class ItemAttribute(models.Model):
     is_option = models.BooleanField(
         verbose_name=_("Опція?"), default=False
     )
-    # item = models.
-
+    
     def get_values(self):
         return ItemAttributeValue.objects.filter(item_attribute=self)
 

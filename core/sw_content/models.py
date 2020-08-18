@@ -237,7 +237,6 @@ class Slider(BaseMixin):
 
 from django.db import models 
 from django.shortcuts import reverse 
-from adminsortable.models import SortableMixin
 from box.core.models import BaseMixin
 from django.utils.translation import gettext_lazy as _
 

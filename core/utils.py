@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .forms import * 
 
-from box.apps.sw_admin.modelclone import ClonableModelAdmin
+from box.core.modelclone import ClonableModelAdmin
 
 from import_export.admin import *
 from adminsortable2.admin import SortableAdminMixin
@@ -38,11 +38,16 @@ def load_csv(filename):
   return data
 
 
-def paginate(request, klass):
+def paginate(request, klass, per_page=4, page_number=1, ):
     query        = request.GET
-    page_number  = query.get('page_number', 1)
-    per_page     = query.get('per_page', 4)
-    page         = Paginator(klass.objects.all(), per_page=per_page).get_page(page_number)
+    page_number  = query.get('page_number', page_number)
+    per_page     = query.get('per_page', per_page)
+    try:
+      objects      = klass.objects.all()
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
+    except:
+      objects      = klass
+      page         = Paginator(objects, per_page=per_page).get_page(page_number)
     is_paginated = page.has_other_pages()
     current_page = page.number
     last_page    = page.paginator.num_pages
@@ -58,8 +63,7 @@ def paginate(request, klass):
 def get_resource(name):
     resources = get_resources()
     for resource in resources:
-        # print(resource)
-        # print(resource.__name__, resource.__name__=="ItemStockResource")
+        print(resource)
         if resource.__name__ == name:
             return resource 
     raise Exception(f"Resource '{name}' not found")
@@ -75,16 +79,14 @@ def get_resources():
       try:
         resource_module = appname+'.resources'
         module = import_module(resource_module) 
-      except Exception as e:
+      except ImportError as e:
         pass 
     if module:
-      for name, obj in inspect.getmembers(module):
+      for _, obj in inspect.getmembers(module):
         if inspect.isclass(obj):
           if ModelResource in obj.__mro__:
             if obj is not ModelResource:
-              package_name = inspect.getmodule(obj)
-              # print(package_name)
-              if package_name.__name__.split('.')[-1] != 'abstract_resources':
+              if inspect.getmodule(obj).__name__.split('.')[-1] != 'abstract_resources':
                 resources.append(obj)
   return resources
 
@@ -291,13 +293,14 @@ def move_to(self, request, queryset, initial):
       self.message_user(request, message.format(field, count))
       return redirect(request.get_full_path())
     elif not form.is_valid():
-      raise("FORM IS INVALID")
+      print(form.errors)
+      raise Exception("FORM IS INVALID")
   if not form:
     initial = {
         'model':model, 
         'widget':widget, 
         "formfield":formfield, 
-        '_selected_action':request.POST.getlist(admin.ACTION_CHECKBOX_NAME),
+        '_selected_action':request.POST.getlist(admin.helpers.ACTION_CHECKBOX_NAME),
       }
     form = ChangeForm(initial=initial)
     return render(request, 'core/admin/move_to.html', {

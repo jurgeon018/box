@@ -1,4 +1,5 @@
-from django.contrib import admin 
+from django.contrib import admin
+from django.conf import settings  
 from ..models.features import * 
 
 import nested_admin 
@@ -8,10 +9,11 @@ class ItemFeatureInline(nested_admin.NestedTabularInline):
     model = ItemFeature
     # model = ItemFeature.items.through
     extra = 0
-    autocomplete_fields = [
-        'name',
-        'value',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'name',
+            'value',
+        ]
     # classes 
 
 
@@ -29,6 +31,11 @@ class FeatureValueAdmin(admin.ModelAdmin):
 
 @admin.register(Feature)
 class FeatureAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+
+@admin.register(FeatureCategory)
+class FeatureCategoryAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 

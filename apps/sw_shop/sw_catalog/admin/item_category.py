@@ -124,9 +124,10 @@ class ItemCategoryAdmin(
         }],
         seo,
     ]
-    autocomplete_fields = [
-        'parent',
-        'currency'
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'parent',
+            'currency'
+        ]
     
    

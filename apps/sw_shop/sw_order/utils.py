@@ -16,7 +16,7 @@ def get_order_liqpay_context(request, params={}):
   for cart_item in CartItem.objects.filter(cart=cart):
     amount += cart_item.total_price
   order_id = str(order.id)
-  order_id += datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  # order_id += datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   print(order_id)
   def_params = {
     'amount': amount,
@@ -37,3 +37,6 @@ def get_order_liqpay_context(request, params={}):
     'callback_url':'/sw_order/liqpay_callback/',
   }
   return context 
+
+
+

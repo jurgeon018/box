@@ -39,6 +39,7 @@ def get_response(request):
 
 
 def create_liqpay_transaction(request):
+  print('!!!create_liqpay_transaction!!!')
   response = get_response(request)
   status   = response.get('status', '')
   if status == 'failure':
