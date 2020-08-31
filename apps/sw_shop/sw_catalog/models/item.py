@@ -88,8 +88,10 @@ class Item(AbstractPage, GoogleFieldsMixin):
         help_text=_('0 - товар відсутній. Порожнє поле - необмежена кількість.'),
     )
     image      = models.ImageField(
-        verbose_name=_("Картинка"), upload_to='shop/item/',
-        blank=True, null=True, storage=OverwriteStorage(),
+        verbose_name=_("Картинка"), 
+        blank=True, null=True, 
+        upload_to=item_settings.ITEM_UPLOAD_TO,
+        # storage=OverwriteStorage(),
     )
     currency = models.ForeignKey(
         verbose_name=_("Валюта"),    to="sw_currency.Currency",
