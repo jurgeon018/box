@@ -228,7 +228,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
         images = ItemImage.objects.filter(item=self)
         if images.exists():
             image = images.first().image 
-            if image and self.slug:
+            if image and self.slug and not self.image:
                 # print('!!!!', self.slug, image.name, image.name.split('/'))
                 name = self.slug + image.name.split("/")[-1]
                 try:
