@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 12:41+0000\n"
+"POT-Creation-Date: 2020-08-03 09:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr ""
 msgid "Порядок"
 msgstr ""
 
-#: box/core/models.py:45 box/core/models.py:154
+#: box/core/models.py:45 box/core/models.py:155
 msgid "Активність"
 msgstr ""
 
@@ -61,46 +61,46 @@ msgstr ""
 msgid "Оновлено"
 msgstr ""
 
-#: box/core/models.py:80
+#: box/core/models.py:81
 msgid "Мета-заголовок"
 msgstr ""
 
-#: box/core/models.py:80
+#: box/core/models.py:81
 msgid ""
 "Заголовок сторінки в браузері, який відображається у видачі пошукових систем"
 msgstr ""
 
-#: box/core/models.py:83
+#: box/core/models.py:84
 msgid "Мета-опис"
 msgstr ""
 
-#: box/core/models.py:83
+#: box/core/models.py:84
 msgid "__"
 msgstr ""
 
-#: box/core/models.py:86
+#: box/core/models.py:87
 msgid "Ключові слова"
 msgstr ""
 
-#: box/core/models.py:86
+#: box/core/models.py:87
 msgid "Список ключових слів"
 msgstr ""
 
-#: box/core/models.py:89 box/core/sw_content/abstract_models.py:75
+#: box/core/models.py:90 box/core/sw_content/abstract_models.py:75
 #: box/core/sw_content/abstract_models.py:111
 msgid "Посилання"
 msgstr ""
 
-#: box/core/models.py:93
+#: box/core/models.py:94
 msgid "Альт до картинки"
 msgstr ""
 
-#: box/core/models.py:95 box/core/sw_content/abstract_models.py:119
+#: box/core/models.py:96 box/core/sw_content/abstract_models.py:119
 #: box/core/sw_content/admin/admin.py:207 box/core/sw_content/models.py:52
 msgid "Картинка"
 msgstr ""
 
-#: box/core/models.py:98 box/core/sw_auth/admin/admin.py:57
+#: box/core/models.py:99 box/core/sw_auth/admin/admin.py:57
 #: box/core/sw_content/models.py:133 box/core/sw_content/models.py:199
 #: box/core/sw_content/models.py:245 box/core/sw_currency/models.py:23
 #: box/core/sw_global_config/models.py:56
@@ -108,11 +108,11 @@ msgstr ""
 msgid "Назва"
 msgstr ""
 
-#: box/core/models.py:100
+#: box/core/models.py:101
 msgid "Опис"
 msgstr ""
 
-#: box/core/models.py:153
+#: box/core/models.py:154
 msgid "Емайл"
 msgstr ""
 
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Паролі не співпадаюсь"
 msgstr ""
 
-#: box/core/sw_auth/api/views.py:44 box/core/sw_auth/api/views.py:132
+#: box/core/sw_auth/api/views.py:44
 msgid "Неправильний старий пароль"
 msgstr ""
 
@@ -170,7 +170,7 @@ msgstr ""
 msgid "Цей емайл вже зайнятий"
 msgstr ""
 
-#: box/core/sw_auth/api/views.py:176
+#: box/core/sw_auth/api/views.py:176 box/core/sw_auth/api/views.py:177
 msgid "'Такого користувача не існує'"
 msgstr ""
 
@@ -1762,19 +1762,19 @@ msgstr ""
 msgid "доступні мови"
 msgstr ""
 
-#: box/core/utils.py:95
+#: box/core/utils.py:97
 msgid "SEO"
 msgstr ""
 
-#: box/core/utils.py:113
+#: box/core/utils.py:115
 msgid "ОСНОВНА ІНФОРМАЦІЯ"
 msgstr ""
 
-#: box/core/utils.py:153
+#: box/core/utils.py:155
 msgid "Показати на сайті"
 msgstr ""
 
-#: box/core/utils.py:156
+#: box/core/utils.py:158
 #, python-brace-format
 msgid "{obj._meta.verbose_name} не активний"
 msgstr ""
