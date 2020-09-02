@@ -40,7 +40,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
     def autocomplete_search_fields():
         return 'markers', 'labels', 'manufacturer',
     
-    parent = models.ForeignKey(verbose_name="Батьківський товар", to="self", on_delete=models.SET_NULL, null=True, blank=True)
+    # parent = models.ForeignKey(verbose_name="Батьківський товар", to="self", on_delete=models.SET_NULL, null=True, blank=True)
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',

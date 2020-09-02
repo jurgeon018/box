@@ -27,13 +27,18 @@ from django.utils.translation import gettext_lazy as _
 
 
 
-
+from rest_framework.decorators import api_view 
+import json 
 @csrf_exempt
+@api_view(['GET','POST'])
 def order_items(request):
-  print("query!!!")
   query        = request.POST or request.GET
-  print(query)
-  # import pdb; pdb.set_trace()
+  if not query and request.body:
+    query = request.body.decode('utf-8')
+    query = json.loads(query)
+  # print("query!!!")
+  # print(query)
+  # print()
   name         = query.get('name', "---")
   email        = query.get('email', "---")
   phone        = query.get('phone', "---")

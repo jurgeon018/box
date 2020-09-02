@@ -100,6 +100,7 @@ def create_warehouses(response):
     Warehouse.objects.all().delete()
     warehouses = []
     for item in response.get('data'):
+        print(item)
         params = {
             'title': item.get('Description'),
             'address': item.get('CityDescription')

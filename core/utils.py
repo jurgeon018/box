@@ -126,7 +126,11 @@ def get_multilingual_fields(model):
             multilingual_fields[field].append(f'{field}_{lang}')
     return multilingual_fields
 
-
+'''
+    formfield_overrides = {
+        models.ImageField:{"widget":AdminImageWidget}
+    }
+'''
 class AdminImageWidget(AdminFileWidget):
   def render(self, name, value, attrs=None, renderer=None):
     output = []
