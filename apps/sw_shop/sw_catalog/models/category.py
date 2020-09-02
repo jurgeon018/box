@@ -21,7 +21,14 @@ class ItemCategory(AbstractPage, MPTTModel):
     verbose_name_plural = _('категорії'); 
     unique_together = ('title', 'parent')
     ordering = ['order']
+  
+  def get_active_categories(self):
+    return ItemCategory.objects.filter(parent=self, is_active=True)
 
+  def has_items(self):
+    from .item import Item 
+    return Item.objects.filter(category=self).exists()
+  
   def get_absolute_url(self):
     if self.slug:
       return reverse(catalog_settings.ITEM_CATEGORY_URL_NAME, kwargs={"slug": self.slug})
@@ -125,4 +132,19 @@ class ItemCategory(AbstractPage, MPTTModel):
     # 	print(e)
     # 	result = self.title
     return result
+
+  def get_items(self):
+    from .item import Item 
+    items = Item.objects.filter(category=self,is_active=True)
+    return items
+
+
+
+
+
+
+
+
+
+
 

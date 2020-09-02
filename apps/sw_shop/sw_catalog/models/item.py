@@ -33,7 +33,14 @@ class GoogleFieldsMixin(models.Model):
     class Meta:
         abstract = True 
 
+
 class Item(AbstractPage, GoogleFieldsMixin):
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'markers', 'labels', 'manufacturer',
+    
+    # parent = models.ForeignKey(verbose_name="Батьківський товар", to="self", on_delete=models.SET_NULL, null=True, blank=True)
     if item_settings.MULTIPLE_CATEGORY:
         categories = models.ManyToManyField(
             verbose_name=_("Категорія"), to='sw_catalog.ItemCategory',
@@ -81,8 +88,10 @@ class Item(AbstractPage, GoogleFieldsMixin):
         help_text=_('0 - товар відсутній. Порожнє поле - необмежена кількість.'),
     )
     image      = models.ImageField(
-        verbose_name=_("Картинка"), upload_to='shop/item/',
-        blank=True, null=True, storage=OverwriteStorage(),
+        verbose_name=_("Картинка"), 
+        blank=True, null=True, 
+        upload_to=item_settings.ITEM_UPLOAD_TO,
+        # storage=OverwriteStorage(),
     )
     currency = models.ForeignKey(
         verbose_name=_("Валюта"),    to="sw_currency.Currency",
@@ -219,7 +228,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
         images = ItemImage.objects.filter(item=self)
         if images.exists():
             image = images.first().image 
-            if image and self.slug:
+            if image and self.slug and not self.image:
                 # print('!!!!', self.slug, image.name, image.name.split('/'))
                 name = self.slug + image.name.split("/")[-1]
                 try:
@@ -232,11 +241,14 @@ class Item(AbstractPage, GoogleFieldsMixin):
             image  = self.image 
             width  = 400
             # height = 400
-            img    = Image.open(image.path)
-            height = int((float(img.size[1])*float((width/float(img.size[0])))))
-            img    = img.resize((width,height), Image.ANTIALIAS)
-            img.save(image.path) 
-        
+            try:
+                img    = Image.open(image.path)
+                height = int((float(img.size[1])*float((width/float(img.size[0])))))
+                img    = img.resize((width,height), Image.ANTIALIAS)
+                img.save(image.path) 
+            except Exception as e:
+                print(e)
+            
     def get_feature_categories(self):
         feature_categories = self.get_item_features().values_list('category__id', flat=True).distinct()
         feature_categories = FeatureCategory.objects.filter(id__in=feature_categories)
@@ -247,7 +259,7 @@ class Item(AbstractPage, GoogleFieldsMixin):
         ids = self.get_item_attributes().values_list('attribute__category__id', flat=True).distinct()
         attribute_categories = AttributeCategory.objects.filter(id__in=ids)
         return attribute_categories
-
+    
     def get_item_features(self):
         return ItemFeature.objects.filter(item=self, is_active=True)
 
@@ -318,3 +330,45 @@ class Item(AbstractPage, GoogleFieldsMixin):
       except:
         stars = 0
       return str(stars)
+
+
+# class ItemVariant(models.Model):
+#     pass 
+
+
+
+
+'''
+
+
+
+1 спосіб 
+
+плюси
+мінуси 
+
+
+
+Реджіна 
+id:1
+Реджіна 
+id:2
+
+ItemFeature
+item:1
+name:розмір
+value:30
+unit:cm 
+
+ItemFeature
+item:2
+name:розмір
+value:50 
+unit:cm 
+
+'''
+
+
+
+
+

@@ -46,6 +46,9 @@ class Post(AbstractPage):
     verbose_name=_("Автор"), to=User, on_delete=models.CASCADE, 
     blank=True, null=True,
   )
+  similars  = models.ManyToManyField(
+    verbose_name="Схожі публікації", blank=True, null=True, to='sw_blog.Post',
+  )
 
   def save(self, *args, **kwargs):
     if not self.slug:

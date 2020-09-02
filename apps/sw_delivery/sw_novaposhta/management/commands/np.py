@@ -30,9 +30,9 @@ class Command(BaseCommand):
         )
 
         '''
-        python3 manage.py np settlements -a=gen_json 
-        python3 manage.py np settlements -a=gen_json -l=150 -p=1 -pl=5
-        python3 manage.py np settlements -a=from_json 
+        python3 manage.py np -c settlements -a=gen_json 
+        python3 manage.py np -c settlements -a=gen_json -l=150 -p=1 -pl=5
+        python3 manage.py np -c settlements -a=from_json 
 
         action  = refresh, browse
         content = warehouses, settlements 

@@ -1,5 +1,5 @@
 from django.urls import path 
-from box.apps.sw_blog.api.views import *
+from ...views import *
 
 
 urlpatterns = [

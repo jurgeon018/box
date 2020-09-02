@@ -38,6 +38,9 @@ from .views import *
 from .item_inlines import * 
 from ..resources import * 
 
+zminna = True
+# zminna = False
+
 
 class AttrBaseMixin(
     TabbedTranslationAdmin,
@@ -47,10 +50,12 @@ class AttrBaseMixin(
     pass 
 
 class ItemAttributeValueInline(nested_admin.NestedTabularInline):
-    autocomplete_fields = [
-        'value',
-        'proposition',
-    ]
+    # if 'jet' not in settings.INSTALLED_APPS:
+    if zminna:
+        autocomplete_fields = [
+            'value',
+            'proposition',
+        ]
     # fieldsets = (
     #     (None, {
     #         "fields": (
@@ -78,9 +83,12 @@ class ItemAttributeValueInline(nested_admin.NestedTabularInline):
 
 
 class ItemAttributeInline(nested_admin.NestedTabularInline):
-    autocomplete_fields = [
-        'attribute'
-    ]
+    # if 'jet' not in settings.INSTALLED_APPS:
+    if zminna:
+        autocomplete_fields = [
+            'attribute'
+        ]
+
     extra = 0
     classes = [
         'collapse',
@@ -101,10 +109,11 @@ class ItemAttributeAdmin(
     inlines = [
         ItemAttributeValueInline,
     ]
-    autocomplete_fields = [
-        'item',
-        'attribute',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'item',
+            'attribute',
+        ]
     list_filter = [
         'is_option',
         ItemFilter,
@@ -158,10 +167,11 @@ class ItemAttributeValueAdmin(
     # def get_model_perms(self, request):
     #     return {}
     resource_class = ItemAttributeValueResource
-    autocomplete_fields = [
-        'item_attribute',
-        'value',
-    ] 
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'item_attribute',
+            'value',
+        ] 
     list_display = [
         'id',
         'item_attribute',
@@ -193,9 +203,10 @@ class AttributeAdmin(AttrBaseMixin):
     search_fields = [
         'name'
     ]
-    autocomplete_fields = [
-        'category',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'category',
+        ]
     list_display = [
         'id',
         'code',

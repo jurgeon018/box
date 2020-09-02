@@ -1,8 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from django.db import models 
 from box.core.models import AbstractPage, BaseMixin
-from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
-from adminsortable.fields import SortableForeignKey
+# from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
+# from adminsortable.fields import SortableForeignKey
 from ..utils import generate_unique_slug, item_image_folder
 from django.contrib.auth import get_user_model
 from django.conf import settings 
@@ -69,8 +69,8 @@ def compress(image):
     return new_image
 
 
-from filer.fields.image import FilerImageField
-from filer.fields.file import FilerFileField
+# from filer.fields.image import FilerImageField
+# from filer.fields.file import FilerFileField
 
 class ItemImage(models.Model):
     order           = models.PositiveIntegerField(
@@ -192,6 +192,7 @@ class ItemStock(models.Model):
     text         = models.CharField(verbose_name=_('Текст'), max_length=255, unique=True)
     availability = models.BooleanField(verbose_name=_('Можливість покупки'), default=True)
     colour       = ColorField(verbose_name=_('Колір'),  max_length=255)
+
     def __str__(self):
         return f"{self.text}"
     

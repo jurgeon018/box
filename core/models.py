@@ -4,7 +4,6 @@ from django.utils import timezone
 from box.core import settings as core_settings 
 
 from tinymce import HTMLField
-from adminsortable.models import SortableMixin
 
 from .managers import BasicManager, ActiveManager
 from django.db.models.manager import BaseManager
@@ -13,7 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 
-
+# from django.shortcuts import reverse 
 
 __all__ = [
     "BaseMixin",
@@ -68,6 +67,7 @@ class BaseMixin(models.Model):
 	@classmethod
 	def modeltranslation_fields(self):
 		return []
+
 
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, *args, **kwargs):

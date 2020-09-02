@@ -20,6 +20,7 @@ from store.models import Product, OptionItem, ProductCategory
 SETTINGS = settings.FEEDS
 
 current_site = Site.objects.get_current()
+from django.utils.html import strip_tags
 
 class GoogleProductsFeed(Rss201rev2Feed):
     """

@@ -27,17 +27,23 @@ from django.utils.translation import gettext_lazy as _
 
 
 
-
+from rest_framework.decorators import api_view 
+import json 
 @csrf_exempt
+@api_view(['GET','POST'])
 def order_items(request):
   query        = request.POST or request.GET
-  # import pdb; pdb.set_trace()
+  if not query and request.body:
+    query = request.body.decode('utf-8')
+    query = json.loads(query)
+  # print("query!!!")
+  # print(query)
+  # print()
   name         = query.get('name', "---")
   email        = query.get('email', "---")
   phone        = query.get('phone', "---")
   address      = query.get('address', "---")
   comments     = query.get('comments', "---")
-
   payment_opt  = query.get('payment_opt', "---")
   delivery_opt = query.get('delivery_opt', "---")
 
@@ -63,6 +69,7 @@ def order_items(request):
     order.make_order(request)
     url = reverse('thank_you')
     return JsonResponse({"url":url})
+  
 
 from rest_framework.decorators import api_view
 
@@ -80,13 +87,20 @@ def order_request(request):
     phone    = query.get('phone', '---')
     address  = query.get('address', '---')
     comments = query.get('comments', '---')
-    attributes = json.loads(query.get('attributes'))
-    item_id  = query['product_id']
+    attributes = query.get('attributes')
+    if attributes:
+      attributes = json.loads(attributes)
+    item_id  = query.get('product_id')
+    if not item_id:
+      item_id = query.get('item_id')
     payment  = _('Покупка в 1 клік')
     delivery = _('Покупка в 1 клік')
     print(query)
     cart = get_cart(request)
-    cart.add_item(item_id=item_id, quantity=1, attributes=attributes)
+    if attributes:
+      cart.add_item(item_id=item_id, quantity=1, attributes=attributes)
+    else:
+      cart.add_item(item_id=item_id, quantity=1)
     order = Order.objects.create(
       name    = name,    
       email   = email,   
@@ -107,6 +121,8 @@ from ..models import OrderRecipientEmail
 def item_info(request):
   query   = request.GET or request.POST
   item_id = query.get('product_id')
+  if not item_id:
+    item_id = query.get('item_id')
   name    = query.get('name', '---') 
   phone   = query.get('phone', '---') 
   email   = query.get('email', '---')

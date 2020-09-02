@@ -28,7 +28,7 @@ class ClonableModelAdmin(ModelAdmin):
 
     clone_verbose_name = lazy('Дублювати')
     change_form_template = 'modelclone/change_form.html'
-
+    
     def clone_link(self, clonable_model):
         '''
         Method to be used on `list_display`, renders a link to clone model

@@ -91,9 +91,10 @@ class ItemImageAdmin(
         'alt',
     ]
     list_editable = []
-    autocomplete_fields = [
-        'item',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'item',
+        ]
 
 
 class ItemStockAdmin(

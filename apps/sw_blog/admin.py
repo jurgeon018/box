@@ -6,15 +6,15 @@ from django.forms import NumberInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline
 from box.core.utils import BaseAdmin , seo 
-from adminsortable.admin import SortableAdmin
+# from adminsortable.admin import SortableAdmin
 from box.core.utils import BaseAdmin
 from .models import *
 from box.core.utils import (
     show_admin_link,
     AdminImageWidget, seo, 
 )
-from django_summernote.admin import SummernoteModelAdmin
-from markdownx.admin import MarkdownxModelAdmin
+# from django_summernote.admin import SummernoteModelAdmin
+# from markdownx.admin import MarkdownxModelAdmin
 
 
 
@@ -45,6 +45,7 @@ class PostCategoryAdmin(
                 'image',
                 'created',
                 'updated',
+                'code',
             ),
             'classes':('collapse'),
         }),
@@ -53,6 +54,11 @@ class PostCategoryAdmin(
     prepopulated_fields = {
         "slug": ("title",),
     }
+    readonly_fields = [
+        'code',
+        'updated',
+        'created',
+    ]
     save_on_top = True 
     # changelist
     search_fields = [
@@ -87,7 +93,7 @@ from .resources import PostResource
 class PostAdmin(
     BaseAdmin,
     TabbedTranslationAdmin,
-    SortableAdmin,
+    # SortableAdmin,
     ImportExportModelAdmin,
     # MarkdownxModelAdmin,
     # SummernoteModelAdmin,
@@ -105,11 +111,13 @@ class PostAdmin(
     prepopulated_fields = {
         'slug':('title',),
     }
-    autocomplete_fields = [
-        'author',
-        'category',
-        'markers',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+        autocomplete_fields = [
+            'author',
+            'category',
+            'similars',
+            'markers',
+        ]
     inlines = [
         CommentInline,
     ]
@@ -120,6 +128,7 @@ class PostAdmin(
                 'title',
                 'category',
                 'author',
+                'similars',
                 'markers',
                 'image',
                 'content',

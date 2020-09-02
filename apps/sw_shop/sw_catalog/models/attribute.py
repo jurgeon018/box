@@ -41,8 +41,9 @@ class Attribute(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if self.name:
-            self.name = self.name.lower().strip()
+        # if self.name:
+            # self.name = self.name.lower().strip()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -105,12 +106,13 @@ class AttributeValue(models.Model):
 class ItemAttributeValue(models.Model):
     item_attribute = models.ForeignKey(
         to="sw_catalog.ItemAttribute", verbose_name=_("Атрибут товару"), on_delete=models.CASCADE,
-        related_name='variants',
+        related_name='item_attribute_values',
     )
     value = models.ForeignKey(
         verbose_name=_("Значення"), 
         to='sw_catalog.AttributeValue', 
         on_delete=models.CASCADE,
+
     )
     price = models.DecimalField(
         verbose_name=_("Ціна"), max_digits=9, decimal_places=2, default=0,
@@ -165,8 +167,7 @@ class ItemAttribute(models.Model):
     is_option = models.BooleanField(
         verbose_name=_("Опція?"), default=False
     )
-    # item = models.
-
+    
     def get_values(self):
         return ItemAttributeValue.objects.filter(item_attribute=self)
 

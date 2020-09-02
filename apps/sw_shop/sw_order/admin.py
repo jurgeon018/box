@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib import admin 
 from django.shortcuts import reverse, render, redirect
 from django.utils.html import mark_safe
+from django.conf import settings 
 
 from box.apps.sw_shop.sw_order.models import Order, OrderStatus, Payment
 # from box.apps.sw_payment.liqpay.admin import PaymentInline
@@ -14,7 +15,10 @@ from .filters import *
 from .forms import * 
 
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline, TranslationTabularInline
-from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+if 'jet' in settings.INSTALLED_APPS:
+  from jet.filters import DateRangeFilter, DateTimeRangeFilter
+else:
+  from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 import nested_admin
 from import_export.admin import ImportExportModelAdmin
 from .resources import * 
@@ -215,8 +219,11 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
     list_filter = [
         'status',
         'tags',
-        ('created', DateTimeRangeFilter), 
-        ('updated', DateTimeRangeFilter),
+        # ('created', DateTimeRangeFilter), 
+        ('created', DateRangeFilter), 
+        # ('updated', DateTimeRangeFilter),
+        ('updated', DateRangeFilter),
+        
     ]
     fields = [
         # 'user',
@@ -237,11 +244,12 @@ class OrderAdmin(nested_admin.NestedModelAdmin):
         "total_without_coupon",
         'note',
     ]
-    autocomplete_fields = [ 
-      'status',
-      'tags',
-      'coupon',
-    ]
+    if 'jet' not in settings.INSTALLED_APPS:
+      autocomplete_fields = [ 
+        'status',
+        'tags',
+        'coupon',
+      ]
     readonly_fields = [
         'show_user',
         'total_with_coupon',
@@ -286,9 +294,14 @@ class ItemRequestAdmin(admin.ModelAdmin):
 class OrderStatusInline(TranslationTabularInline):
     extra = 0 
     model = OrderStatus
-     
+
 class OrderRecipientEmailInline(admin.TabularInline):
   model = OrderRecipientEmail
+  exclude = []
+  extra = 0
+
+class OrderAdditionalPriceInline(admin.TabularInline):
+  model = OrderAdditionalPrice
   exclude = []
   extra = 0
 
@@ -297,5 +310,6 @@ class OrderRecipientEmailInline(admin.TabularInline):
 class OrderConfigAdmin(SingletonModelAdmin):
   inlines = [
     OrderStatusInline,
-    OrderRecipientEmailInline
+    OrderRecipientEmailInline,
+    OrderAdditionalPriceInline,
   ]

@@ -16,12 +16,14 @@ def box_send_mail(subject, template, email_config, model, fail_silently=False, c
   global_emails  = list(GlobalRecipientEmail.get_recipient_list())
   emails         = list(email_config.get_recipient_list())
   global_emails.extend(emails)
+  recipient_list = set(global_emails)
+  print("recipient_list:", recipient_list)
   context.update({'site':site, 'model':model})
   send_mail(
     subject        = subject,
     message        = render_to_string(template, context),
     from_email     = GlobalConfig.get_solo().from_email,
-    recipient_list = set(global_emails),
+    recipient_list = recipient_list,
     fail_silently  = fail_silently,
   )
   # TODO: сповіщення по SMS

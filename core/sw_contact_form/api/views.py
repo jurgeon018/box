@@ -37,7 +37,8 @@ def sw_contact(request):
       template     = 'sw_contact_form/mail.html', 
       email_config = ContactRecipientEmail, 
       model        = model, 
-      fail_silently= False,
+      fail_silently= True,
+    #   fail_silently= False,
     )
     return JsonResponse({
         'status':'OK',
