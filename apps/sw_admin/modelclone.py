@@ -106,27 +106,29 @@ class ClonableModelAdmin(ModelAdmin):
 
             prefixes = {}
             for FormSet, inline in self.get_formsets_with_inlines(request):
-                prefix = FormSet.get_default_prefix()
-                prefixes[prefix] = prefixes.get(prefix, 0) + 1
-                if prefixes[prefix] != 1 or not prefix:
-                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                try:
+                    prefix = FormSet.get_default_prefix()
+                    prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                    if prefixes[prefix] != 1 or not prefix:
+                        prefix = "%s-%s" % (prefix, prefixes[prefix])
 
-                request_files = request.FILES
-                filter_params = {'%s__pk' % original_obj.__class__.__name__.lower(): original_obj.pk}
-                inlined_objs = inline.model.objects.filter(**filter_params)
-                for n, inlined_obj in enumerate(inlined_objs.all()):
-                    for field in inlined_obj._meta.fields:
-                        if isinstance(field, FileField) and field not in request_files:
-                            value = field.value_from_object(inlined_obj)
-                            file_field_name = '{}-{}-{}'.format(prefix, n, field.name)
-                            request_files.setdefault(file_field_name, value)
+                    request_files = request.FILES
+                    filter_params = {'%s__pk' % original_obj.__class__.__name__.lower(): original_obj.pk}
+                    inlined_objs = inline.model.objects.filter(**filter_params)
+                    for n, inlined_obj in enumerate(inlined_objs.all()):
+                        for field in inlined_obj._meta.fields:
+                            if isinstance(field, FileField) and field not in request_files:
+                                value = field.value_from_object(inlined_obj)
+                                file_field_name = '{}-{}-{}'.format(prefix, n, field.name)
+                                request_files.setdefault(file_field_name, value)
 
-                formset = FormSet(data=request.POST, files=request_files,
-                                  instance=new_object,
-                                  save_as_new="_saveasnew" in request.POST,   # ????
-                                  prefix=prefix)
-                formsets.append(formset)
-
+                    formset = FormSet(data=request.POST, files=request_files,
+                                    instance=new_object,
+                                    save_as_new="_saveasnew" in request.POST,   # ????
+                                    prefix=prefix)
+                    formsets.append(formset)
+                except Exception as e:
+                    print(e, "!!!!")
             if all_valid(formsets) and form_validated:
 
                 # if original model has any file field, save new model
