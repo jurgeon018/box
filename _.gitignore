@@ -29,9 +29,5 @@ __pycache__/
 static_root/
 
 node_modules
-package-lock.json
-package.json
-webpack.config.js
-
 
 
