@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 12:41+0000\n"
+"POT-Creation-Date: 2020-08-03 09:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,26 +71,26 @@ msgstr ""
 msgid "Типи населених пунктів"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:85
+#: box/apps/sw_delivery/sw_novaposhta/models.py:86
 msgid "Type"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:86
+#: box/apps/sw_delivery/sw_novaposhta/models.py:87
 msgid "latitude"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:87
+#: box/apps/sw_delivery/sw_novaposhta/models.py:88
 msgid "longitude"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:88
+#: box/apps/sw_delivery/sw_novaposhta/models.py:89
 msgid "Region"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:109
+#: box/apps/sw_delivery/sw_novaposhta/models.py:110
 msgid "населений пункт"
 msgstr ""
 
-#: box/apps/sw_delivery/sw_novaposhta/models.py:110
+#: box/apps/sw_delivery/sw_novaposhta/models.py:111
 msgid "населені пункти"
 msgstr ""
