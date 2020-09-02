@@ -123,7 +123,13 @@ class AbstractPage(BaseMixin):
 	@property
 	def image_url(self):
 		url = core_settings.IMAGE_NOT_FOUND
-		if self.image: url = self.image.url
+		# if self.image: url = self.image.url
+		if self.image: 
+			try:
+				x = open(self.image.path, 'r')
+				url = self.image.url
+			except:
+				url = core_settings.IMAGE_NOT_FOUND
 		return url 
 
 	@property

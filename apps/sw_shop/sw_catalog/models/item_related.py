@@ -141,7 +141,13 @@ class ItemImage(models.Model):
     @property
     def image_url(self):
         image_url = core_settings.IMAGE_NOT_FOUND
-        if self.image: image_url = self.image.url 
+        # if self.image: image_url = self.image.url 
+        if self.image: 
+            try:
+                x = open(self.image.path)
+                image_url = self.image.url 
+            except:
+                image_url = core_settings.IMAGE_NOT_FOUND
         return image_url
 
     class Meta: 
