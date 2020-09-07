@@ -204,7 +204,11 @@ class ItemResource(ModelResource):
     
     def dehydrate_images(self, item):
         images = ItemImage.objects.all().filter(item=item) 
-        images_url = ','.join([image.image.url.split('/')[-1] for image in images])
+        imgs = []
+        for image in images:
+            if image.image:
+                imgs.append(image.image.url.split('/')[-1])
+        images_url = ','.join(imgs)
         return images_url
 
     def handle_server_images_import(self, row):
@@ -221,8 +225,9 @@ class ItemResource(ModelResource):
         server_images = []
         images = ItemImage.objects.all().filter(item=item)
         for image in images:
-            server_image = f'https://{domain}{image.image.url}'
-            server_images.append(server_image)
+            if image.image:
+                server_image = f'https://{domain}{image.image.url}'
+                server_images.append(server_image)
         return ','.join(server_images) 
 
     def handle_markers_import(self, row):

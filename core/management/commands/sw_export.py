@@ -121,11 +121,12 @@ class Command(BaseCommand):
 
   def export(self, resource, dirname, ext):
     print(resource)
-    app_label   = resource._meta.model._meta.app_label
-    folder_name = f'export/{dirname}/{app_label}/' 
-    file_name   = f'{resource.__name__}.{ext}'
-    path_name   = folder_name + file_name
-    Path(folder_name).mkdir(parents=True, exist_ok=True)
-    with open(path_name, 'w') as f:
-      f.write(getattr(resource().export(), ext))
+    if resource._meta.model:
+      app_label   = resource._meta.model._meta.app_label
+      folder_name = f'export/{dirname}/{app_label}/' 
+      file_name   = f'{resource.__name__}.{ext}'
+      path_name   = folder_name + file_name
+      Path(folder_name).mkdir(parents=True, exist_ok=True)
+      with open(path_name, 'w') as f:
+        f.write(getattr(resource().export(), ext))
 
