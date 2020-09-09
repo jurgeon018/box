@@ -63,7 +63,7 @@ def paginate(request, klass, per_page=4, page_number=1, ):
 def get_resource(name):
     resources = get_resources()
     for resource in resources:
-        print(resource)
+        # print(resource)
         if resource.__name__ == name:
             return resource 
     raise Exception(f"Resource '{name}' not found")

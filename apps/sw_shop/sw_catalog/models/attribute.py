@@ -1,7 +1,7 @@
 from django.db import models 
 from django.utils.translation import gettext_lazy as _
 from box.core.sw_currency.models import Currency
-
+from box.core.helpers import get_admin_url
 
 class AttributeCategory(models.Model):
     name   = models.CharField(
@@ -17,7 +17,10 @@ class AttributeCategory(models.Model):
    
     def get_category_attributes(self, item):
         return ItemAttribute.objects.filter(item=item, attribute__category=self) 
-    
+
+    def get_category_attribute_values(self, item):
+        return ItemAttributeValue.objects.filter(item_attribute__item=item, item_attribute__attribute__category=self)
+
     class Meta:
         verbose_name = _('категорія атрибутів')
         verbose_name_plural = _('категорії атрибутів')
@@ -25,6 +28,10 @@ class AttributeCategory(models.Model):
     @classmethod
     def modeltranslation_fields(cls):
         return ['name']
+
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
 
 
 class Attribute(models.Model):
@@ -48,6 +55,10 @@ class Attribute(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
 
     class Meta:
         verbose_name = _('атрибут')
@@ -94,6 +105,10 @@ class AttributeValue(models.Model):
             self.value = self.value.lower().strip()
         super().save(*args, **kwargs)
 
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
+
     class Meta:
         verbose_name = _('значення атрибуту')
         verbose_name_plural = _('значення атрибутів')
@@ -138,6 +153,10 @@ class ItemAttributeValue(models.Model):
       if not self.currency:
         self.currency = Currency.objects.get(is_main=True)
       super().save(*args, **kwargs)
+
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
 
     @classmethod
     def modeltranslation_fields(self):
@@ -185,6 +204,10 @@ class ItemAttribute(models.Model):
             'item',
             'attribute',
         ]
+
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
 
 
 

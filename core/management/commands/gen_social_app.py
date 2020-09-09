@@ -53,11 +53,14 @@ class Command(BaseCommand):
     if not name:
         name = 'google'
     if not client_id:
-        client_id = '697687398766-c0bp6htapgjknp375e62arb8njtutt2i.apps.googleusercontent.com'
+        client_id = '362540016772-nqgbd8ktjkh5314759ol1kpi9q1tcjca.apps.googleusercontent.com'
+        # client_id = '697687398766-c0bp6htapgjknp375e62arb8njtutt2i.apps.googleusercontent.com'
     if not secret:
-        secret = 'qG1YSFzKX40VlMdBgxLTRBpI'
+        secret = 'bokK8C27V29tOHm7NhmaCee0'
+        # secret = 'qG1YSFzKX40VlMdBgxLTRBpI'
     # key       = kwargs.get('key', '')
     # sites     = kwargs.get('sites')
+    SocialApp.objects.all().delete()
     social_app, _ = SocialApp.objects.get_or_create(
         provider=provider,
         name=name,

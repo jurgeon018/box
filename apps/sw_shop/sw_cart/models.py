@@ -70,7 +70,7 @@ class Cart(models.Model):
           value=attribute_value,
           price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
         )
-
+  
   def get_cart_item(self, item, attributes):
     print(attributes)
     cart_items = CartItem.objects.filter(cart=self, item=item)
