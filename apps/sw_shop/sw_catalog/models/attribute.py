@@ -127,14 +127,13 @@ class ItemAttributeValue(models.Model):
         verbose_name=_("Значення"), 
         to='sw_catalog.AttributeValue', 
         on_delete=models.CASCADE,
-
     )
     price = models.DecimalField(
         verbose_name=_("Ціна"), max_digits=9, decimal_places=2, default=0,
     )
     currency = models.ForeignKey(
         verbose_name=_("Валюта"), to="sw_currency.Currency", 
-        on_delete=models.CASCADE, blank=True, null=True
+        on_delete=models.SET_NULL, blank=True, null=True
     )
     amount = models.PositiveIntegerField(
 		verbose_name=_("Кількість"), blank=True, null=True, default=None,

@@ -40,7 +40,6 @@ class OrderAdditionalPrice(models.Model):
       verbose_name_plural = _("емейли для сповіщень про замовлення")
 
 
-
 class OrderRecipientEmail(AbstractRecipientEmail):
   config = models.ForeignKey(
     verbose_name=_("Налаштування"),to="sw_order.OrderConfig", 
@@ -49,6 +48,7 @@ class OrderRecipientEmail(AbstractRecipientEmail):
   class Meta:
       verbose_name = _('емейл для сповіщень про замовлення')
       verbose_name_plural = _("емейли для сповіщень про замовлення")
+
 
 from box.apps.sw_shop.sw_cart.models import CartItem
 from box.apps.sw_shop.sw_cart.utils import get_cart
