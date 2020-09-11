@@ -88,6 +88,18 @@ class Currency(models.Model):
 			return self.sale_rate 
 		elif main_field == "purchase":
 			return self.purchase_rate
+		
+	def convert(self, curr_from, curr_to):
+		rate = 1
+		# print("curr_from:", curr_from, curr_from.get_rate())
+		# print("curr_to:", curr_to, curr_to.get_rate())
+		if curr_from.is_main:
+			rate = curr_from.get_rate() / curr_to.get_rate()
+		elif curr_to.is_main:
+			rate = curr_from.get_rate() / curr_to.get_rate()
+		else:
+			rate = curr_from.get_rate() / curr_to.get_rate()
+		return rate
 
 	class Meta: 
 		verbose_name = _('валюта'); 

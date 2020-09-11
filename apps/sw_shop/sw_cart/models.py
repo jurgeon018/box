@@ -195,6 +195,18 @@ class Cart(models.Model):
   def items_count(self):
     return CartItem.objects.filter(cart=self).all().count()
 
+  # prices new
+
+  def get_price(self, currency=None, price_type=None):
+    if not currency:
+      currency = Currency.objects.get(is_main=True)
+    # todo: замовлення без купону, замовлення з купоном
+    if price_type == 'total_price':
+      price = self.total_price 
+    return price 
+
+  # prices old
+
   @property
   def total_price(self):
     total_price = 0
@@ -260,30 +272,43 @@ class CartItemPriceMixin(models.Model):
   class Meta:
     abstract = True 
 
-  def get_price(self, currency=None, price_type=None):
+  def get_price(self, currency=None, price_type='price'):
     if not currency:
       currency = Currency.objects.get(is_main=True)
-    if price_type == None:
+    if price_type == 'price':
+      # ціна без атрибутів без скидки
       price = self.item.get_price(currency)
-    elif price_type == 'with_discount':
-      # без атрибутів з скидкою
+    elif price_type == 'price_with_discount':
+      # ціна без атрибутів з скидкою
       price = self.item.get_price(currency,"with_discount")
-    elif price_type == 'with_options':
-      # з атрибутами без скидки
+    elif price_type == 'price_with_attributes':
+      # ціна з атрибутами без скидки
       price = 0
-    elif price_type == 'with_discount_with_options':
-      # з атрибутами з скидкою
+    elif price_type == 'price_with_discount_with_attributes':
+      # ціна з атрибутами з скидкою
       price = self.item.get_price(currency,"with_discount")
       price += 0
-      # TODO: сконвертувати ціну атрибута відносно ціни товараю
-    elif price_type == '':
-      # з 
+      # TODO: сконвертувати ціну атрибута відносно ціни товара
+    elif price_type == 'attributes':
+      # ціна атрибутів
+      price = 0
+    elif price_type == 'total_price':
+      # сумарна ціна без атрибутів без скидки
+      price = 0
+    elif price_type == 'total_price_with_discount':
+      # сумарна ціна без атрибутів з скидкою
+      price = 0
+    elif price_type == 'total_price_with_attributes':
+      # сумарна ціна з атрибутами без скидки
+      price = 0
+    elif price_type == 'total_price_with_discount_with_attributes':
+      # сумарна ціна з атрибутами з скидкою
+      price = 0
+    elif price_type == 'total_attributes':
+      # сумарна ціна атрибутів
       price = 0
     elif price_type == '':
-      price = 0
-    elif price_type == '':
-      price = 0
-    elif price_type == '':
+      # 
       price = 0
     price = price * currency.get_rate()
     return price 
@@ -303,7 +328,6 @@ class CartItemPriceMixin(models.Model):
   @property
   def price_of_attributes(self):
     price = 0
-    price += float(ItemAttributeValue.objects.filter(id__in=ids))
     for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
       for value in cart_item_attribute.values.all():
         price += float(value.price)

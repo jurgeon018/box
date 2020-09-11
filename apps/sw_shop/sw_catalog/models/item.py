@@ -63,20 +63,20 @@ class ItemPricesMixin(models.Model):
         # blank=True, null=True,
     )
 
-    def get_price(self, currency=None, price_type=None):
+    def get_price(self, currency=None, price_type='price'):
+        print("currency", currency)
         if not currency:
             currency = Currency.objects.get(is_main=True)
         price = self.price
-        if price_type == 'with_discount' and self.discount:
+        if price_type == 'price_with_discount' and self.discount:
             if self.discount_type == 'p':
                 discount = self.price * self.discount / 100
             else:
                 discount = self.discount 
             price = self.price - discount
-            # price = round(price, 2)
-        price = price * currency.get_rate()
+        price = price * currency.convert(curr_from=self.currency, curr_to=currency)
         return price 
-    
+
     # old 
 
     def converted_price(self):

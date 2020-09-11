@@ -144,7 +144,10 @@ class Order(models.Model):
     cart = get_cart(request)
     self.handle_user(request)
     self.handle_amount(request)
-    self.total_price = cart.total_price
+
+    # self.total_price = cart.total_price
+    self.total_price = cart.get_price(price_type='total_price')
+    
     self.ordered = True
     self.save()
     cart.order = self 

@@ -31,8 +31,13 @@ def get_category_attribute_values(category, item=None):
 
 
 @register.simple_tag
-def get_price(item, currency):
-    return item.get_price(currency)
+def get_item_price(item, currency=None, price_type=None):
+    return item.get_price(currency, price_type)
+
+
+@register.simple_tag
+def get_item_attribute_value_price(item_attribute_value, currency=None, price_type=None):
+    return item_attribute_value.get_price(currency, price_type)
 
 
 

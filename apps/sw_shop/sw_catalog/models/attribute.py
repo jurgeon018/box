@@ -155,7 +155,13 @@ class ItemAttributeValue(models.Model):
 
     def get_admin_url(self):
         return get_admin_url(self)
-        
+
+    def get_price(self, currency=None, price_type=None):
+        if currency == None:
+            currency = Currency.objects.get(is_main=True)
+        curr_from = self.currency or currency 
+        price = float(self.price) * currency.convert(curr_from=curr_from, curr_to=currency)
+        return price         
 
     @classmethod
     def modeltranslation_fields(self):
