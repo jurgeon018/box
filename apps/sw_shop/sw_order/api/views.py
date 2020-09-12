@@ -36,9 +36,7 @@ def order_items(request):
   if not query and request.body:
     query = request.body.decode('utf-8')
     query = json.loads(query)
-  # print("query!!!")
-  # print(query)
-  # print()
+  print("query:", query)
   name         = query.get('name', "---")
   email        = query.get('email', "---")
   phone        = query.get('phone', "---")

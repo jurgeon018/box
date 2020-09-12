@@ -377,11 +377,11 @@ attributes: [
     },
     {
         "item_attribute_id":int,
-        "item_attribute_value_ids":[int,int,int,...,int], 
+        "item_attribute_value_ids":[int,int,int,...,int],
     },
     {
         "item_attribute_id":int,
-        "item_attribute_value_ids":[int,int,int,...,int], 
+        "item_attribute_value_ids":[int,int,int,...,int],
     },
     {
         "item_attribute_id":int,

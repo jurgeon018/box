@@ -32,6 +32,8 @@ def get_response(request):
     public  = config.liqpay_public_key
     private = config.liqpay_private_key
   liqpay    = LiqPay(public, private)
+  print("private:", private)
+  print("data:", data)
   sign      = liqpay.str_to_sign(private + data + private)
   response  = liqpay.decode_data_from_str(data)
   if sign == signature: print('callback is valid')
