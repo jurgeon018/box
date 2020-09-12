@@ -200,13 +200,17 @@ class Cart(models.Model):
   def get_price(self, currency=None, price_type='total_price'):
     if not currency:
       currency = Currency.objects.get(is_main=True)
-    # todo: замовлення без купону, замовлення з купоном
+    # todo: замовлення без купону, за мовлення з купоном
     if price_type == 'total_price':
-      price = self.total_price 
+      price = 0 
       for cart_item in CartItem.objects.filter(cart=self):
-        price = price + cart_item.get_price(currency, "total_price_with_discount_with_attributes") * currency.convert(curr_from=self.get_currency(), curr_to=currency)
+        curr_from = cart_item.item.currency
+        ci    = cart_item.get_price(currency, "total_price_with_discount_with_attributes") 
+        koef  = currency.convert(curr_from=curr_from, curr_to=currency)
+        price = price + ci*koef
       for additional_price in OrderAdditionalPrice.objects.all(): 
         price = price + additional_price.price * currency.convert(curr_from=self.get_currency(), curr_to=currency)
+    # print("cart.get_price", price)
     return price 
 
   # prices old
