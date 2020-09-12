@@ -197,12 +197,16 @@ class Cart(models.Model):
 
   # prices new
 
-  def get_price(self, currency=None, price_type=None):
+  def get_price(self, currency=None, price_type='total_price'):
     if not currency:
       currency = Currency.objects.get(is_main=True)
     # todo: замовлення без купону, замовлення з купоном
     if price_type == 'total_price':
       price = self.total_price 
+      for cart_item in CartItem.objects.filter(cart=self):
+        price = price + cart_item.get_price(currency, "total_price_with_discount_with_attributes") * currency.convert(curr_from=self.get_currency(), curr_to=currency)
+      for additional_price in OrderAdditionalPrice.objects.all(): 
+        price = price + additional_price.price * currency.convert(curr_from=self.get_currency(), curr_to=currency)
     return price 
 
   # prices old
@@ -275,42 +279,52 @@ class CartItemPriceMixin(models.Model):
   def get_price(self, currency=None, price_type='price'):
     if not currency:
       currency = Currency.objects.get(is_main=True)
+
     if price_type == 'price':
       # ціна без атрибутів без скидки
       price = self.item.get_price(currency)
     elif price_type == 'price_with_discount':
       # ціна без атрибутів з скидкою
-      price = self.item.get_price(currency,"with_discount")
+      price = self.item.get_price(currency, "price_with_discount")
     elif price_type == 'price_with_attributes':
       # ціна з атрибутами без скидки
-      price = 0
+      price = self.item.get_price(currency)
+      price += self.get_price_of_attributes(currency)
     elif price_type == 'price_with_discount_with_attributes':
       # ціна з атрибутами з скидкою
-      price = self.item.get_price(currency,"with_discount")
-      price += 0
-      # TODO: сконвертувати ціну атрибута відносно ціни товара
+      price = self.item.get_price(currency,"price_with_discount")
+      price += self.get_price_of_attributes(currency)
     elif price_type == 'attributes':
       # ціна атрибутів
-      price = 0
+      price = self.get_price_of_attributes(currency)
     elif price_type == 'total_price':
       # сумарна ціна без атрибутів без скидки
-      price = 0
+      price = self.item.get_price(currency) * self.quantity
     elif price_type == 'total_price_with_discount':
       # сумарна ціна без атрибутів з скидкою
-      price = 0
+      price = self.item.get_price(currency, "price_with_discount") * self.quantity
     elif price_type == 'total_price_with_attributes':
       # сумарна ціна з атрибутами без скидки
-      price = 0
+      price = self.item.get_price(currency) * self.quantity
+      price += self.get_price_of_attributes(currency)
     elif price_type == 'total_price_with_discount_with_attributes':
       # сумарна ціна з атрибутами з скидкою
-      price = 0
+      price = self.item.get_price(currency, "price_with_discount") * self.quantity
+      price += self.get_price_of_attributes(currency)
     elif price_type == 'total_attributes':
       # сумарна ціна атрибутів
-      price = 0
-    elif price_type == '':
-      # 
-      price = 0
-    price = price * currency.get_rate()
+      price = self.get_price_of_attributes(currency) * self.quantity
+    price = price * currency.convert(curr_from=self.item.currency, curr_to=currency)
+    return price 
+
+  def get_price_of_attributes(self, currency):
+    price = 0
+    for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
+      for value in cart_item_attribute.values.all():
+        attr_price = float(value.price)
+      if cart_item_attribute.value:
+        attr_price = float(cart_item_attribute.value.price)
+      price += attr_price * currency.convert(curr_from=self.item.currency, curr_to=currency)
     return price 
 
   # old 
@@ -349,6 +363,7 @@ class CartItemPriceMixin(models.Model):
 
   def get_currency(self):
     return self.cart.get_currency()
+
 
 class CartItem(CartItemPriceMixin):
   ordered  = models.BooleanField(

@@ -62,9 +62,9 @@ class ItemPricesMixin(models.Model):
         default=0, 
         # blank=True, null=True,
     )
-
+    
     def get_price(self, currency=None, price_type='price'):
-        print("currency", currency)
+        # print("currency", currency)
         if not currency:
             currency = Currency.objects.get(is_main=True)
         price = self.price

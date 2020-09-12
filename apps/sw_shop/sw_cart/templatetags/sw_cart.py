@@ -11,7 +11,17 @@ register = template.Library()
 
 @register.simple_tag
 def get_cart_item_attribute(cart_item, attr_code):
-    # print('get_cart_item_attribute:')
     return cart_item.get_attribute(attr_code)
+
+
+@register.simple_tag
+def get_cart_item_price(cart_item, currency_code, price_type):
+    return cart_item.get_price(currency_code, price_type)
+
+
+
+@register.simple_tag
+def get_cart_price(cart, currency_code, price_type):
+    return cart.get_price(currency_code, price_type)
 
 
