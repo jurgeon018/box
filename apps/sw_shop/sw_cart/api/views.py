@@ -44,7 +44,7 @@ def cart_item(request, id):
   cart = get_cart(request)
   if request.method == 'GET':
     cart_item = CartItem.objects.get(id=id)
-    return Response(data=CartItemSerializer(cart_item).data, status=200)
+    return Response(data=CartItemSerializer(cart_item, context={'request':request}).data, status=200)
   elif request.method == 'PATCH':
     cart_item    = cart.change_cart_item_amount(id, request.data['quantity'])
     response     = {

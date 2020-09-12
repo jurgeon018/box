@@ -15,10 +15,15 @@ class CartItemSerializer(serializers.ModelSerializer):
   currency    = serializers.ReadOnlyField()
   attributes  = CartItemAttributeSerializer(read_only=True, many=True)
   prices      = serializers.SerializerMethodField()
+  chosen_currency      = serializers.SerializerMethodField()
+  
+  def get_chosen_currency(self, cart_item):
+    return self.context['request'].session.get('current_currency_code')
 
   def get_prices(self, cart_item):
     prices = {}
-    request = self.context.get('request')
+    # request = self.context.get('request')
+    request = self.context['request']
     if request:
       query = request.query_params or request.data
       currency = None 

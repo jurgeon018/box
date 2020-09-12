@@ -27,7 +27,8 @@ def get_cart_info(request):
     "cart_total_price":cart_total_price,
     "cart_items_count":cart_items_count,
     "cart_items_quantity":cart_items_quantity,
-	"cart_currency":cart_currency,
+    "cart_currency":cart_currency,
+    # ""
   }
 
 
