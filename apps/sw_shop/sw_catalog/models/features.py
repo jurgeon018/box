@@ -1,8 +1,11 @@
 from django.db import models 
-
+from box.core.helpers import get_admin_url 
 
 class FeatureCategory(models.Model):
     name = models.CharField(verbose_name="Назва", max_length=255)
+
+    def get_admin_url(self):
+        return get_admin_url(self)
 
     @classmethod
     def modeltranslation_fields(self):
@@ -24,6 +27,9 @@ class FeatureValue(models.Model):
     value = models.CharField(verbose_name="Значення", max_length=255)
     code  = models.SlugField(verbose_name="Код", unique=True, null=True, blank=True)
 
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
     def __str__(self):
         return f'{self.value}'
 
@@ -43,6 +49,9 @@ class Feature(models.Model):
     def __str__(self):
         return f'{self.name}'
     
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
     @classmethod
     def modeltranslation_fields(self):
         return ['name']
@@ -61,6 +70,9 @@ class ItemFeature(models.Model):
     is_active = models.BooleanField(verbose_name="Активність", default=True)
     code      = models.SlugField(verbose_name='Код', blank=True, null=True, unique=True)
 
+    def get_admin_url(self):
+        return get_admin_url(self)
+        
     def __str__(self):
         return f'{self.name}:{self.value} - {self.item}'
 

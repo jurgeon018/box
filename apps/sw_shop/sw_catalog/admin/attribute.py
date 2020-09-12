@@ -221,7 +221,7 @@ class AttributeAdmin(AttrBaseMixin):
         'name',
     ]
     readonly_fields = [
-        'code',
+        # 'code',
     ]
     list_filter = [
         CategoryFilter,
@@ -234,7 +234,9 @@ class AttributeValueAdmin(AttrBaseMixin):
     
     def has_delete_permission(self, request, obj=None):
         return False if obj and obj.code else True 
-
+    autocomplete_fields = [
+        'attribute',
+    ]
     resource_class = AttributeValueResource
     readonly_fields = [
         # 'code',

@@ -108,7 +108,7 @@ class Command(BaseCommand):
     items = [dct for dct in map(dict, csv.DictReader(open(init_filename)))] 
     # TODO: зробити шось з порядком імпортів
     for item in items:
-      print(item)
+      # print(item)
       if bool(int(item['load'])):
         res = self.load(
           filename=item['filename'], 
@@ -126,7 +126,7 @@ class Command(BaseCommand):
   def load(self, filename, resource_name, ext):
     errors = []
     Resource = get_resource(resource_name)
-    # print(Resource)
+    print("Resource: ", Resource)
     dataset  = Dataset()
     with open(filename, 'r') as f:
       # imported_data = dataset.load(f.read())

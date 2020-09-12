@@ -81,7 +81,7 @@ class ItemAdmin(
         ]
     else:
         list_filter = [
-            "category",
+            # "category",
             # ('category', ItemCategoryTreeRelatedFieldListFilter),
             CategoryFilter,
             MarkersFilter,

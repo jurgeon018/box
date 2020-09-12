@@ -70,7 +70,7 @@ class Cart(models.Model):
           value=attribute_value,
           price=attribute_value.price # TODO: забрати price, бо вона і так є у ItemAttributeValue
         )
-
+  
   def get_cart_item(self, item, attributes):
     print(attributes)
     cart_items = CartItem.objects.filter(cart=self, item=item)
@@ -78,10 +78,7 @@ class Cart(models.Model):
     # Проходиться по всіх товарах в корзині
     for cart_item in cart_items:
       cart_item_attributes = CartItemAttribute.objects.filter(cart_item=cart_item)
-      # print("cart_item_attributes:", cart_item_attributes)
-      # print("cart_item:", cart_item)
       # Проходиться по всіх атрибутах присланих з фронту
-      # print(attributes)
       for attribute in attributes:
         item_attr  = ItemAttribute.objects.get(id=attribute['item_attribute_id'])
         if item_attr.is_option:
@@ -97,10 +94,6 @@ class Cart(models.Model):
           else:
             cart_value = cart_item_attribute.value
           # Якшо атрибут з фронта і атрибут товара в корзині співпадають ... 
-          # print()
-          # print("item_value:",item_value)
-          # print("cart_value:",cart_value)
-          # print()
           # https://stackoverflow.com/questions/45217691/django-check-if-querysets-are-equals
 
           if item_attr == cart_attr:
@@ -190,7 +183,6 @@ class Cart(models.Model):
 
   def clear(self):
     CartItem.objects.filter(cart=self).delete()
-    # self.items.all().delete()
 
   @property
   def items_quantity(self):
@@ -202,6 +194,22 @@ class Cart(models.Model):
   @property
   def items_count(self):
     return CartItem.objects.filter(cart=self).all().count()
+
+  # prices new
+
+  def get_price(self, currency=None, price_type='total_price'):
+    if not currency:
+      currency = Currency.objects.get(is_main=True)
+    # todo: замовлення без купону, замовлення з купоном
+    if price_type == 'total_price':
+      price = self.total_price 
+      for cart_item in CartItem.objects.filter(cart=self):
+        price = price + cart_item.get_price(currency, "total_price_with_discount_with_attributes") * currency.convert(curr_from=self.get_currency(), curr_to=currency)
+      for additional_price in OrderAdditionalPrice.objects.all(): 
+        price = price + additional_price.price * currency.convert(curr_from=self.get_currency(), curr_to=currency)
+    return price 
+
+  # prices old
 
   @property
   def total_price(self):
@@ -223,7 +231,6 @@ class Cart(models.Model):
   @property
   def currency(self):
     return Currency.objects.get(is_main=True).code
-
 
   def get_currency(self):
     return Currency.objects.get(is_main=True)
@@ -265,7 +272,100 @@ class CartItemAttribute(models.Model):
       return f'{self.cart_item.item.title}, {self.attribute_name.attribute.name}:{self.value.value.value}'
 
 
-class CartItem(models.Model):
+class CartItemPriceMixin(models.Model):
+  class Meta:
+    abstract = True 
+
+  def get_price(self, currency=None, price_type='price'):
+    if not currency:
+      currency = Currency.objects.get(is_main=True)
+
+    if price_type == 'price':
+      # ціна без атрибутів без скидки
+      price = self.item.get_price(currency)
+    elif price_type == 'price_with_discount':
+      # ціна без атрибутів з скидкою
+      price = self.item.get_price(currency, "price_with_discount")
+    elif price_type == 'price_with_attributes':
+      # ціна з атрибутами без скидки
+      price = self.item.get_price(currency)
+      price += self.get_price_of_attributes(currency)
+    elif price_type == 'price_with_discount_with_attributes':
+      # ціна з атрибутами з скидкою
+      price = self.item.get_price(currency,"price_with_discount")
+      price += self.get_price_of_attributes(currency)
+    elif price_type == 'attributes':
+      # ціна атрибутів
+      price = self.get_price_of_attributes(currency)
+    elif price_type == 'total_price':
+      # сумарна ціна без атрибутів без скидки
+      price = self.item.get_price(currency) * self.quantity
+    elif price_type == 'total_price_with_discount':
+      # сумарна ціна без атрибутів з скидкою
+      price = self.item.get_price(currency, "price_with_discount") * self.quantity
+    elif price_type == 'total_price_with_attributes':
+      # сумарна ціна з атрибутами без скидки
+      price = self.item.get_price(currency) * self.quantity
+      price += self.get_price_of_attributes(currency)
+    elif price_type == 'total_price_with_discount_with_attributes':
+      # сумарна ціна з атрибутами з скидкою
+      price = self.item.get_price(currency, "price_with_discount") * self.quantity
+      price += self.get_price_of_attributes(currency)
+    elif price_type == 'total_attributes':
+      # сумарна ціна атрибутів
+      price = self.get_price_of_attributes(currency) * self.quantity
+    price = price * currency.convert(curr_from=self.item.currency, curr_to=currency)
+    return price 
+
+  def get_price_of_attributes(self, currency):
+    price = 0
+    for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
+      for value in cart_item_attribute.values.all():
+        attr_price = float(value.price)
+      if cart_item_attribute.value:
+        attr_price = float(cart_item_attribute.value.price)
+      price += attr_price * currency.convert(curr_from=self.item.currency, curr_to=currency)
+    return price 
+
+  # old 
+
+  @property
+  def total_price(self):
+    total_price = float(self.price_of_quantity) + float(self.price_of_attributes)
+    return total_price 
+
+  @property
+  def price_of_quantity(self):
+    total_price = self.price_per_item * self.quantity
+    return total_price
+  
+  @property
+  def price_of_attributes(self):
+    price = 0
+    for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
+      for value in cart_item_attribute.values.all():
+        price += float(value.price)
+      if cart_item_attribute.value:
+        price += float(cart_item_attribute.value.price)
+    return price 
+
+  @property
+  def price_per_item(self):
+    price_per_item = self.item.get_cart_price()
+    attrs = self.get_attributes().aggregate(Sum('price'))['price__sum']
+    if attrs:
+      price_per_item += attrs
+    return price_per_item 
+
+  @property
+  def currency(self):
+    return self.cart.currency
+
+  def get_currency(self):
+    return self.cart.get_currency()
+
+
+class CartItem(CartItemPriceMixin):
   ordered  = models.BooleanField(
      verbose_name=("Замовлено"), default=False,
     )
@@ -304,41 +404,6 @@ class CartItem(models.Model):
     except:
         attr = None 
     return attr 
-
-  @property
-  def total_price(self):
-    total_price = float(self.price_of_quantity) + float(self.price_of_attributes)
-    return total_price 
-
-  @property
-  def price_of_quantity(self):
-    total_price = self.price_per_item * self.quantity
-    return total_price
-  
-  @property
-  def price_of_attributes(self):
-    price = 0
-    for cart_item_attribute in CartItemAttribute.objects.filter(cart_item=self):
-      for value in cart_item_attribute.values.all():
-        price += float(value.price)
-      if cart_item_attribute.value:
-        price += float(cart_item_attribute.value.price)
-    return price 
-
-  @property
-  def price_per_item(self):
-    price_per_item = self.item.get_cart_price()
-    attrs = self.get_attributes().aggregate(Sum('price'))['price__sum']
-    if attrs:
-      price_per_item += attrs
-    return price_per_item 
-
-  @property
-  def currency(self):
-    return self.cart.currency
-
-  def get_currency(self):
-    return self.cart.get_currency()
 
   def __str__(self):
     return f'''

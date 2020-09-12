@@ -6,10 +6,7 @@ from .category import *
 from .item_related import * 
 from .item import * 
 
-
 from box.core.models import AbstractRecipientEmail
-
-
 
 from django.utils.translation import ugettext_lazy as _
 
