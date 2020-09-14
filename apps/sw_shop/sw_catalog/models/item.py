@@ -74,13 +74,19 @@ class ItemPricesMixin(models.Model):
         elif price_type == 'price_with_coupons' and request:
             # ціна з купоном
             price -= self.get_coupons_price(self.currency, request)
+            # price -= price / self.get_coupons_discount(self.currency, request)
+            # TODO: 
         elif price_type == 'price_with_coupons_with_discount':
             # ціна з купоном з знижкою
             if request and self.discount:
                 price -= self.get_discount_price()
                 price -= self.get_coupons_price(self.currency, request)
+                # price -= price / self.get_coupons_discount(self.currency, request)
+                # TODO: 
             elif request:
                 price -= self.get_coupons_price(self.currency, request)
+                # price -= price / self.get_coupons_discount(self.currency, request)
+                # TODO: 
             elif self.discount:
                 price -= self.get_discount_price()
         koef = currency.convert(curr_from=self.currency, curr_to=currency)

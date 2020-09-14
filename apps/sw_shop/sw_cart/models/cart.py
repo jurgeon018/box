@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from ._imports import *
 from .cart_item import CartItem 
+from .cart_item_attribute import CartItemAttribute 
 
 class Cart(models.Model):
   user    = models.ForeignKey(
@@ -194,8 +195,9 @@ class Cart(models.Model):
         curr_from = cart_item.item.currency
         ci    = cart_item.get_price(currency, "total_price_with_coupons_with_attributes_with_discount") 
         # ci    = cart_item.get_price(currency, "total_price_with_discount_with_attributes") 
-        koef  = currency.convert(curr_from=curr_from, curr_to=currency)
-        price = price + ci*koef
+        price += ci
+        # koef  = currency.convert(curr_from=curr_from, curr_to=currency)
+        # price = price + ci*koef
       for additional_price in OrderAdditionalPrice.objects.all(): 
         price = price + additional_price.price * currency.convert(curr_from=self.get_currency(), curr_to=currency)
     # print("cart.get_price", price)
