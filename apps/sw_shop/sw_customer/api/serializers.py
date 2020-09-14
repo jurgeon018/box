@@ -22,10 +22,10 @@ class OrderSerializer(serializers.ModelSerializer):
             'user',
         ]
 
-class CustomerGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomerGroup
-        exclude = []
+# class CustomerGroupSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CustomerGroup
+#         exclude = []
 
 
 class CouponSerializer(serializers.ModelSerializer):
@@ -34,8 +34,8 @@ class CouponSerializer(serializers.ModelSerializer):
         exclude = []
 
 
-class SubscriberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscriber
-        exclude = []
+# class SubscriberSerializer(serializers.ModelSerializer):
+    # class Meta:
+    #     model = Subscriber
+    #     exclude = []
 

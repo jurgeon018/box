@@ -20,9 +20,9 @@ from rest_framework.viewsets import ModelViewSet
 
 
 
-class CustomerGroupViewSet(ModelViewSet):
-  serializer_class = CustomerGroupSerializer
-  queryset = CustomerGroup.objects.all()
+# class CustomerGroupViewSet(ModelViewSet):
+#   serializer_class = CustomerGroupSerializer
+#   queryset = CustomerGroup.objects.all()
 
 
 class CouponViewSet(ModelViewSet):
@@ -30,9 +30,9 @@ class CouponViewSet(ModelViewSet):
   queryset = Coupon.objects.all()
 
 
-class SubscriberViewSet(ModelViewSet):
-  serializer_class = SubscriberSerializer
-  queryset = Subscriber.objects.all()
+# class SubscriberViewSet(ModelViewSet):
+#   serializer_class = SubscriberSerializer
+#   queryset = Subscriber.objects.all()
 
 
 

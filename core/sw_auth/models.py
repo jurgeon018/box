@@ -56,14 +56,14 @@ class BoxAbstractUser(models.Model):
         _('email address'), blank=True,
         unique=True, 
     )
-    if 'box.apps.sw_shop.sw_customer' in settings.INSTALLED_APPS:
-        group        = models.ForeignKey(
-            to="sw_customer.CustomerGroup", 
-            verbose_name=_("Група"), 
-            blank=True, null=True, 
-            on_delete=models.SET_NULL, 
-            help_text=("Група з купонами на скидку"),
-        )
+    # if 'box.apps.sw_shop.sw_customer' in settings.INSTALLED_APPS:
+    #     group        = models.ForeignKey(
+    #         to="sw_customer.CustomerGroup", 
+    #         verbose_name=_("Група"), 
+    #         blank=True, null=True, 
+    #         on_delete=models.SET_NULL, 
+    #         help_text=("Група з купонами на скидку"),
+    #    )
     username     = models.CharField(
         _('username'),
         max_length=150,
