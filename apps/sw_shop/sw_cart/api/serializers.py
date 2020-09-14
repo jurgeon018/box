@@ -30,11 +30,11 @@ class CartItemSerializer(serializers.ModelSerializer):
       currency_code = request.session.get('current_currency_code')
       if currency_code:
         currency = Currency.objects.get(code=currency_code)
-      price_with_discount_with_attributes = cart_item.get_price(currency, price_type='price_with_discount_with_attributes')
-      total_price_with_discount_with_attributes = cart_item.get_price(currency, price_type='total_price_with_discount_with_attributes')
+      price_with_coupons_with_attributes_with_discount = cart_item.get_price(currency, price_type='price_with_coupons_with_attributes_with_discount')
+      total_price_with_coupons_with_attributes_with_discount = cart_item.get_price(currency, price_type='total_price_with_coupons_with_attributes_with_discount')
       prices = {
-        "price_with_discount_with_attributes":price_with_discount_with_attributes,
-        "total_price_with_discount_with_attributes":total_price_with_discount_with_attributes,
+        "price_with_coupons_with_attributes_with_discount":price_with_coupons_with_attributes_with_discount,
+        "total_price_with_coupons_with_attributes_with_discount":total_price_with_coupons_with_attributes_with_discount,
       }
     return prices
 

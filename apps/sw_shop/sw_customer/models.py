@@ -9,7 +9,9 @@ class Customer(get_user_model()):
         verbose_name = _('покупець')
         verbose_name_plural = _('Список покупців')
 
+from box.core.helpers import get_admin_url
 
+# find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 
 class Coupon(models.Model):
     discount_type_choices = (
@@ -30,7 +32,7 @@ class Coupon(models.Model):
     )
     requisition     = models.FloatField(
         verbose_name=_("Умова"), default=0,
-        help_text=_("Мінімальна сума, на яку потрібно зробити замовлення, щоб купон набув дійсності. "),
+        help_text=_("Мінімальна сума, на яку потрібно зробити замовлення, щоб купон набув дійсності."),
     )
     started         = models.DateTimeField(
         verbose_name="Дата початку", blank=False, null=False,
@@ -51,6 +53,9 @@ class Coupon(models.Model):
     def __str__(self):
         return f'{self.name}, {self.discount_amount}{self.get_discount_type_display()}'
     
+    def get_admin_url(self):
+        return get_admin_url(self)
+
     def save(self, *args, **kwargs):
         if self.discount_type == 'percent' and self.discount_amount > 100:
             self.discount_amount = 100
