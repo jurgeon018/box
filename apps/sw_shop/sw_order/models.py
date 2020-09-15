@@ -149,9 +149,9 @@ class Order(models.Model):
 
     # self.total_price = cart.total_price
     total_price = cart.get_price(price_type='total_price')
-    total_price = Decimal.from_float(total_price)
-    print("total_price:", total_price)
-    print("total_price:", type(total_price))
+    # total_price = Decimal.from_float(total_price)
+    # print("total_price:", total_price)
+    # print("total_price:", type(total_price))
     self.total_price = total_price 
     
     self.ordered = True
