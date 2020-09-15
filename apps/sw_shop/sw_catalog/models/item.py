@@ -63,21 +63,58 @@ class ItemPricesMixin(models.Model):
         # blank=True, null=True,
     )
     
-    def get_price(self, currency=None, price_type='price'):
+    def get_price(self, currency=None, price_type='price', request=None):
         # print("currency", currency)
         if not currency:
             currency = Currency.objects.get(is_main=True)
         price = self.price
         if price_type == 'price_with_discount' and self.discount:
-            if self.discount_type == 'p':
-                discount = self.price * self.discount / 100
-            else:
-                discount = self.discount 
-            price = self.price - discount
-        price = price * currency.convert(curr_from=self.currency, curr_to=currency)
+            # ціна з знижкою
+            price -= self.get_discount_price()
+        elif price_type == 'price_with_coupons' and request:
+            # ціна з купоном
+            price -= self.get_coupons_price(self.currency, request)
+            # price -= price / self.get_coupons_discount(self.currency, request)
+            # TODO: 
+        elif price_type == 'price_with_coupons_with_discount':
+            # ціна з купоном з знижкою
+            if request and self.discount:
+                price -= self.get_discount_price()
+                price -= self.get_coupons_price(self.currency, request)
+                # price -= price / self.get_coupons_discount(self.currency, request)
+                # TODO: 
+            elif request:
+                price -= self.get_coupons_price(self.currency, request)
+                # price -= price / self.get_coupons_discount(self.currency, request)
+                # TODO: 
+            elif self.discount:
+                price -= self.get_discount_price()
+        koef = currency.convert(curr_from=self.currency, curr_to=currency)
+        price = price * koef
         return price 
 
-    # old 
+    def get_discount_price(self):
+        if self.discount_type == 'p':
+            discount = self.price * self.discount / 100
+        else:
+            discount = self.discount 
+        return self.price - discount   
+
+    def get_coupons_price(self, item_currency, request):
+        price = 0
+        coupons = Coupon.objects.filter(user__in=[request.user,], discount_type='currency')
+        for coupon in coupons:
+            price += coupon.discount_amount * Currency.convert(curr_from=coupon.currency, curr_to=item_currency)
+        return price 
+        
+    def get_coupons_discount(self, item_currency, request):
+        price = 0
+        coupons = Coupon.objects.filter(user__in=[request.user,], discount_type='percent')
+        for coupon in coupons:
+            price += coupon_discount.discount_amount
+        return price 
+
+    # old
 
     def converted_price(self):
         price = 0 

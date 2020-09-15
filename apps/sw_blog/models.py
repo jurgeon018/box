@@ -47,7 +47,7 @@ class Post(AbstractPage):
     blank=True, null=True,
   )
   similars  = models.ManyToManyField(
-    verbose_name="Схожі публікації", blank=True, null=True, to='sw_blog.Post',
+    verbose_name="Схожі публікації", blank=True, to='sw_blog.Post',
   )
 
   def save(self, *args, **kwargs):

@@ -75,13 +75,15 @@ class OrderStatus(models.Model):
     verbose_name = _('статус замовленнь')
     verbose_name_plural = _('cтатуси замовленнь')
 
-
+from decimal import Decimal
 class Order(models.Model):
   user        = models.ForeignKey(
     verbose_name=_("Користувач"), to=User, on_delete=models.SET_NULL, related_name='orders', blank=True, null=True
   )
-  total_price = models.DecimalField(
-    verbose_name=_('Сумма замовлення'), max_digits=10, decimal_places=2, default=0
+  total_price = models.FloatField(
+  # total_price = models.DecimalField(
+    verbose_name=_('Сумма замовлення'), default=0,
+    # max_digits=10, decimal_places=2, 
   )
   name        = models.CharField(
     verbose_name=_('Імя'), max_length=255, blank=True, null=True
@@ -146,7 +148,11 @@ class Order(models.Model):
     self.handle_amount(request)
 
     # self.total_price = cart.total_price
-    self.total_price = cart.get_price(price_type='total_price')
+    total_price = cart.get_price(price_type='total_price')
+    # total_price = Decimal.from_float(total_price)
+    # print("total_price:", total_price)
+    # print("total_price:", type(total_price))
+    self.total_price = total_price 
     
     self.ordered = True
     self.save()
