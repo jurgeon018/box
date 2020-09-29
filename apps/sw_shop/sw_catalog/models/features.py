@@ -1,5 +1,6 @@
 from django.db import models 
 from box.core.helpers import get_admin_url 
+from django.utils.text import slugify
 
 class FeatureCategory(models.Model):
     name = models.CharField(verbose_name="Назва", max_length=255)
@@ -26,6 +27,10 @@ class FeatureCategory(models.Model):
 class FeatureValue(models.Model):
     value = models.CharField(verbose_name="Значення", max_length=255)
     code  = models.SlugField(verbose_name="Код", unique=True, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):	
+        self.code = slugify(self.value) 
+        super().save(*args, **kwargs)
 
     def get_admin_url(self):
         return get_admin_url(self)
@@ -55,6 +60,15 @@ class Feature(models.Model):
     @classmethod
     def modeltranslation_fields(self):
         return ['name']
+    
+    def get_values(self, item=None):
+        item_features = ItemFeature.objects.all()
+        if item:
+            item_features = item_features.filter(item=item)
+        features_value_ids = item_features.values_list('value__id', flat=True)
+        values = FeatureValue.objects.filter(id__in=features_value_ids)
+        return values
+    
 
     class Meta:
         verbose_name = 'назва характеристики'

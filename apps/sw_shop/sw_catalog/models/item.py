@@ -343,8 +343,13 @@ class Item(AbstractPage, GoogleFieldsMixin, ItemPricesMixin):
         #     visits = visits[:10]
         request.session['visits'] = visits
     
-    def get_visited(self, request):
-        visited = self._meta.model.objects.filter(id__in=request.session['visits'])
+    # def get_visited(self, request):
+    #     visited = self._meta.model.objects.filter(id__in=request.session['visits'])
+    #     return visited
+    
+    @classmethod
+    def get_visited(cls, request):
+        visited = cls.objects.filter(id__in=request.session.get('visits', []))
         return visited
 
     def get_visited_by(self, request):
