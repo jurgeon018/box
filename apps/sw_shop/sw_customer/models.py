@@ -44,7 +44,7 @@ class Coupon(models.Model):
     #     verbose_name=_("Чи є одноразовий"), default=False,
     # )
     users = models.ManyToManyField(
-        verbose_name="Користувачі", to=get_user_model(), blank=True, null=True,
+        verbose_name="Користувачі", to=get_user_model(), blank=True,
     )
     # uses_amount     = models.PositiveIntegerField(
     #     verbose_name=_("К-сть використань"), default=0, blank=True, null=True,

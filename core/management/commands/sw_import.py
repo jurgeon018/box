@@ -128,7 +128,7 @@ class Command(BaseCommand):
     Resource = get_resource(resource_name)
     print("Resource: ", Resource)
     dataset  = Dataset()
-    with open(filename, 'r') as f:
+    with open(filename, mode='r', encoding='utf-8') as f:
       # imported_data = dataset.load(f.read())
       dataset.load(f.read(), format=ext)
     result = Resource().import_data(dataset, dry_run=True)
