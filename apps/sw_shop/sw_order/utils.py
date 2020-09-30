@@ -1,8 +1,13 @@
 from .models import Order 
 from box.apps.sw_shop.sw_cart.utils import get_cart
 from box.apps.sw_shop.sw_cart.models import CartItem
-from box.apps.sw_payment.liqpay.utils import get_liqpay_context
-from box.apps.sw_payment.liqpay.models import LiqpayConfig
+try:
+  from box.apps.sw_payment.liqpay.utils import get_liqpay_context
+  from box.apps.sw_payment.liqpay.models import LiqpayConfig
+# except ImportError:
+except:
+  from sw_liqpay.utils import get_liqpay_context
+  from sw_liqpay.models import LiqpayConfig
 from django.utils import timezone 
 from datetime import datetime 
 

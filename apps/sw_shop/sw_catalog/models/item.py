@@ -148,6 +148,7 @@ class ItemPricesMixin(models.Model):
     def main_currency(self):
         return Currency.objects.get(is_main=True)
 
+
 class Item(AbstractPage, GoogleFieldsMixin, ItemPricesMixin):
     # parent = models.ForeignKey(verbose_name="Батьківський товар", to="self", on_delete=models.SET_NULL, null=True, blank=True)
     if item_settings.MULTIPLE_CATEGORY:
@@ -207,7 +208,7 @@ class Item(AbstractPage, GoogleFieldsMixin, ItemPricesMixin):
         return f"{self.title}"#, {self.slug}"
     
     class Meta: 
-        verbose_name = _('товар'); 
+        verbose_name = _('товар')
         verbose_name_plural = _('товари')
         # ordering = ['order']
 
