@@ -57,17 +57,17 @@ class ItemCategoryResource(ModelResource):
         return order 
     
     def before_import_row(self, row, **kwargs):
-        self.handle_image_import(row)
+        # self.handle_image_import(row)
         self.handle_code_import(row)
     
     def handle_code_import(self, row):
         if row.get('code') == '':
             row['code'] = None 
         
-    # def handle_image_import(self, row):
-    #     if row.get('image'):
-    #         image = row.get('image')
-    #         row['image'] = f'shop/category/{image}'
+    def handle_image_import(self, row):
+        if row.get('image'):
+            image = row.get('image')
+            row['image'] = f'shop/category/{image}'
     
     def dehydrate_image(self, category):
         image = None 
