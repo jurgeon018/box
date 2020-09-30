@@ -64,10 +64,10 @@ class ItemCategoryResource(ModelResource):
         if row.get('code') == '':
             row['code'] = None 
         
-    def handle_image_import(self, row):
-        if row.get('image'):
-            image = row.get('image')
-            row['image'] = f'shop/category/{image}'
+    # def handle_image_import(self, row):
+    #     if row.get('image'):
+    #         image = row.get('image')
+    #         row['image'] = f'shop/category/{image}'
     
     def dehydrate_image(self, category):
         image = None 
