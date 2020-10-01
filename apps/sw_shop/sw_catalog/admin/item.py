@@ -56,6 +56,24 @@ class SimilarInline(nested_admin.NestedTabularInline):
     verbose_name_plural = _('Схожі товари')
 if 'jet' in settings.INSTALLED_APPS:
     from jet.filters import RelatedFieldAjaxListFilter
+ 
+from importlib import import_module 
+
+def gen_item_inlines():
+    inlines = [
+        SimilarInline,
+        ItemImageInline,
+        ItemFeatureInline,
+        ItemAttributeInline,
+        # ItemReviewInline, 
+    ]  
+    for item_additional_inline in item_settings.ITEM_ADDITIONAL_INLINE:
+        module, klass = item_additional_inline.rsplit('.', 1)
+        module = import_module(module)
+        inline = getattr(module, klass)
+        inlines.append(inline)
+    return inlines
+
 
 class ItemAdmin(
     BaseAdmin,
@@ -106,13 +124,8 @@ class ItemAdmin(
         "slug": ("title",),
         # "code": ("title",),
     }
-    inlines = [
-        SimilarInline,
-        ItemImageInline,
-        ItemFeatureInline,
-        ItemAttributeInline,
-        # ItemReviewInline, 
-    ]  
+
+    inlines = gen_item_inlines()
     item_fields = [
         'title',
         "brand",

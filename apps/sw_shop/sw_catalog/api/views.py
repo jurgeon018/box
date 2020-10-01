@@ -55,7 +55,6 @@ class ItemList(generics.ListCreateAPIView):
     :min_price: мінімальна ціна(цифра)
     :is_discount: true|false
     :ordering: -price | price 
-    :attributes: 
     '''
     queryset     = super().get_queryset().filter(is_active=True).order_by('order')
     data         = self.request.query_params
@@ -66,6 +65,7 @@ class ItemList(generics.ListCreateAPIView):
     ordering     = data.get('ordering', None)
     category_ids = data.get('category_ids', [])
     attributes   = data.get('attributes', [])
+    features     = data.get('features', [])
   
     # TODO: добавити сюда пошук по modelsearch, 
     #  get_items_in_favours, get_items_in_cart
@@ -73,9 +73,7 @@ class ItemList(generics.ListCreateAPIView):
     if category_id is not None:
       cat = ItemCategory.objects.get(id=category_id)
       descentant_ids = list(cat.get_descendants().values_list('id', flat=True))
-      print("descentant_ids:", descentant_ids)
       descentant_ids.append(cat.id) 
-      print("descentant_ids:", descentant_ids)
       queryset = queryset.filter(category__id__in=descentant_ids)
 
       # if item_settings.FILTER_BY_CATEGORY
@@ -84,24 +82,17 @@ class ItemList(generics.ListCreateAPIView):
       #   descentant_ids = cat.get_descendants()
       #   queryset = queryset.filter(category__id__in=descentant_ids)
     if category_ids: category_ids = json.loads(category_ids)#; category_ids = literal_eval(category_ids)
-    print(category_ids)
     if category_ids:
       queryset = queryset.filter(category__id__in=category_ids)
     
-    # if max_price is not None:
     if max_price:
       queryset = queryset.filter(price__lte=max_price)
     
-    # if min_price is not None:
     if min_price:
       queryset = queryset.filter(price__gte=min_price)
     
-    # print(is_discount)
-    # if is_discount is not None:
     if is_discount == 'true' or is_discount is True:
-      # print(queryset.count())
       queryset = queryset.exclude(discount=0)
-      # print(queryset.count())
 
     if ordering is not None:
       queryset = queryset.order_by(ordering)
@@ -120,6 +111,32 @@ class ItemList(generics.ListCreateAPIView):
           id__in=item_attribute_ids,
         ).values_list('item', flat=True)
         queryset = queryset.filter(id__in=item_ids)
+
+    if features: features = json.loads(features)
+    for feature in features:
+      if feature.get('feature_id') and feature.get('feature_value_id'):
+        feature       = Feature.objects.get(id=feature['feature_id'])
+        feature_value = FeatureValue.objects.get(id=feature['feature_value_id'])
+        item_features = ItemFeature.objects.filter(value__id=feature_value.id)
+        item_ids      = item_features.values_list('item__id', flat=True)
+        queryset      = queryset.filter(id__in=item_ids)
+      elif feature.get('feature_slug') and feature.get('feature_value_slug'):
+        feature       = Feature.objects.get(id=feature['feature_slug'])
+        feature_value = FeatureValue.objects.get(id=feature['feature_value_slug'])
+        item_features = ItemFeature.objects.filter(value__slug=feature_value.id)
+        item_ids      = item_features.values_list('item__id', flat=True)
+        queryset      = queryset.filter(id__in=item_ids)
+
+    feature_value_slugs = []
+    for key, value in request.data.items():
+      if value == "true" and key != 'is_discount':
+        feature_value_slugs.append(key)
+
+    if feature_value_slugs:
+      item_features = ItemFeature.objects.filter(value__slug__in=feature_value_slugs)
+      item_ids      = item_features.values_list('item__id', flat=True)
+      queryset      = queryset.filter(id__in=item_ids)
+    
     return queryset
 
 

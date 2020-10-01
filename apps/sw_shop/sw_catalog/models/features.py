@@ -1,9 +1,45 @@
 from django.db import models 
-from box.core.helpers import get_admin_url 
 from django.utils.text import slugify
+
+from box.core.helpers import get_admin_url 
+
+from transliterate import translit
+
+
+def generate_unique_slug(instance, slug):
+	items   = instance._meta.model.objects.all()
+	origin_slug = slug
+	numb = 1
+	while items.filter(slug=slug).exclude(pk=instance.pk).exists():
+		slug = f'{origin_slug}-{numb}'
+		numb += 1
+	return slug 
+
+
+def trans_slug(instance):
+	try:
+		slug = slugify(translit(instance.name, reversed=True))
+	except Exception as e:
+		slug = slugify(instance.name)
+	return slug 
+
+
+def handle_slug(instance, *args, **kwargs):
+	if instance.slug:
+		slug = instance.slug 
+	elif not instance.slug:
+		slug = trans_slug(instance)
+	instance.slug = generate_unique_slug(instance, slug)
+	return instance
+
 
 class FeatureCategory(models.Model):
     name = models.CharField(verbose_name="Назва", max_length=255)
+    slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # handle_slug(self)
+        super().save(*args, **kwargs)
 
     def get_admin_url(self):
         return get_admin_url(self)
@@ -27,8 +63,10 @@ class FeatureCategory(models.Model):
 class FeatureValue(models.Model):
     value = models.CharField(verbose_name="Значення", max_length=255)
     code  = models.SlugField(verbose_name="Код", unique=True, null=True, blank=True)
-    
-    def save(self, *args, **kwargs):	
+    slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # handle_slug(self)
         self.code = slugify(self.value) 
         super().save(*args, **kwargs)
 
@@ -50,6 +88,12 @@ class FeatureValue(models.Model):
 class Feature(models.Model):
     name = models.CharField(verbose_name="Назва", max_length=255)
     code = models.SlugField(verbose_name='Код', blank=True, null=True, unique=True)
+    slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # handle_slug(self)
+        # self.code = slugify(self.value) 
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.name}'
@@ -62,7 +106,7 @@ class Feature(models.Model):
         return ['name']
     
     def get_values(self, item=None):
-        item_features = ItemFeature.objects.all()
+        item_features = ItemFeature.objects.filter(name=self)
         if item:
             item_features = item_features.filter(item=item)
         features_value_ids = item_features.values_list('value__id', flat=True)
