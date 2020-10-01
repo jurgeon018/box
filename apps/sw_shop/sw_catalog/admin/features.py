@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.conf import settings  
 from ..models.features import * 
+from ..resources.features import * 
 from modeltranslation.admin import TabbedTranslationAdmin
 from import_export.admin import ImportExportActionModelAdmin, ImportExportModelAdmin
 import nested_admin 
@@ -62,7 +63,7 @@ class FeatureValueAdmin(
     ImportExportModelAdmin,
     # admin.ModelAdmin
     ):
-
+    resource_class = FeatureValueResource
     search_fields = ['value']
     list_display = [
         'id',

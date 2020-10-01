@@ -66,6 +66,7 @@ class RegionsList(generics.ListCreateAPIView):
     serializer_class = RegionSerializer 
     queryset = Region.objects.all() 
     pagination_class = StandardPageNumberPagination
+    
     def get_queryset(self):
         queryset = super().get_queryset()
         data     = self.request.query_params
@@ -84,6 +85,7 @@ class SettlementsList(generics.ListCreateAPIView):
     serializer_class = SettlementSerializer 
     queryset = Settlement.objects.all() 
     pagination_class = StandardPageNumberPagination
+
     def get_queryset(self):
         queryset  = super().get_queryset()
         data      = self.request.query_params

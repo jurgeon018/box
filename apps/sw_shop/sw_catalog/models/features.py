@@ -67,7 +67,8 @@ class FeatureValue(models.Model):
 
     def save(self, *args, **kwargs):
         # handle_slug(self)
-        self.code = slugify(self.value) 
+        # if self.value:
+        #     self.code = slugify(self.value) 
         super().save(*args, **kwargs)
 
     def get_admin_url(self):
@@ -92,7 +93,8 @@ class Feature(models.Model):
 
     def save(self, *args, **kwargs):
         # handle_slug(self)
-        # self.code = slugify(self.value) 
+        # if self.value:
+        #     self.code = slugify(self.value) 
         super().save(*args, **kwargs)
 
     def __str__(self):
