@@ -4,10 +4,11 @@ from box.apps.sw_shop.sw_cart.models import CartItem
 try:
   from box.apps.sw_payment.liqpay.utils import get_liqpay_context
   from box.apps.sw_payment.liqpay.models import LiqpayConfig
-# except ImportError:
+  print('import box.apps.sw_payment.sw_liqpay')
 except:
   from sw_liqpay.utils import get_liqpay_context
   from sw_liqpay.models import LiqpayConfig
+  print('import sw_liqpay')
 from django.utils import timezone 
 from datetime import datetime 
 
