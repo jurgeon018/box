@@ -128,7 +128,7 @@ class ItemList(generics.ListCreateAPIView):
         queryset      = queryset.filter(id__in=item_ids)
 
     feature_value_slugs = []
-    for key, value in request.data.items():
+    for key, value in data.items():
       if value == "true" and key != 'is_discount':
         feature_value_slugs.append(key)
 
