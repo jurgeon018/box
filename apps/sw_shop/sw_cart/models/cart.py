@@ -185,22 +185,47 @@ class Cart(models.Model):
 
   # prices new
 
-  def get_price(self, currency=None, price_type='total_price'):
+  def get_price(self, currency=None, price_type='total_price', request=None):
     if not currency:
       currency = Currency.objects.get(is_main=True)
-    # todo: замовлення без купону, за мовлення з купоном
     if price_type == 'total_price':
       price = 0 
       for cart_item in CartItem.objects.filter(cart=self):
+        koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
         curr_from = cart_item.item.currency
         ci    = cart_item.get_price(currency, "total_price_with_coupons_with_attributes_with_discount") 
         # ci    = cart_item.get_price(currency, "total_price_with_discount_with_attributes") 
         price += ci
-        # koef  = currency.convert(curr_from=curr_from, curr_to=currency)
         # price = price + ci*koef
       for additional_price in OrderAdditionalPrice.objects.all(): 
         price = price + additional_price.price * currency.convert(curr_from=self.get_currency(), curr_to=currency)
-    # print("cart.get_price", price)
+    elif price_type == 'discount':
+      price = 0
+      for cart_item in CartItem.objects.filter(cart=self):
+        koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
+        price += cart_item.get_price(currency, 'total_discount')
+        price = price + price*koef
+    elif price_type == 'total_with_discount':
+      price = 0
+      for cart_item in CartItem.objects.filter(cart=self):
+        koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
+        price += cart_item.get_price(currency, 'total_price_with_discount')
+        price = price + price*koef
+    elif price_type == 'total':
+      price = 0
+      for cart_item in CartItem.objects.filter(cart=self):
+        koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
+        price += cart_item.get_price(currency, 'total_price')
+        price = price + price*koef
+    # todo: замовлення без купону, за мовлення з купоном
+    # elif price_type == '':
+    #   price = price 
+    # elif price_type == '':
+    #   price = price 
+    # elif price_type == '':
+    #   price = price 
+    # elif price_type == '':
+    #   price = price 
     return price 
 
   # prices old

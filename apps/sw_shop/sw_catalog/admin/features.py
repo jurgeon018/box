@@ -21,6 +21,7 @@ class ItemFeatureInline(nested_admin.NestedTabularInline):
     # classes 
 
 
+
 from .filters import * 
 
 @admin.register(ItemFeature)

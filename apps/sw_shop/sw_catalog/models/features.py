@@ -7,28 +7,28 @@ from transliterate import translit
 
 
 def generate_unique_slug(instance, slug):
-	items   = instance._meta.model.objects.all()
+	objects = instance._meta.model.objects.all()
 	origin_slug = slug
 	numb = 1
-	while items.filter(slug=slug).exclude(pk=instance.pk).exists():
+	while objects.filter(slug=slug).exclude(pk=instance.pk).exists():
 		slug = f'{origin_slug}-{numb}'
 		numb += 1
 	return slug 
 
 
-def trans_slug(instance):
+def trans_slug(instance, field_name):
 	try:
-		slug = slugify(translit(instance.name, reversed=True))
+		slug = slugify(translit(getattr(instance, field_name), reversed=True))
 	except Exception as e:
-		slug = slugify(instance.name)
+		slug = slugify(getattr(instance, field_name))
 	return slug 
 
 
-def handle_slug(instance, *args, **kwargs):
+def handle_slug(instance, field_name, *args, **kwargs):
 	if instance.slug:
 		slug = instance.slug 
 	elif not instance.slug:
-		slug = trans_slug(instance)
+		slug = trans_slug(instance, field_name)
 	instance.slug = generate_unique_slug(instance, slug)
 	return instance
 
@@ -38,7 +38,7 @@ class FeatureCategory(models.Model):
     slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # handle_slug(self)
+        handle_slug(self, 'name')
         super().save(*args, **kwargs)
 
     def get_admin_url(self):
@@ -50,7 +50,6 @@ class FeatureCategory(models.Model):
     
     def get_item_features(self, item):
         return ItemFeature.objects.filter(item=item,category=self)
-
 
     class Meta:
         verbose_name = 'категорія характеристик'
@@ -66,14 +65,12 @@ class FeatureValue(models.Model):
     slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # handle_slug(self)
-        # if self.value:
-        #     self.code = slugify(self.value) 
+        handle_slug(self, 'value')
         super().save(*args, **kwargs)
 
     def get_admin_url(self):
         return get_admin_url(self)
-        
+
     def __str__(self):
         return f'{self.value}'
 
@@ -92,9 +89,7 @@ class Feature(models.Model):
     slug = models.SlugField(verbose_name="Слаг", unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # handle_slug(self)
-        # if self.value:
-        #     self.code = slugify(self.value) 
+        handle_slug(self, 'name')
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -122,7 +117,7 @@ class Feature(models.Model):
 
 
 class ItemFeature(models.Model):
-    # items = models.ManyToManyField(to="sw_catalog.Item", verbose_name="Товари")
+    # items = models.ManyToManyField(to="sw_catalog.Item", verbose_name="Товари", related_name="item_features", blank=)
     item      = models.ForeignKey(to="sw_catalog.Item", verbose_name="Товар", on_delete=models.CASCADE)
     name      = models.ForeignKey(to="sw_catalog.Feature", verbose_name="Назва характеристики", on_delete=models.CASCADE)
     value     = models.ForeignKey(to="sw_catalog.FeatureValue", verbose_name="Значення характеристики", on_delete=models.CASCADE)

@@ -28,6 +28,7 @@ class StandardPageNumberPagination(PageNumberPagination):
     max_page_size          = 1000
     page_query_param       = 'page_number'
     page_size_query_param  = 'per_page'
+    
     def get_paginated_response(self, data):
         items = self.page.object_list
         response = super().get_paginated_response(data)

@@ -54,6 +54,7 @@ class SimilarInline(nested_admin.NestedTabularInline):
     classes = ['collapse',]
     verbose_name = _('Схожий товар')
     verbose_name_plural = _('Схожі товари')
+    
 if 'jet' in settings.INSTALLED_APPS:
     from jet.filters import RelatedFieldAjaxListFilter
  

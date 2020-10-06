@@ -5,17 +5,10 @@ from .cart_item_attribute import *
 class CartItemPriceMixin(models.Model):
   class Meta:
     abstract = True 
-
+  
   def get_price(self, currency=None, price_type='price', request=None):
     if not currency:
       currency = Currency.objects.get(is_main=True)
-    curr_from = self.item.currency
-    curr_to   = currency
-    print()
-    print("curr_from", curr_from)
-    print("curr_to", curr_to)
-    print()
-    koef = currency.convert(curr_from=curr_from, curr_to=curr_to)
     if price_type == 'price':
       # ціна без атрибутів без знижки
       price = self.item.get_price(currency, "price", request)
@@ -90,11 +83,10 @@ class CartItemPriceMixin(models.Model):
     elif price_type == 'total_coupons':
       # сумарна ціна купонів 
       price = self.item.get_coupons_price(self.item.currency, request) * self.quantity 
-    
+    # curr_from = self.item.currency
+    # curr_to   = currency
+    # koef = currency.convert(curr_from=curr_from, curr_to=curr_to)
     # price = price * koef
-    # print("koef", koef)
-    # print("price_type", price_type)
-    # print("price", price)
     return price 
 
   def get_price_of_attributes(self, currency, request):

@@ -64,7 +64,6 @@ class ItemPricesMixin(models.Model):
     )
     
     def get_price(self, currency=None, price_type='price', request=None):
-        # print("currency", currency)
         if not currency:
             currency = Currency.objects.get(is_main=True)
         price = self.price
@@ -97,8 +96,9 @@ class ItemPricesMixin(models.Model):
         if self.discount_type == 'p':
             discount = self.price * self.discount / 100
         else:
-            discount = self.discount 
-        return self.price - discount   
+            discount = self.discount
+        return discount  
+        # return self.price - discount   
 
     def get_coupons_price(self, item_currency, request):
         price = 0
