@@ -110,13 +110,18 @@ class ItemDetailSerializer(serializers.ModelSerializer):
       'similars',
       # 'images',
     ]
+from box.core.sw_global_config.models import GlobalMarker
+class GlobalMarkerSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = GlobalMarker
+    exclude = []
 
 
 class ItemListSerializer(serializers.ModelSerializer):
   price    = serializers.ReadOnlyField()
   currency = CurrencySerializer()
   in_stock = ItemStockSerializer()
-
+  markers  = GlobalMarkerSerializer(many=True, read_only=True)
   absolute_url = serializers.SerializerMethodField() 
   def get_absolute_url(self, obj):
       return obj.get_absolute_url()
