@@ -33,6 +33,7 @@ class StandardPageNumberPagination(PageNumberPagination):
         items = self.page.object_list
         response = super().get_paginated_response(data)
         response.data['total_pages'] = self.page.paginator.num_pages
+        response.data['page_number'] = self.page.number
         response.data['items_in_cart'] = get_items_in_cart(self.request, items)
         response.data['items_in_favours'] = get_items_in_favours(self.request, items)
         return response

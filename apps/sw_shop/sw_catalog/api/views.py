@@ -67,9 +67,6 @@ class ItemList(generics.ListCreateAPIView):
     attributes   = data.get('attributes', [])
     features     = data.get('features', [])
   
-    # TODO: добавити сюда пошук по modelsearch, 
-    #  get_items_in_favours, get_items_in_cart
-
     if category_id is not None:
       cat = ItemCategory.objects.get(id=category_id)
       descentant_ids = list(cat.get_descendants().values_list('id', flat=True))
