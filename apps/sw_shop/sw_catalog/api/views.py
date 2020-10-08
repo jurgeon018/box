@@ -66,9 +66,9 @@ class ItemList(generics.ListCreateAPIView):
     category_ids = data.get('category_ids', [])
     attributes   = data.get('attributes', [])
     features     = data.get('features', [])
-    brand_slugs  = data.get('brand_slugs').split(',')
+    brand_slugs  = data.get('brand_slugs','').split(',')
 
-    if brand_slugs:
+    if brand_slugs != ['']:
       queryset = queryset.filter(brand__slug__in=brand_slugs)
       
     if category_id is not None:
