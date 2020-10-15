@@ -60,7 +60,6 @@ class Cart(models.Model):
         )
   
   def get_cart_item(self, item, attributes):
-    print(attributes)
     cart_items = CartItem.objects.filter(cart=self, item=item)
     sdf = []
     # Проходиться по всіх товарах в корзині
@@ -134,7 +133,6 @@ class Cart(models.Model):
         self.create_cart_items_with_attributes(item, quantity, attributes)
       else:
         cart_item = self.get_cart_item(item, attributes)
-        print(cart_item)
         if cart_item:
           cart_item.quantity += quantity
           cart_item.save()
@@ -210,14 +208,17 @@ class Cart(models.Model):
       for cart_item in CartItem.objects.filter(cart=self):
         koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
         price += cart_item.get_price(currency, 'total_price_with_discount')
-        price = price + price*koef
+        # price = price + price*koef
+        # ^ з цим рядком не працює
+        # | 
     elif price_type == 'total':
       price = 0
       for cart_item in CartItem.objects.filter(cart=self):
         koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
         price += cart_item.get_price(currency, 'total_price')
-        price = price + price*koef
-        print("price: ", price)
+        # price = price + price*koef
+        # ^ з цим рядком не працює
+        # | 
     # todo: замовлення без купону, за мовлення з купоном
     # elif price_type == '':
     #   price = price 
