@@ -217,6 +217,7 @@ class Cart(models.Model):
         koef  = currency.convert(curr_from=cart_item.item.currency, curr_to=currency)
         price += cart_item.get_price(currency, 'total_price')
         price = price + price*koef
+        print("price: ", price)
     # todo: замовлення без купону, за мовлення з купоном
     # elif price_type == '':
     #   price = price 
